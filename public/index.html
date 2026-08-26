@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Label Ninja — Thermal Barcode Studio & Label Editor</title>
+  <title>Label Ninja — Thermal Barcode Studio & Custom Label Editor</title>
   <meta name="description" content="Free thermal label generator & comprehensive drag-and-drop label editor for warehouse bins, Whatnot live numbers, Amazon FNSKUs, and 4x6 shipping labels. Compatible with Rollo, Dymo, Zebra.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -68,7 +71,10 @@
 
     <!-- Mode Navigation Tabs -->
     <div class="flex items-center space-x-2 bg-slate-950 p-1 border border-slate-800 rounded-lg">
-      <button onclick="switchMode('bin')" id="tab-bin" class="px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition">
+      <button onclick="switchMode('editor')" id="tab-editor" class="px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition">
+        Custom Visual Editor
+      </button>
+      <button onclick="switchMode('bin')" id="tab-bin" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition">
         Warehouse Bins
       </button>
       <button onclick="switchMode('whatnot')" id="tab-whatnot" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition">
@@ -76,9 +82,6 @@
       </button>
       <button onclick="switchMode('fnsku')" id="tab-fnsku" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition">
         FNSKU & CSV Batch
-      </button>
-      <button onclick="switchMode('editor')" id="tab-editor" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition">
-        Custom Visual Editor
       </button>
     </div>
 
@@ -91,112 +94,28 @@
     </div>
   </header>
 
-  <!-- MODE 1: Warehouse Bin Labels -->
-  <main id="mode-bin" class="flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col space-y-6 no-print">
-    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-6">
-      <div class="border-b border-slate-800 pb-4">
-        <h2 class="text-xl font-bold text-white">Warehouse Bin Label Generator</h2>
-        <p class="text-xs text-slate-400 mt-1">Generates full-bleed, edge-to-edge bin labels formatted for Rollo, Dymo, and Zebra thermal printers.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Bin Prefix</label>
-          <input type="text" id="bin-prefix" value="BIN " class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono font-bold">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Shelf Letter</label>
-          <input type="text" id="bin-shelf" value="A" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono font-bold uppercase">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Start #</label>
-          <input type="number" id="bin-start" value="1" min="1" max="500" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">End #</label>
-          <input type="number" id="bin-end" value="20" min="1" max="500" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
-        </div>
-      </div>
-
-      <button onclick="generateBinBatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-        <span>PRINT BIN LABELS NOW</span>
-      </button>
-    </div>
-  </main>
-
-  <!-- MODE 2: Whatnot Live Show Numbers -->
-  <main id="mode-whatnot" class="flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col space-y-6 hidden no-print">
-    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-6">
-      <div class="border-b border-slate-800 pb-4">
-        <h2 class="text-xl font-bold text-white">Whatnot Live Show Number Sequencer</h2>
-        <p class="text-xs text-slate-400 mt-1">Generates giant, high-contrast consecutive show numbers (#1, #2, C1, C2) for live auction streams.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Number Prefix</label>
-          <input type="text" id="wn-prefix" value="#" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono font-bold">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Start #</label>
-          <input type="number" id="wn-start" value="1" min="1" max="999" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">End #</label>
-          <input type="number" id="wn-end" value="50" min="1" max="999" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
-        </div>
-      </div>
-
-      <button onclick="generateWhatnotBatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-        <span>PRINT WHATNOT NUMBERS NOW</span>
-      </button>
-    </div>
-  </main>
-
-  <!-- MODE 3: FNSKU & CSV Batch Studio -->
-  <main id="mode-fnsku" class="flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col space-y-6 hidden no-print">
-    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-6">
-      <div class="border-b border-slate-800 pb-4">
-        <h2 class="text-xl font-bold text-white">Amazon FNSKU & Manifest CSV Batch Tool</h2>
-        <p class="text-xs text-slate-400 mt-1">Single & bulk barcode generator for FNSKUs, UPCs, and InventoryLab CSV manifests.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Barcode / FNSKU</label>
-          <input type="text" id="fnsku-val" value="X001ABC123" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Item Title</label>
-          <input type="text" id="fnsku-title" value="Wireless Bluetooth Earbuds" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Condition</label>
-          <input type="text" id="fnsku-cond" value="New" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
-        </div>
-      </div>
-
-      <button onclick="printSingleFNSKU()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-        <span>PRINT FNSKU LABEL NOW</span>
-      </button>
-    </div>
-  </main>
-
-  <!-- MODE 4: Custom Visual Editor (Comprehensive Studio) -->
-  <div id="mode-editor" class="flex-1 flex overflow-hidden hidden no-print">
+  <!-- MODE 1: Custom Visual Editor (Comprehensive Studio) -->
+  <div id="mode-editor" class="flex-1 flex overflow-hidden no-print">
     <!-- Left Sidebar -->
     <aside class="w-80 bg-slate-900 border-r border-slate-800 p-4 flex flex-col space-y-5 overflow-y-auto">
       <div>
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Media Preset</h3>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Thermal Media Preset</h3>
         <select id="preset-size" onchange="changeCanvasSize()" class="w-full bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded px-3 py-2 font-mono">
-          <option value="standard" selected>2.25" x 1.25" (Dymo 30336)</option>
-          <option value="fnsku">2" x 1" (Dymo 30334 / FNSKU)</option>
-          <option value="shipping">4" x 6" (Rollo / Zebra Shipping)</option>
-          <option value="address">1.125" x 3.5" (Dymo 30252 Address)</option>
-          <option value="polybag">2" x 2" (Square Polybag)</option>
+          <optgroup label="Amazon FBA & Dymo Rolls">
+            <option value="fnsku">2" x 1" (Dymo 30334 FNSKU)</option>
+            <option value="standard" selected>2.25" x 1.25" (Dymo 30336 Multipurpose)</option>
+            <option value="address">1.125" x 3.5" (Dymo 30252 Address / Bin)</option>
+            <option value="small_sq">1" x 1" (Dymo 30332 Small Square)</option>
+            <option value="small_bc">2" x 0.75" (Dymo 30330 Barcode)</option>
+            <option value="large_multi">2.3125" x 4" (Dymo 30256 Large Multi)</option>
+          </optgroup>
+          <optgroup label="Rollo, Zebra & Munbyn 4x6">
+            <option value="shipping">4" x 6" (Rollo / Zebra Box Shipping)</option>
+            <option value="box_3">4" x 3" (Carton Box Inventory)</option>
+            <option value="product_3x2">3" x 2" (Whatnot Live Show Number)</option>
+            <option value="polybag">2" x 2" (Square Polybag Warning)</option>
+            <option value="polybag_large">2.25" x 4" (Polybag Suffocation Warning)</option>
+          </optgroup>
         </select>
       </div>
 
@@ -209,23 +128,45 @@
           <button onclick="addElement('barcode')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
             <span>Add Barcode</span>
           </button>
+          <button onclick="addElement('badge')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
+            <span>Price Badge</span>
+          </button>
+          <button onclick="addElement('box')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
+            <span>Border Box</span>
+          </button>
         </div>
       </div>
 
       <div>
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Presets</h3>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">One-Click Templates</h3>
         <div class="space-y-1.5">
-          <button onclick="loadTemplate('shipping_4x6')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
-            <span>4" x 6" Shipping Label</span>
-            <span class="text-[10px] text-slate-500 font-mono">4x6</span>
-          </button>
           <button onclick="loadTemplate('fnsku')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
             <span>Amazon FNSKU Label</span>
             <span class="text-[10px] text-slate-500 font-mono">2x1</span>
           </button>
+          <button onclick="loadTemplate('shipping_4x6')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+            <span>4" x 6" Thermal Shipping Label</span>
+            <span class="text-[10px] text-slate-500 font-mono">4x6</span>
+          </button>
           <button onclick="loadTemplate('suffocation')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
             <span>Polybag Suffocation Warning</span>
             <span class="text-[10px] text-slate-500 font-mono">2x2</span>
+          </button>
+          <button onclick="loadTemplate('suffocation_large')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+            <span>Large Suffocation Warning</span>
+            <span class="text-[10px] text-slate-500 font-mono">2.25x4</span>
+          </button>
+          <button onclick="loadTemplate('sold_set')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+            <span>Sold As Set - Do Not Separate</span>
+            <span class="text-[10px] text-slate-500 font-mono">2.25x1.25</span>
+          </button>
+          <button onclick="loadTemplate('fragile')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+            <span>Fragile Handle With Care</span>
+            <span class="text-[10px] text-slate-500 font-mono">2.25x1.25</span>
+          </button>
+          <button onclick="loadTemplate('single_bin')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+            <span>Warehouse Bin Label</span>
+            <span class="text-[10px] text-slate-500 font-mono">BIN 1A</span>
           </button>
         </div>
       </div>
@@ -262,6 +203,100 @@
     </main>
   </div>
 
+  <!-- MODE 2: Warehouse Bin Labels -->
+  <main id="mode-bin" class="flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col space-y-6 hidden no-print">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-xl font-bold text-white">Warehouse Bin Label Generator</h2>
+        <p class="text-xs text-slate-400 mt-1">Generates full-bleed, edge-to-edge bin labels formatted for Rollo, Dymo, and Zebra thermal printers.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Bin Prefix</label>
+          <input type="text" id="bin-prefix" value="BIN " class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono font-bold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Shelf Letter</label>
+          <input type="text" id="bin-shelf" value="A" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono font-bold uppercase">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Start #</label>
+          <input type="number" id="bin-start" value="1" min="1" max="500" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">End #</label>
+          <input type="number" id="bin-end" value="20" min="1" max="500" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+        </div>
+      </div>
+
+      <button onclick="generateBinBatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+        <span>PRINT BIN LABELS NOW</span>
+      </button>
+    </div>
+  </main>
+
+  <!-- MODE 3: Whatnot Live Show Numbers -->
+  <main id="mode-whatnot" class="flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col space-y-6 hidden no-print">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-xl font-bold text-white">Whatnot Live Show Number Sequencer</h2>
+        <p class="text-xs text-slate-400 mt-1">Generates giant, high-contrast consecutive show numbers (#1, #2, C1, C2) for live auction streams.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Number Prefix</label>
+          <input type="text" id="wn-prefix" value="#" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono font-bold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Start #</label>
+          <input type="number" id="wn-start" value="1" min="1" max="999" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">End #</label>
+          <input type="number" id="wn-end" value="50" min="1" max="999" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+        </div>
+      </div>
+
+      <button onclick="generateWhatnotBatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+        <span>PRINT WHATNOT NUMBERS NOW</span>
+      </button>
+    </div>
+  </main>
+
+  <!-- MODE 4: FNSKU & CSV Batch Studio -->
+  <main id="mode-fnsku" class="flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col space-y-6 hidden no-print">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-xl font-bold text-white">Amazon FNSKU & Manifest CSV Batch Tool</h2>
+        <p class="text-xs text-slate-400 mt-1">Single & bulk barcode generator for FNSKUs, UPCs, and InventoryLab CSV manifests.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Barcode / FNSKU</label>
+          <input type="text" id="fnsku-val" value="X001ABC123" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Item Title</label>
+          <input type="text" id="fnsku-title" value="Wireless Bluetooth Earbuds" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Condition</label>
+          <input type="text" id="fnsku-cond" value="New" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+        </div>
+      </div>
+
+      <button onclick="printSingleFNSKU()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+        <span>PRINT FNSKU LABEL NOW</span>
+      </button>
+    </div>
+  </main>
+
   <!-- Live Batch Print Container -->
   <div id="batch-print-area" class="w-full flex flex-col items-center"></div>
 
@@ -283,8 +318,14 @@
       standard: { width: 360, height: 200, name: "2.25x1.25 Dymo 30336" },
       fnsku: { width: 320, height: 180, name: "2x1 Dymo 30334" },
       address: { width: 520, height: 160, name: "1.125x3.5 Address" },
+      small_sq: { width: 200, height: 200, name: "1x1 Square" },
+      small_bc: { width: 300, height: 120, name: "2x0.75 Barcode" },
+      large_multi: { width: 370, height: 640, name: "2.31x4 Large Multi" },
       shipping: { width: 400, height: 600, name: "4x6 Box Shipping" },
-      polybag: { width: 300, height: 300, name: "2x2 Polybag" }
+      box_3: { width: 400, height: 300, name: "4x3 Box Inventory" },
+      product_3x2: { width: 420, height: 280, name: "3x2 Whatnot Show" },
+      polybag: { width: 300, height: 300, name: "2x2 Square Polybag" },
+      polybag_large: { width: 360, height: 640, name: "2.25x4 Suffocation Warning" }
     };
 
     function switchMode(mode) {
@@ -313,7 +354,7 @@
         document.getElementById('mode-editor').classList.add('flex');
         document.getElementById('tab-editor').className = "px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition";
         changeCanvasSize();
-        if (!elements.length) loadTemplate('single_bin');
+        if (!elements.length) loadTemplate('standard');
       }
     }
 
@@ -410,8 +451,8 @@
       const id = 'el-' + (nextId++);
       let newEl = {
         id, type, x: 25, y: 20 + elements.length * 45,
-        text: type === 'barcode' ? 'BIN-1A' : 'BIN 1A',
-        fontSize: type === 'barcode' ? 14 : 32,
+        text: type === 'barcode' ? 'X001ABC123' : (type === 'badge' ? '$19.99' : (type === 'box' ? 'BORDER BOX' : 'SAMPLE TEXT')),
+        fontSize: type === 'barcode' ? 14 : (type === 'badge' ? 16 : 24),
         align: 'center', bold: true, ...customProps
       };
       elements.push(newEl);
@@ -437,6 +478,12 @@
 
         if (el.type === 'text') {
           div.innerHTML = el.text.replace(/\n/g, '<br>');
+        } else if (el.type === 'badge') {
+          div.className += ' bg-black text-white px-3 py-1 font-mono font-bold rounded';
+          div.innerText = el.text;
+        } else if (el.type === 'box') {
+          div.className += ' border-2 border-black p-2 font-bold';
+          div.innerText = el.text;
         } else if (el.type === 'barcode') {
           const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
           svg.id = `barcode-${el.id}`;
@@ -512,6 +559,15 @@
       } else if (type === 'suffocation') {
         document.getElementById('preset-size').value = 'polybag';
         addElement('text', { text: 'WARNING: TO AVOID DANGER OF SUFFOCATION, KEEP THIS BAG AWAY FROM BABIES AND CHILDREN.\n\nDO NOT USE IN CRIBS, BEDS, OR PLAYPENS. THIS BAG IS NOT A TOY.', x: 15, y: 40, fontSize: 12 });
+      } else if (type === 'suffocation_large') {
+        document.getElementById('preset-size').value = 'polybag_large';
+        addElement('text', { text: 'WARNING: TO AVOID DANGER OF SUFFOCATION, KEEP THIS PLASTIC BAG AWAY FROM BABIES AND CHILDREN.\n\nDO NOT USE IN CRIBS, BEDS, CARRIAGES OR PLAYPENS. THIS BAG IS NOT A TOY.\n\nKNOT BAG BEFORE THROWING AWAY.', x: 20, y: 60, fontSize: 14 });
+      } else if (type === 'sold_set') {
+        document.getElementById('preset-size').value = 'standard';
+        addElement('box', { text: 'SOLD AS SET - DO NOT SEPARATE\nTHIS IS A SINGLE ITEM', x: 25, y: 50, fontSize: 16 });
+      } else if (type === 'fragile') {
+        document.getElementById('preset-size').value = 'standard';
+        addElement('box', { text: 'FRAGILE - HANDLE WITH CARE\nGLASSWARE / SENSITIVE CONTENTS', x: 20, y: 50, fontSize: 15 });
       } else if (type === 'single_bin') {
         document.getElementById('preset-size').value = 'standard';
         addElement('text', { text: 'BIN 1A', x: 80, y: 15, fontSize: 34 });
@@ -521,6 +577,10 @@
     }
 
     document.getElementById('label-canvas-container').onclick = () => { selectedId = null; renderCanvas(); };
+
+    window.onload = () => {
+      switchMode('editor');
+    };
   </script>
 </body>
 </html>
