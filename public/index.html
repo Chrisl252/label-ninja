@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Label Ninja — Warehouse Bin & Thermal Barcode Studio</title>
-  <meta name="description" content="Free thermal label generator for warehouse rack bin labels, Amazon FNSKUs, and reseller inventory. Compatible with Dymo, Rollo, Zebra printers.">
+  <title>Label Ninja — Thermal Barcode & Warehouse Studio</title>
+  <meta name="description" content="Professional thermal label generator for warehouse rack bin labels, Amazon FNSKUs, and reseller inventory. Compatible with Dymo, Rollo, Zebra printers.">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,10 +15,12 @@
   <!-- PDFMake -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <!-- Tesseract.js for OCR -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
     .canvas-element { user-select: none; touch-action: none; }
-    .canvas-element.selected { outline: 2px dashed #6366f1; outline-offset: 2px; }
+    .canvas-element.selected { outline: 2px dashed #3b82f6; outline-offset: 2px; }
     @media print {
       body * { visibility: hidden; }
       #label-canvas-container, #label-canvas-container *, #batch-print-area, #batch-print-area * { visibility: visible; }
@@ -36,44 +38,42 @@
     }
   </style>
 </head>
-<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col relative select-none">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col relative select-none">
 
   <!-- Top Navbar -->
-  <header class="border-b border-gray-800 bg-gray-950 px-6 py-3 flex justify-between items-center no-print flex-wrap gap-3">
+  <header class="border-b border-slate-800 bg-slate-900 px-6 py-3 flex justify-between items-center no-print flex-wrap gap-3">
     <div class="flex items-center space-x-3">
-      <div class="bg-indigo-600 text-white font-bold px-3 py-1 rounded-lg text-lg tracking-wider flex items-center space-x-2">
-        <span>🥷</span>
-        <span>LABEL NINJA</span>
-      </div>
-      <span class="text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded font-mono font-semibold">BIN & THERMAL STUDIO</span>
+      <img src="/assets/logo.jpg" alt="Label Ninja Logo" class="h-8 w-8 rounded border border-slate-700 object-cover">
+      <div class="font-bold text-white tracking-wider text-base">LABEL NINJA</div>
+      <span class="text-xs text-slate-400 border border-slate-700 px-2 py-0.5 rounded font-mono uppercase">Thermal Studio</span>
     </div>
 
     <!-- Center Label Size Selector -->
     <div class="flex items-center space-x-3">
-      <label class="text-xs text-gray-400 font-semibold uppercase">Label Size:</label>
-      <select id="preset-size" onchange="changeCanvasSize()" class="bg-gray-900 border border-gray-700 text-gray-200 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-mono">
-        <optgroup label="Bin & Rack Labels">
+      <label class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Media Preset:</label>
+      <select id="preset-size" onchange="changeCanvasSize()" class="bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded px-3 py-1.5 focus:outline-none focus:border-blue-500 font-mono">
+        <optgroup label="Bin & Warehouse Rack">
           <option value="standard" selected>2.25" x 1.25" (Dymo 30336 Bin Label)</option>
-          <option value="fnsku">2" x 1" (Dymo 30334 Small Bin / FNSKU)</option>
-          <option value="address">1.125" x 3.5" (Dymo 30252 Long Rack Label)</option>
+          <option value="fnsku">2" x 1" (Dymo 30334 FNSKU / Small Bin)</option>
+          <option value="address">1.125" x 3.5" (Dymo 30252 Rack Label)</option>
         </optgroup>
-        <optgroup label="Rollo & Zebra Shipping/Box">
-          <option value="shipping">4" x 6" (Rollo / Zebra Carton)</option>
-          <option value="box_3">4" x 3" (Box Inventory)</option>
+        <optgroup label="Rollo & Zebra Shipping">
+          <option value="shipping">4" x 6" (Rollo / Zebra Box Shipping)</option>
+          <option value="box_3">4" x 3" (Carton Box Inventory)</option>
           <option value="polybag">2" x 2" (Square Bin / Polybag)</option>
         </optgroup>
       </select>
     </div>
 
-    <!-- Right Controls -->
+    <!-- Right Action Buttons -->
     <div class="flex items-center space-x-3">
-      <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow transition flex items-center space-x-1.5">
+      <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-4 py-2 rounded shadow transition flex items-center space-x-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
         <span>Print Labels</span>
       </button>
-      <button onclick="exportVectorPDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow transition flex items-center space-x-1.5">
+      <button onclick="exportVectorPDF()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs px-4 py-2 rounded shadow transition flex items-center space-x-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-        <span>Download PDF</span>
+        <span>Export PDF</span>
       </button>
     </div>
   </header>
@@ -81,102 +81,114 @@
   <!-- Workspace -->
   <div class="flex-1 flex overflow-hidden">
 
-    <!-- Left Sidebar -->
-    <aside class="w-72 bg-gray-950 border-r border-gray-800 p-4 flex flex-col space-y-5 no-print overflow-y-auto">
+    <!-- Left Sidebar Toolbar -->
+    <aside class="w-72 bg-slate-900 border-r border-slate-800 p-4 flex flex-col space-y-5 no-print overflow-y-auto">
       
-      <!-- Quick Bin Generator Tool -->
-      <div class="bg-indigo-950/40 border border-indigo-800/60 rounded-xl p-3.5 space-y-3">
-        <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center space-x-1.5">
-          <span>📦</span>
+      <!-- Batch Rack BIN Generator Tool -->
+      <div class="bg-slate-950 border border-slate-800 rounded-lg p-3.5 space-y-3">
+        <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
+          <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
           <span>Batch Rack BIN Generator</span>
         </h3>
-        <p class="text-[11px] text-gray-300 leading-snug">Generate a whole rack of sequential bin labels (e.g. BIN 1A to 20A) in 1 click.</p>
+        <p class="text-[11px] text-slate-400 leading-snug">Generate a sequential series of rack bin labels (e.g. BIN 1A to 20A) formatted for thermal printing.</p>
         
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[10px] text-gray-400 font-semibold uppercase">Shelf Letter</label>
-            <input type="text" id="bin-shelf" value="A" class="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white uppercase font-mono">
+            <label class="block text-[10px] text-slate-400 font-semibold uppercase">Shelf Letter</label>
+            <input type="text" id="bin-shelf" value="A" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white uppercase font-mono">
           </div>
           <div>
-            <label class="block text-[10px] text-gray-400 font-semibold uppercase">Prefix</label>
-            <input type="text" id="bin-prefix" value="BIN " class="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white font-mono">
+            <label class="block text-[10px] text-slate-400 font-semibold uppercase">Prefix</label>
+            <input type="text" id="bin-prefix" value="BIN " class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono">
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[10px] text-gray-400 font-semibold uppercase">Start #</label>
-            <input type="number" id="bin-start" value="1" min="1" max="500" class="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white font-mono">
+            <label class="block text-[10px] text-slate-400 font-semibold uppercase">Start #</label>
+            <input type="number" id="bin-start" value="1" min="1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono">
           </div>
           <div>
-            <label class="block text-[10px] text-gray-400 font-semibold uppercase">End #</label>
-            <input type="number" id="bin-end" value="20" min="1" max="500" class="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white font-mono">
+            <label class="block text-[10px] text-slate-400 font-semibold uppercase">End #</label>
+            <input type="number" id="bin-end" value="20" min="1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono">
           </div>
         </div>
 
-        <button onclick="generateBinBatch()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 rounded text-xs transition shadow">
-          ⚡ Generate Batch Bin Labels
+        <button onclick="generateBinBatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded text-xs transition shadow">
+          Generate Batch Bin Labels
         </button>
       </div>
 
       <!-- Single Element Tools -->
       <div>
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Single Add Tools</h3>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Single Elements</h3>
         <div class="grid grid-cols-2 gap-2">
-          <button onclick="addElement('text')" class="flex items-center justify-center space-x-1 p-2 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded text-xs font-semibold text-gray-200">
-            <span>T</span> <span>Add Text</span>
+          <button onclick="addElement('text')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            <span>Add Text</span>
           </button>
-          <button onclick="addElement('barcode')" class="flex items-center justify-center space-x-1 p-2 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded text-xs font-semibold text-gray-200">
-            <span>║▌║</span> <span>Add Barcode</span>
+          <button onclick="addElement('barcode')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>Add Barcode</span>
           </button>
         </div>
       </div>
 
-      <!-- Quick Templates -->
+      <!-- Photo OCR Import -->
       <div>
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Preset Templates</h3>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Photo OCR Import</h3>
+        <div class="border border-dashed border-slate-700 bg-slate-950 hover:bg-slate-800 rounded-lg p-3 text-center cursor-pointer relative">
+          <input type="file" accept="image/*" onchange="handlePhotoOCR(this.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+          <div class="text-xs font-semibold text-slate-300">Upload Label Photo</div>
+          <div class="text-[10px] text-slate-500 mt-0.5">Extracts text & barcode data</div>
+        </div>
+      </div>
+
+      <!-- Quick Layout Templates -->
+      <div>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Presets</h3>
         <div class="space-y-1.5">
-          <button onclick="loadTemplate('single_bin')" class="w-full text-left p-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded text-xs text-gray-300 transition flex justify-between">
-            <span>📦 Single BIN Label (BIN 1A)</span>
-            <span class="text-[10px] text-indigo-400">Bold</span>
+          <button onclick="loadTemplate('single_bin')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+            <span>Single BIN Label (BIN 1A)</span>
+            <span class="text-[10px] text-slate-500 font-mono">Bold</span>
           </button>
-          <button onclick="loadTemplate('fnsku')" class="w-full text-left p-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded text-xs text-gray-300 transition flex justify-between">
-            <span>📦 Amazon FNSKU Label</span>
-            <span class="text-[10px] text-indigo-400">2x1</span>
+          <button onclick="loadTemplate('fnsku')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+            <span>Amazon FNSKU Label</span>
+            <span class="text-[10px] text-slate-500 font-mono">2x1</span>
           </button>
         </div>
       </div>
     </aside>
 
     <!-- Center Stage -->
-    <main class="flex-1 bg-gray-900/60 p-8 flex flex-col items-center justify-start overflow-auto relative">
+    <main class="flex-1 bg-slate-950/80 p-8 flex flex-col items-center justify-start overflow-auto relative">
       
       <!-- Formatting Toolbar -->
-      <div id="formatting-bar" class="bg-gray-950 border border-gray-800 rounded-xl px-4 py-2 mb-6 flex items-center space-x-4 no-print shadow-xl">
-        <span class="text-xs text-gray-400 font-semibold">Inspector:</span>
-        <div class="h-4 w-px bg-gray-800"></div>
+      <div id="formatting-bar" class="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 mb-6 flex items-center space-x-4 no-print shadow-lg">
+        <span class="text-xs text-slate-400 font-semibold">Inspector:</span>
+        <div class="h-4 w-px bg-slate-800"></div>
 
         <div class="flex items-center space-x-2">
-          <span class="text-xs text-gray-400">Font Size:</span>
+          <span class="text-xs text-slate-400">Font Size:</span>
           <input type="range" id="inspector-size" min="10" max="60" value="28" oninput="updateSelectedElement()" class="w-24">
-          <span id="size-val" class="text-xs font-mono text-indigo-300">28px</span>
+          <span id="size-val" class="text-xs font-mono text-blue-400">28px</span>
         </div>
 
-        <div class="h-4 w-px bg-gray-800"></div>
+        <div class="h-4 w-px bg-slate-800"></div>
 
         <div class="flex items-center space-x-2 flex-1">
-          <input type="text" id="inspector-text" oninput="updateSelectedElement()" placeholder="Edit text or bin location..." class="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 w-48 font-mono">
+          <input type="text" id="inspector-text" oninput="updateSelectedElement()" placeholder="Edit text or location..." class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500 w-56 font-mono">
         </div>
 
-        <button onclick="deleteSelectedElement()" class="text-xs text-red-400 hover:text-red-300 font-bold px-2 py-1 bg-red-950/50 border border-red-900 rounded">
-          🗑️ Delete
+        <button onclick="deleteSelectedElement()" class="text-xs text-red-400 hover:text-red-300 font-semibold px-2 py-1 bg-red-950/40 border border-red-900 rounded">
+          Delete
         </button>
       </div>
 
       <!-- Printable Canvas -->
-      <div id="label-canvas-container" class="flex items-center justify-center p-6 border border-dashed border-gray-800 bg-gray-950 rounded-xl shadow-2xl">
+      <div id="label-canvas-container" class="flex items-center justify-center p-6 border border-dashed border-slate-800 bg-slate-900 rounded-xl shadow-xl">
         <div id="label-canvas" class="bg-white text-black rounded shadow-2xl relative overflow-hidden transition-all duration-200" style="width: 360px; height: 200px;">
-          <!-- Dynamic Canvas Elements -->
+          <!-- Canvas Elements -->
         </div>
       </div>
     </main>
@@ -327,7 +339,7 @@
         const barcodeCode = binText.replace(/\s+/g, '-');
 
         const labelDiv = document.createElement('div');
-        labelDiv.className = 'print-label bg-white text-black p-4 flex flex-col justify-between items-center shadow-lg border border-gray-300';
+        labelDiv.className = 'print-label bg-white text-black p-4 flex flex-col justify-between items-center shadow-lg border border-slate-300';
         labelDiv.style.width = '360px';
         labelDiv.style.height = '200px';
 
@@ -346,6 +358,18 @@
       }
 
       setTimeout(() => { window.print(); }, 400);
+    }
+
+    function handlePhotoOCR(file) {
+      if (!file) return;
+      Tesseract.recognize(file, 'eng').then(({ data: { text } }) => {
+        const fnskuMatch = text.match(/\b(X[0-9A-Z]{9})\b/i);
+        const code = fnskuMatch ? fnskuMatch[1] : 'BIN-1A';
+        elements = [];
+        addElement('text', { text: text.split('\n')[0] || 'Recreated Label', x: 20, y: 15, fontSize: 14 });
+        addElement('barcode', { text: code, x: 35, y: 45 });
+        renderCanvas();
+      });
     }
 
     function exportVectorPDF() {
