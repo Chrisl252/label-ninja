@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Label Ninja — Thermal Barcode & Warehouse Studio</title>
-  <meta name="description" content="Professional thermal label generator for warehouse rack bin labels, Amazon FNSKUs, and reseller inventory. Compatible with Dymo, Rollo, Zebra printers.">
+  <title>Label Ninja — Thermal Barcode, Whatnot & Shipping Studio</title>
+  <meta name="description" content="Free thermal label generator for Whatnot show numbers, 4x6 shipping labels, warehouse rack bin labels, and Amazon FNSKUs. Compatible with Dymo, Rollo, Zebra printers.">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -52,15 +52,18 @@
     <div class="flex items-center space-x-3">
       <label class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Media Preset:</label>
       <select id="preset-size" onchange="changeCanvasSize()" class="bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded px-3 py-1.5 focus:outline-none focus:border-blue-500 font-mono">
-        <optgroup label="Bin & Warehouse Rack">
-          <option value="standard" selected>2.25" x 1.25" (Dymo 30336 Bin Label)</option>
-          <option value="fnsku">2" x 1" (Dymo 30334 FNSKU / Small Bin)</option>
-          <option value="address">1.125" x 3.5" (Dymo 30252 Rack Label)</option>
-        </optgroup>
-        <optgroup label="Rollo & Zebra Shipping">
-          <option value="shipping">4" x 6" (Rollo / Zebra Box Shipping)</option>
+        <optgroup label="Shipping & Box">
+          <option value="shipping" selected>4" x 6" (Rollo / Zebra / Dymo 4XL Shipping)</option>
           <option value="box_3">4" x 3" (Carton Box Inventory)</option>
-          <option value="polybag">2" x 2" (Square Bin / Polybag)</option>
+        </optgroup>
+        <optgroup label="Whatnot & Live Show">
+          <option value="product_3x2">3" x 2" (Whatnot Live Show Number)</option>
+          <option value="polybag">2" x 2" (Square Polybag Warning)</option>
+        </optgroup>
+        <optgroup label="Bin & Warehouse Rack">
+          <option value="standard">2.25" x 1.25" (Dymo 30336 Bin Label)</option>
+          <option value="fnsku">2" x 1" (Dymo 30334 FNSKU / Small Bin)</option>
+          <option value="address">1.125" x 3.5" (Dymo 30252 Address)</option>
         </optgroup>
       </select>
     </div>
@@ -82,15 +85,42 @@
   <div class="flex-1 flex overflow-hidden">
 
     <!-- Left Sidebar Toolbar -->
-    <aside class="w-72 bg-slate-900 border-r border-slate-800 p-4 flex flex-col space-y-5 no-print overflow-y-auto">
+    <aside class="w-80 bg-slate-900 border-r border-slate-800 p-4 flex flex-col space-y-5 no-print overflow-y-auto">
       
+      <!-- Whatnot & Live Show Sequential Numbers Generator -->
+      <div class="bg-slate-950 border border-slate-800 rounded-lg p-3.5 space-y-3">
+        <h3 class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center space-x-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
+          <span>Whatnot Show Number Sequencer</span>
+        </h3>
+        <p class="text-[11px] text-slate-400 leading-snug">Generate consecutive live-stream show numbers (e.g. #1 to #50 or C1 to C50) for fast item tagging.</p>
+        
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 font-semibold uppercase">Prefix</label>
+            <input type="text" id="wn-prefix" value="#" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono">
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 font-semibold uppercase">Start #</label>
+            <input type="number" id="wn-start" value="1" min="1" max="999" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono">
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 font-semibold uppercase">End #</label>
+            <input type="number" id="wn-end" value="50" min="1" max="999" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono">
+          </div>
+        </div>
+
+        <button onclick="generateWhatnotBatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded text-xs transition shadow">
+          Generate Whatnot Numbers (#1 - #50)
+        </button>
+      </div>
+
       <!-- Batch Rack BIN Generator Tool -->
       <div class="bg-slate-950 border border-slate-800 rounded-lg p-3.5 space-y-3">
         <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
-          <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
           <span>Batch Rack BIN Generator</span>
         </h3>
-        <p class="text-[11px] text-slate-400 leading-snug">Generate a sequential series of rack bin labels (e.g. BIN 1A to 20A) formatted for thermal printing.</p>
         
         <div class="grid grid-cols-2 gap-2">
           <div>
@@ -114,9 +144,32 @@
           </div>
         </div>
 
-        <button onclick="generateBinBatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded text-xs transition shadow">
+        <button onclick="generateBinBatch()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold py-2 rounded text-xs transition shadow">
           Generate Batch Bin Labels
         </button>
+      </div>
+
+      <!-- Quick Layout Templates -->
+      <div>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Preset Templates</h3>
+        <div class="space-y-1.5">
+          <button onclick="loadTemplate('shipping_4x6')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+            <span>4" x 6" Thermal Shipping Label</span>
+            <span class="text-[10px] text-slate-500 font-mono">4x6</span>
+          </button>
+          <button onclick="loadTemplate('fnsku')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+            <span>Amazon FNSKU Label</span>
+            <span class="text-[10px] text-slate-500 font-mono">2x1</span>
+          </button>
+          <button onclick="loadTemplate('suffocation')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+            <span>Polybag Suffocation Warning</span>
+            <span class="text-[10px] text-slate-500 font-mono">2x2</span>
+          </button>
+          <button onclick="loadTemplate('single_bin')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+            <span>Single BIN Label (BIN 1A)</span>
+            <span class="text-[10px] text-slate-500 font-mono">Bold</span>
+          </button>
+        </div>
       </div>
 
       <!-- Single Element Tools -->
@@ -130,31 +183,6 @@
           <button onclick="addElement('barcode')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
             <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             <span>Add Barcode</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Photo OCR Import -->
-      <div>
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Photo OCR Import</h3>
-        <div class="border border-dashed border-slate-700 bg-slate-950 hover:bg-slate-800 rounded-lg p-3 text-center cursor-pointer relative">
-          <input type="file" accept="image/*" onchange="handlePhotoOCR(this.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-          <div class="text-xs font-semibold text-slate-300">Upload Label Photo</div>
-          <div class="text-[10px] text-slate-500 mt-0.5">Extracts text & barcode data</div>
-        </div>
-      </div>
-
-      <!-- Quick Layout Templates -->
-      <div>
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Presets</h3>
-        <div class="space-y-1.5">
-          <button onclick="loadTemplate('single_bin')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
-            <span>Single BIN Label (BIN 1A)</span>
-            <span class="text-[10px] text-slate-500 font-mono">Bold</span>
-          </button>
-          <button onclick="loadTemplate('fnsku')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
-            <span>Amazon FNSKU Label</span>
-            <span class="text-[10px] text-slate-500 font-mono">2x1</span>
           </button>
         </div>
       </div>
@@ -187,7 +215,7 @@
 
       <!-- Printable Canvas -->
       <div id="label-canvas-container" class="flex items-center justify-center p-6 border border-dashed border-slate-800 bg-slate-900 rounded-xl shadow-xl">
-        <div id="label-canvas" class="bg-white text-black rounded shadow-2xl relative overflow-hidden transition-all duration-200" style="width: 360px; height: 200px;">
+        <div id="label-canvas" class="bg-white text-black rounded shadow-2xl relative overflow-hidden transition-all duration-200" style="width: 400px; height: 600px;">
           <!-- Canvas Elements -->
         </div>
       </div>
@@ -203,18 +231,19 @@
     let nextId = 1;
 
     const PRESETS = {
-      standard: { width: 360, height: 200, name: "2.25x1.25 Dymo 30336" },
-      fnsku: { width: 320, height: 180, name: "2x1 Dymo 30334" },
-      address: { width: 520, height: 160, name: "1.125x3.5 Address" },
       shipping: { width: 400, height: 600, name: "4x6 Box Shipping" },
       box_3: { width: 400, height: 300, name: "4x3 Box Inventory" },
-      polybag: { width: 300, height: 300, name: "2x2 Square" }
+      product_3x2: { width: 420, height: 280, name: "3x2 Whatnot Show" },
+      polybag: { width: 300, height: 300, name: "2x2 Square" },
+      standard: { width: 360, height: 200, name: "2.25x1.25 Dymo 30336" },
+      fnsku: { width: 320, height: 180, name: "2x1 Dymo 30334" },
+      address: { width: 520, height: 160, name: "1.125x3.5 Address" }
     };
 
     function changeCanvasSize() {
       const presetKey = document.getElementById('preset-size').value;
       const canvas = document.getElementById('label-canvas');
-      const p = PRESETS[presetKey] || PRESETS.standard;
+      const p = PRESETS[presetKey] || PRESETS.shipping;
       canvas.style.width = p.width + 'px';
       canvas.style.height = p.height + 'px';
     }
@@ -223,8 +252,8 @@
       const id = 'el-' + (nextId++);
       let newEl = {
         id, type, x: 25, y: 20 + elements.length * 45,
-        text: type === 'barcode' ? 'BIN-1A' : 'BIN 1A',
-        fontSize: type === 'barcode' ? 14 : 32,
+        text: type === 'barcode' ? '420902109200' : 'SAMPLE TEXT',
+        fontSize: type === 'barcode' ? 14 : 20,
         align: 'center', bold: true, ...customProps
       };
       elements.push(newEl);
@@ -249,7 +278,7 @@
         makeDraggable(div, el);
 
         if (el.type === 'text') {
-          div.innerText = el.text;
+          div.innerHTML = el.text.replace(/\n/g, '<br>');
         } else if (el.type === 'barcode') {
           const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
           svg.id = `barcode-${el.id}`;
@@ -312,17 +341,50 @@
 
     function loadTemplate(type) {
       elements = [];
-      if (type === 'single_bin') {
-        document.getElementById('preset-size').value = 'standard';
-        addElement('text', { text: 'BIN 1A', x: 80, y: 15, fontSize: 34 });
-        addElement('barcode', { text: 'BIN-1A', x: 60, y: 75 });
+      if (type === 'shipping_4x6') {
+        document.getElementById('preset-size').value = 'shipping';
+        addElement('text', { text: 'DISCOUNT PANTRY LLC\n100 RESELLER WAY\nLAS VEGAS NV 89101', x: 20, y: 20, fontSize: 11 });
+        addElement('text', { text: 'SHIP TO:\nCHRIS LUCAS\n123 MAIN STREET\nAPARTMENT 4B\nLAS VEGAS NV 89102', x: 40, y: 150, fontSize: 16 });
+        addElement('barcode', { text: '4208910294001234567890', x: 30, y: 420 });
       } else if (type === 'fnsku') {
         document.getElementById('preset-size').value = 'fnsku';
         addElement('text', { text: 'Wireless Bluetooth Earbuds', x: 15, y: 10, fontSize: 12 });
         addElement('barcode', { text: 'X001ABC123', x: 35, y: 40 });
         addElement('text', { text: 'New', x: 135, y: 135, fontSize: 11 });
+      } else if (type === 'suffocation') {
+        document.getElementById('preset-size').value = 'polybag';
+        addElement('text', { text: 'WARNING: TO AVOID DANGER OF SUFFOCATION, KEEP THIS BAG AWAY FROM BABIES AND CHILDREN.\n\nDO NOT USE IN CRIBS, BEDS, OR PLAYPENS. THIS BAG IS NOT A TOY.', x: 15, y: 40, fontSize: 12 });
+      } else if (type === 'single_bin') {
+        document.getElementById('preset-size').value = 'standard';
+        addElement('text', { text: 'BIN 1A', x: 80, y: 15, fontSize: 34 });
+        addElement('barcode', { text: 'BIN-1A', x: 60, y: 75 });
       }
       changeCanvasSize();
+    }
+
+    function generateWhatnotBatch() {
+      const prefix = document.getElementById('wn-prefix').value || '#';
+      const start = parseInt(document.getElementById('wn-start').value || 1);
+      const end = parseInt(document.getElementById('wn-end').value || 50);
+
+      const batchPrintArea = document.getElementById('batch-print-area');
+      batchPrintArea.innerHTML = '';
+
+      for (let i = start; i <= end; i++) {
+        const numText = `${prefix}${i}`;
+
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'print-label bg-white text-black p-4 flex flex-col justify-center items-center shadow-lg border border-slate-300';
+        labelDiv.style.width = '360px';
+        labelDiv.style.height = '200px';
+
+        labelDiv.innerHTML = `
+          <div class="text-6xl font-black tracking-tighter text-black">${numText}</div>
+        `;
+        batchPrintArea.appendChild(labelDiv);
+      }
+
+      setTimeout(() => { window.print(); }, 400);
     }
 
     function generateBinBatch() {
@@ -360,32 +422,20 @@
       setTimeout(() => { window.print(); }, 400);
     }
 
-    function handlePhotoOCR(file) {
-      if (!file) return;
-      Tesseract.recognize(file, 'eng').then(({ data: { text } }) => {
-        const fnskuMatch = text.match(/\b(X[0-9A-Z]{9})\b/i);
-        const code = fnskuMatch ? fnskuMatch[1] : 'BIN-1A';
-        elements = [];
-        addElement('text', { text: text.split('\n')[0] || 'Recreated Label', x: 20, y: 15, fontSize: 14 });
-        addElement('barcode', { text: code, x: 35, y: 45 });
-        renderCanvas();
-      });
-    }
-
     function exportVectorPDF() {
       const docDefinition = {
-        pageSize: { width: 162, height: 90 },
-        pageMargins: [6, 6, 6, 6],
-        content: elements.map(e => ({ text: e.text, fontSize: e.fontSize / 1.5, alignment: 'center', bold: true }))
+        pageSize: { width: 288, height: 432 },
+        pageMargins: [10, 10, 10, 10],
+        content: elements.map(e => ({ text: e.text, fontSize: e.fontSize / 1.5, alignment: 'left', bold: true }))
       };
-      pdfMake.createPdf(docDefinition).download("bin_labels.pdf");
+      pdfMake.createPdf(docDefinition).download("shipping_label.pdf");
     }
 
     document.getElementById('label-canvas-container').onclick = () => { selectedId = null; renderCanvas(); };
 
     window.onload = () => {
       changeCanvasSize();
-      loadTemplate('single_bin');
+      loadTemplate('shipping_4x6');
     };
   </script>
 </body>
