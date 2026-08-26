@@ -3,32 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Label Ninja — Free Unlimited Thermal Barcode & FNSKU Studio</title>
-  <!-- Tailwind CSS -->
+  <!-- Core SEO Meta Tags -->
+  <title>Label Ninja — Free Thermal Barcode & FNSKU Label Generator for Dymo, Rollo, Zebra</title>
+  <meta name="description" content="Free online thermal label generator & bulk CSV barcode studio. Instant 2x1 FNSKU, UPC, SKU, Suffocation Warning & 4x6 shipping labels for Dymo 450/550, Rollo, Zebra, and Munbyn printers. No sign-up required.">
+  <meta name="keywords" content="fnsku label generator, free dymo label maker, thermal barcode generator, amazon fba barcode generator, rollo barcode generator, bulk fnsku printer, 2x1 dymo 30334 generator, polybag suffocation warning label maker, zebra thermal barcode studio">
+  <meta name="author" content="Bisket LLC / Label Ninja">
+  <link rel="canonical" href="https://label-ninja.com">
+
+  <!-- Open Graph / Social SEO -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Label Ninja — Free Thermal Barcode & FNSKU Studio">
+  <meta property="og:description" content="Instant 100% free thermal label generator for Dymo, Rollo, and Zebra printers. Bulk CSV manifest to printable thermal PDF in seconds.">
+  <meta property="og:url" content="https://label-ninja.com">
+  <meta property="og:site_name" content="Label Ninja">
+
+  <!-- Structured Data JSON-LD for Search Engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Label Ninja",
+    "operatingSystem": "All (Web Browser)",
+    "applicationCategory": "BusinessApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    },
+    "description": "Free web-based thermal barcode label generator & bulk CSV manifest printer for Amazon FBA, eBay, and Etsy sellers using Dymo, Rollo, Zebra, and Munbyn thermal printers."
+  }
+  </script>
+
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- JsBarcode library for 1D/FNSKU barcodes -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-  <!-- PapaParse for client-side CSV processing -->
+  <!-- PapaParse for client-side CSV parsing -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <!-- QRCode library for 2D barcode generation -->
+  <!-- QRCode library -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <!-- PDFMake for vector PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
   <style>
     @media print {
-      body * {
-        visibility: hidden;
-      }
-      #batch-print-area, #batch-print-area *, #single-print-wrapper, #single-print-wrapper * {
-        visibility: visible;
-      }
-      .no-print {
-        display: none !important;
-      }
-      body {
-        background: white !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
+      body * { visibility: hidden; }
+      #batch-print-area, #batch-print-area *, #single-print-wrapper, #single-print-wrapper * { visibility: visible; }
+      .no-print { display: none !important; }
+      body { background: white !important; margin: 0 !important; padding: 0 !important; }
       .print-label {
         break-after: page;
         page-break-after: always;
@@ -41,7 +64,7 @@
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col">
 
-  <!-- Header / Nav -->
+  <!-- Header Nav -->
   <header class="border-b border-gray-800 bg-gray-950 px-6 py-4 flex justify-between items-center no-print">
     <div class="flex items-center space-x-3">
       <div class="bg-indigo-600 text-white font-bold px-3 py-1.5 rounded-lg text-xl tracking-wider flex items-center space-x-2">
@@ -50,9 +73,9 @@
       </div>
       <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-mono font-semibold">100% FREE & UNLIMITED</span>
     </div>
-    <div class="flex items-center space-x-4">
+    <div class="flex items-center space-x-3">
       <button onclick="switchTab('single')" id="tab-btn-single" class="bg-indigo-600 text-white font-semibold text-sm px-4 py-2 rounded-lg shadow transition">
-        Single Label Generator
+        Single Label Studio
       </button>
       <button onclick="switchTab('batch')" id="tab-btn-batch" class="bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold text-sm px-4 py-2 rounded-lg shadow transition flex items-center space-x-2">
         <span>⚡ Bulk CSV Batch Generator</span>
@@ -68,35 +91,63 @@
     <div class="lg:col-span-5 bg-gray-950 border border-gray-800 rounded-xl p-6 shadow-xl space-y-5 no-print">
       <h2 class="text-lg font-bold text-gray-200 border-b border-gray-800 pb-3 flex justify-between items-center">
         <span>1. Label Settings</span>
-        <span class="text-xs text-indigo-400 font-mono">Thermal Printer Ready</span>
+        <span class="text-xs text-indigo-400 font-mono">Dymo • Rollo • Zebra • Munbyn</span>
       </h2>
 
-      <!-- Size Preset Selector -->
+      <!-- Printer & Preset Selector -->
       <div>
-        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Thermal Label Size</label>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Thermal Label Media Preset</label>
         <select id="preset-size" onchange="updateSingleLabel()" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 text-gray-100">
-          <option value="fnsku">2" x 1" (Amazon FNSKU / Dymo 30334)</option>
-          <option value="standard">2.25" x 1.25" (Dymo 30336 / Multipurpose)</option>
-          <option value="address">1.125" x 3.5" (Dymo 30252 / Address)</option>
-          <option value="square">2" x 2" (Square Product Label)</option>
-          <option value="shipping">4" x 6" (Rollo / Zebra Box Shipping)</option>
+          <optgroup label="Amazon FBA & Dymo Presets">
+            <option value="fnsku" selected>2" x 1" (Amazon FNSKU / Dymo 30334)</option>
+            <option value="standard">2.25" x 1.25" (Dymo 30336 Multipurpose)</option>
+            <option value="address">1.125" x 3.5" (Dymo 30252 Address / Barcode)</option>
+            <option value="small_sq">1" x 1" (Dymo 30332 Small Square)</option>
+            <option value="small_bc">2" x 0.75" (Dymo 30330 Small Barcode)</option>
+          </optgroup>
+          <optgroup label="Rollo, Zebra & Munbyn Presets">
+            <option value="shipping">4" x 6" (Rollo / Zebra Box Shipping)</option>
+            <option value="box_3">4" x 3" (FBA Carton / Box Inventory)</option>
+            <option value="polybag">2" x 2" (Suffocation Warning / Polybag)</option>
+            <option value="product_3x2">3" x 2" (Standard Product Label)</option>
+          </optgroup>
         </select>
+      </div>
+
+      <!-- Quick Template Presets -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Label Template</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="applyTemplate('fnsku')" class="text-xs bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 py-1.5 px-2 rounded text-left truncate">
+            📦 Amazon FNSKU
+          </button>
+          <button onclick="applyTemplate('suffocation')" class="text-xs bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 py-1.5 px-2 rounded text-left truncate">
+            ⚠️ Suffocation Warning
+          </button>
+          <button onclick="applyTemplate('sold_set')" class="text-xs bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 py-1.5 px-2 rounded text-left truncate">
+            🏷️ Sold As Set
+          </button>
+          <button onclick="applyTemplate('fragile')" class="text-xs bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 py-1.5 px-2 rounded text-left truncate">
+            🥛 Fragile / Handle Care
+          </button>
+        </div>
       </div>
 
       <!-- Symbology Selector -->
       <div>
         <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Barcode Symbology</label>
         <select id="barcode-type" onchange="updateSingleLabel()" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 text-gray-100">
-          <option value="CODE128">CODE128 (Amazon FNSKU / SKU)</option>
-          <option value="UPC">UPC-A (Standard Retail Barcode)</option>
-          <option value="EAN13">EAN-13 (International Retail)</option>
+          <option value="CODE128">CODE128 (Amazon FNSKU / SKU Standard)</option>
+          <option value="UPC">UPC-A (US Retail Barcode)</option>
+          <option value="EAN13">EAN-13 (Global Retail Barcode)</option>
           <option value="CODE39">CODE39 (Inventory Code)</option>
-          <option value="QR">QR Code (Product / Website Link)</option>
+          <option value="QR">QR Code (Website / Product Link)</option>
+          <option value="NONE">Text Only (Warning / Notice Label)</option>
         </select>
       </div>
 
-      <!-- Barcode Value / FNSKU -->
-      <div>
+      <!-- Barcode Value -->
+      <div id="barcode-input-container">
         <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Barcode / FNSKU Data</label>
         <input type="text" id="barcode-value" value="X001ABC123" oninput="updateSingleLabel()" placeholder="e.g. X001ABC123 or 793573109212" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm font-mono text-indigo-300 focus:outline-none focus:border-indigo-500">
       </div>
@@ -109,15 +160,19 @@
 
       <!-- Condition / Sub-text -->
       <div>
-        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Condition / Sub-Text</label>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Condition / Footer Text</label>
         <input type="text" id="label-condition" value="New" oninput="updateSingleLabel()" placeholder="e.g. New / Used - Good / $19.99" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
       </div>
 
-      <!-- Action Button -->
-      <div class="pt-4 border-t border-gray-800 space-y-3">
-        <button onclick="printSingleLabel()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg shadow-lg transition flex justify-center items-center space-x-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-          <span>Print Single Thermal Label</span>
+      <!-- Action Buttons -->
+      <div class="pt-4 border-t border-gray-800 grid grid-cols-2 gap-3">
+        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg shadow-lg transition flex justify-center items-center space-x-2 text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          <span>Direct Print</span>
+        </button>
+        <button onclick="exportSinglePDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg shadow-lg transition flex justify-center items-center space-x-2 text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <span>Download PDF</span>
         </button>
       </div>
     </div>
@@ -126,7 +181,7 @@
     <div class="lg:col-span-7 flex flex-col items-center justify-start bg-gray-950 border border-gray-800 rounded-xl p-6 shadow-xl">
       <div class="w-full flex justify-between items-center mb-6 no-print">
         <h2 class="text-lg font-bold text-gray-200">2. Live Print Canvas</h2>
-        <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-1 rounded">Crisp Vector Barcode • Dithered Black/White</span>
+        <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-1 rounded">Dithered High-Contrast Vector Output</span>
       </div>
 
       <!-- Thermal Label Container -->
@@ -134,17 +189,17 @@
         <div id="single-print-wrapper" class="flex justify-center items-center">
           <div id="single-label" class="print-label bg-white text-black p-4 rounded shadow-2xl flex flex-col justify-between items-center transition-all duration-300 overflow-hidden" style="width: 320px; height: 180px;">
             <!-- Title -->
-            <div id="preview-title" class="text-xs font-semibold text-center leading-snug line-clamp-2 w-full text-black">
+            <div id="preview-title" class="text-xs font-semibold text-center leading-snug line-clamp-3 w-full text-black">
               Wireless Bluetooth Earbuds - Noise Cancelling
             </div>
             
-            <!-- Barcode Canvas/SVG Render -->
-            <div class="my-1 flex justify-center w-full min-h-[60px] items-center">
+            <!-- Barcode SVG Render -->
+            <div id="barcode-wrapper" class="my-1 flex justify-center w-full min-h-[55px] items-center">
               <svg id="barcode-svg" class="w-full hidden"></svg>
               <canvas id="qrcode-canvas" class="hidden"></canvas>
             </div>
 
-            <!-- Condition -->
+            <!-- Condition / Sub-text -->
             <div id="preview-condition" class="text-[11px] font-bold text-center tracking-wide uppercase text-black">
               New
             </div>
@@ -153,9 +208,12 @@
       </div>
 
       <!-- Specs & Print Tips -->
-      <div class="w-full mt-6 text-xs text-gray-400 space-y-1 no-print bg-gray-900 p-4 rounded-lg border border-gray-800">
-        <div class="font-bold text-gray-300">🖨️ Thermal Printer Setup:</div>
-        <div>In the browser Print dialog: Set Margins = <strong>None</strong>, Scale = <strong>100%</strong>. Perfect for Dymo, Rollo, Zebra, and Munbyn thermal printers.</div>
+      <div class="w-full mt-6 text-xs text-gray-400 space-y-1.5 no-print bg-gray-900 p-4 rounded-lg border border-gray-800">
+        <div class="font-bold text-gray-300 flex justify-between">
+          <span>🖨️ Thermal Printer Compatibility Guide:</span>
+          <span class="text-indigo-400 font-mono">Dymo • Rollo • Zebra • Munbyn • Brother</span>
+        </div>
+        <div>In your browser or PDF reader Print dialog: Set Margins to <strong>None / 0mm</strong> and Scale to <strong>100% (Actual Size)</strong>. Perfect for Dymo LabelWriter 450/550/4XL, Rollo Wireless, Zebra ZD421, and Munbyn ITPP941 printers.</div>
       </div>
     </div>
   </main>
@@ -167,9 +225,9 @@
         <div>
           <h2 class="text-xl font-bold text-white flex items-center space-x-2">
             <span>⚡ Bulk CSV Thermal Batch Generator</span>
-            <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-mono">100% FREE</span>
+            <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-mono">100% FREE & UNLIMITED</span>
           </h2>
-          <p class="text-xs text-gray-400 mt-1">Upload Amazon FBA manifests, InventoryLab CSVs, or eBay SKU files to generate hundreds of labels instantly.</p>
+          <p class="text-xs text-gray-400 mt-1">Upload Amazon FBA inventory manifests, InventoryLab CSV files, or eBay listings to convert them into printable thermal label batches instantly.</p>
         </div>
         <button onclick="downloadSampleCSV()" class="text-xs bg-gray-800 hover:bg-gray-700 text-indigo-300 border border-gray-700 px-3 py-2 rounded-lg font-mono">
           📥 Download Sample CSV
@@ -188,13 +246,19 @@
       <div id="batch-controls" class="hidden space-y-4">
         <div class="flex justify-between items-center bg-gray-900 p-4 rounded-lg border border-gray-800">
           <div>
-            <span class="text-sm text-gray-400">Parsed Items: </span>
+            <span class="text-sm text-gray-400">Parsed Inventory Items: </span>
             <span id="batch-count" class="text-lg font-bold text-emerald-400 font-mono">0 items</span>
           </div>
-          <button onclick="printBatchLabels()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-2.5 rounded-lg shadow-lg transition flex items-center space-x-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-            <span>Print All Thermal Batch Labels</span>
-          </button>
+          <div class="flex space-x-3">
+            <button onclick="printBatchLabels()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 py-2.5 rounded-lg shadow-lg transition flex items-center space-x-2 text-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span>Direct Thermal Print Batch</span>
+            </button>
+            <button onclick="exportBatchPDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2.5 rounded-lg shadow-lg transition flex items-center space-x-2 text-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              <span>Download Batch PDF</span>
+            </button>
+          </div>
         </div>
 
         <!-- CSV Preview Table -->
@@ -221,8 +285,27 @@
     <div id="batch-print-area" class="w-full flex flex-col items-center"></div>
   </main>
 
+  <!-- SEO Content & Programmatic Keywords Section -->
+  <section class="max-w-7xl w-full mx-auto p-6 border-t border-gray-800 mt-12 text-xs text-gray-400 space-y-4 no-print">
+    <h3 class="text-sm font-bold text-gray-200">Supported Thermal Printers, Label Sizes & Barcode Formats</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 leading-relaxed">
+      <div>
+        <h4 class="font-semibold text-indigo-400 mb-1">Dymo Printers & Label Sizes</h4>
+        <p>Compatible with Dymo LabelWriter 450, 450 Turbo, 550, and 4XL. Native support for Dymo 30334 (2"x1" FNSKU), Dymo 30336 (2.25"x1.25" Multipurpose), Dymo 30252 (1.125"x3.5" Address), Dymo 30332 (1"x1" Square), and Dymo 30330 barcodes.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-indigo-400 mb-1">Rollo, Zebra & Munbyn Printers</h4>
+        <p>Supports Rollo Wireless, Zebra ZD420/ZD421, Munbyn ITPP941, Phomemo, and Brother QL series. Formats for 4"x6" FBA Shipping Labels, 4"x3" Box Inventory, 3"x2" Product Labels, and 2"x2" Polybag Suffocation Warnings.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-indigo-400 mb-1">Amazon FBA & Marketplace Standards</h4>
+        <p>Generates high-contrast vector CODE128 FNSKU barcodes compliant with Amazon FBA prep standards, UPC-A for retail items, EAN-13, CODE39, and QR codes. 100% free with unlimited batch CSV processing.</p>
+      </div>
+    </div>
+  </section>
+
   <footer class="border-t border-gray-800 bg-gray-950 px-6 py-4 text-center text-xs text-gray-500 no-print">
-    Label Ninja • Instant Thermal Barcode & FNSKU Studio • 100% Free Client-Side Utility
+    Label Ninja • Free Unlimited Thermal Barcode & FNSKU Studio • Bisket LLC
   </footer>
 
   <script class="no-print">
@@ -249,6 +332,32 @@
       }
     }
 
+    function applyTemplate(type) {
+      if (type === 'fnsku') {
+        document.getElementById('preset-size').value = 'fnsku';
+        document.getElementById('barcode-type').value = 'CODE128';
+        document.getElementById('barcode-value').value = 'X001ABC123';
+        document.getElementById('label-title').value = 'Wireless Bluetooth Earbuds - Noise Cancelling';
+        document.getElementById('label-condition').value = 'New';
+      } else if (type === 'suffocation') {
+        document.getElementById('preset-size').value = 'polybag';
+        document.getElementById('barcode-type').value = 'NONE';
+        document.getElementById('label-title').value = 'WARNING: TO AVOID DANGER OF SUFFOCATION, KEEP THIS PLASTIC BAG AWAY FROM BABIES AND CHILDREN.';
+        document.getElementById('label-condition').value = 'DO NOT USE IN CRIBS, BEDS, CARRIAGES OR PLAYPENS. THIS BAG IS NOT A TOY.';
+      } else if (type === 'sold_set') {
+        document.getElementById('preset-size').value = 'standard';
+        document.getElementById('barcode-type').value = 'NONE';
+        document.getElementById('label-title').value = 'SOLD AS SET - DO NOT SEPARATE';
+        document.getElementById('label-condition').value = 'THIS IS A SINGLE ITEM READY FOR SHIPMENT';
+      } else if (type === 'fragile') {
+        document.getElementById('preset-size').value = 'standard';
+        document.getElementById('barcode-type').value = 'NONE';
+        document.getElementById('label-title').value = '⚠️ FRAGILE - HANDLE WITH CARE';
+        document.getElementById('label-condition').value = 'GLASSWARE / SENSITIVE CONTENTS';
+      }
+      updateSingleLabel();
+    }
+
     function updateSingleLabel() {
       const barcodeValue = document.getElementById('barcode-value').value.trim() || 'X001ABC123';
       const title = document.getElementById('label-title').value || '';
@@ -260,62 +369,74 @@
       document.getElementById('preview-condition').innerText = condition;
 
       const singleLabel = document.getElementById('single-label');
-      if (size === 'fnsku') {
-        singleLabel.style.width = '320px';
-        singleLabel.style.height = '180px';
-      } else if (size === 'standard') {
-        singleLabel.style.width = '360px';
-        singleLabel.style.height = '200px';
-      } else if (size === 'address') {
-        singleLabel.style.width = '500px';
-        singleLabel.style.height = '160px';
-      } else if (size === 'square') {
-        singleLabel.style.width = '300px';
-        singleLabel.style.height = '300px';
-      } else if (size === 'shipping') {
-        singleLabel.style.width = '400px';
-        singleLabel.style.height = '600px';
-      }
+      const barcodeWrapper = document.getElementById('barcode-wrapper');
+
+      if (size === 'fnsku') { singleLabel.style.width = '320px'; singleLabel.style.height = '180px'; }
+      else if (size === 'standard') { singleLabel.style.width = '360px'; singleLabel.style.height = '200px'; }
+      else if (size === 'address') { singleLabel.style.width = '520px'; singleLabel.style.height = '160px'; }
+      else if (size === 'small_sq') { singleLabel.style.width = '200px'; singleLabel.style.height = '200px'; }
+      else if (size === 'small_bc') { singleLabel.style.width = '300px'; singleLabel.style.height = '120px'; }
+      else if (size === 'shipping') { singleLabel.style.width = '400px'; singleLabel.style.height = '600px'; }
+      else if (size === 'box_3') { singleLabel.style.width = '400px'; singleLabel.style.height = '300px'; }
+      else if (size === 'polybag') { singleLabel.style.width = '300px'; singleLabel.style.height = '300px'; }
+      else if (size === 'product_3x2') { singleLabel.style.width = '420px'; singleLabel.style.height = '280px'; }
 
       const svgEl = document.getElementById('barcode-svg');
       const qrEl = document.getElementById('qrcode-canvas');
 
-      if (type === 'QR') {
+      if (type === 'NONE') {
         svgEl.classList.add('hidden');
-        qrEl.classList.remove('hidden');
-        QRCode.toCanvas(qrEl, barcodeValue, { width: 80, margin: 1 }, function (error) {
-          if (error) console.error("QR Code error:", error);
-        });
-      } else {
         qrEl.classList.add('hidden');
-        svgEl.classList.remove('hidden');
-        try {
-          JsBarcode("#barcode-svg", barcodeValue, {
-            format: type === 'UPC' ? 'UPC' : (type === 'EAN13' ? 'EAN13' : (type === 'CODE39' ? 'CODE39' : 'CODE128')),
-            width: 2,
-            height: 50,
-            displayValue: true,
-            fontSize: 12,
-            fontOptions: "bold",
-            margin: 0
+        barcodeWrapper.classList.add('hidden');
+      } else {
+        barcodeWrapper.classList.remove('hidden');
+        if (type === 'QR') {
+          svgEl.classList.add('hidden');
+          qrEl.classList.remove('hidden');
+          QRCode.toCanvas(qrEl, barcodeValue, { width: 75, margin: 1 }, function (error) {
+            if (error) console.error("QR Code error:", error);
           });
-        } catch(e) {
-          console.warn("Falling back to CODE128 due to format error:", e);
-          JsBarcode("#barcode-svg", barcodeValue, {
-            format: "CODE128",
-            width: 2,
-            height: 50,
-            displayValue: true,
-            fontSize: 12,
-            fontOptions: "bold",
-            margin: 0
-          });
+        } else {
+          qrEl.classList.add('hidden');
+          svgEl.classList.remove('hidden');
+          try {
+            JsBarcode("#barcode-svg", barcodeValue, {
+              format: type === 'UPC' ? 'UPC' : (type === 'EAN13' ? 'EAN13' : (type === 'CODE39' ? 'CODE39' : 'CODE128')),
+              width: 2,
+              height: 48,
+              displayValue: true,
+              fontSize: 12,
+              fontOptions: "bold",
+              margin: 0
+            });
+          } catch(e) {
+            JsBarcode("#barcode-svg", barcodeValue, { format: "CODE128", width: 2, height: 48, displayValue: true, fontSize: 12, fontOptions: "bold", margin: 0 });
+          }
         }
       }
     }
 
-    function printSingleLabel() {
-      window.print();
+    function exportSinglePDF() {
+      const title = document.getElementById('label-title').value || '';
+      const condition = document.getElementById('label-condition').value || '';
+      const barcodeValue = document.getElementById('barcode-value').value || 'X001ABC123';
+      const size = document.getElementById('preset-size').value;
+
+      // Define page dimensions in points (72 points = 1 inch)
+      let pageW = 144, pageH = 72; // 2x1 default
+      if (size === 'standard') { pageW = 162; pageH = 90; }
+      else if (size === 'shipping') { pageW = 288; pageH = 432; }
+
+      const docDefinition = {
+        pageSize: { width: pageW, height: pageH },
+        pageMargins: [6, 6, 6, 6],
+        content: [
+          { text: title, fontSize: 8, bold: true, alignment: 'center' },
+          { text: '\n' + barcodeValue + '\n', fontSize: 10, bold: true, alignment: 'center' },
+          { text: condition, fontSize: 7, bold: true, alignment: 'center' }
+        ]
+      };
+      pdfMake.createPdf(docDefinition).download(`label_${barcodeValue}.pdf`);
     }
 
     function handleCSVFile(file) {
@@ -325,22 +446,18 @@
         skipEmptyLines: true,
         complete: function(results) {
           parsedBatchData = [];
-          const rows = results.data;
-          
-          rows.forEach(row => {
-            // Find key mappings dynamically
+          results.data.forEach(row => {
             const barcode = row.FNSKU || row.fnsku || row.Barcode || row.barcode || row.UPC || row.upc || row.SKU || row.sku || row.ASIN || row.asin || '';
             const title = row.Title || row.title || row.Item || row.item || row.Name || row.name || '';
             const condition = row.Condition || row.condition || 'New';
             const qty = parseInt(row.Qty || row.qty || row.Quantity || row.quantity || 1);
 
-            if (barcode) {
+            if (barcode || title) {
               for (let i = 0; i < qty; i++) {
                 parsedBatchData.push({ barcode, title, condition });
               }
             }
           });
-
           displayCSVPreview();
         }
       });
@@ -389,24 +506,28 @@
 
         setTimeout(() => {
           try {
-            JsBarcode(`#${svgId}`, item.barcode, {
-              format: "CODE128",
-              width: 2,
-              height: 48,
-              displayValue: true,
-              fontSize: 11,
-              fontOptions: "bold",
-              margin: 0
-            });
-          } catch(e) {
-            console.error("Batch barcode error:", e);
-          }
+            JsBarcode(`#${svgId}`, item.barcode, { format: "CODE128", width: 2, height: 48, displayValue: true, fontSize: 11, fontOptions: "bold", margin: 0 });
+          } catch(e) {}
         }, 10);
       });
 
-      setTimeout(() => {
-        window.print();
-      }, 500);
+      setTimeout(() => { window.print(); }, 500);
+    }
+
+    function exportBatchPDF() {
+      const content = [];
+      parsedBatchData.forEach(item => {
+        content.push(
+          { text: item.title, fontSize: 8, bold: true, alignment: 'center' },
+          { text: '\n' + item.barcode + '\n', fontSize: 10, bold: true, alignment: 'center' },
+          { text: item.condition, fontSize: 7, bold: true, alignment: 'center', pageBreak: 'after' }
+        );
+      });
+      pdfMake.createPdf({
+        pageSize: { width: 144, height: 72 },
+        pageMargins: [6, 6, 6, 6],
+        content: content
+      }).download("batch_thermal_labels.pdf");
     }
 
     function downloadSampleCSV() {
@@ -420,7 +541,6 @@
       document.body.removeChild(link);
     }
 
-    // Initial render
     window.onload = updateSingleLabel;
   </script>
 </body>
