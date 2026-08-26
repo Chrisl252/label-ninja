@@ -1,0 +1,12 @@
+name = "label-ninja"
+compatibility_date = "2024-09-23"
+
+routes = [
+  { pattern = "label-ninja.com", custom_domain = true },
+  { pattern = "www.label-ninja.com", custom_domain = true }
+]
+
+[assets]
+directory = "./public"
+html_handling = "auto-trailing-slash"
+not_found_handling = "single-page-application"

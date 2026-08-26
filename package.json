@@ -1,0 +1,29 @@
+{
+  "name": "label-ninja",
+  "version": "1.0.0",
+  "description": "Browser-based thermal label studio for reseller workflows",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "deploy:pages": "wrangler pages deploy public --project-name label-ninja"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chrisl252/label-ninja.git"
+  },
+  "keywords": [
+    "thermal-labels",
+    "barcodes",
+    "reselling"
+  ],
+  "author": "Bisket LLC",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Chrisl252/label-ninja/issues"
+  },
+  "homepage": "https://github.com/Chrisl252/label-ninja#readme",
+  "devDependencies": {
+    "wrangler": "^4.126.0"
+  }
+}

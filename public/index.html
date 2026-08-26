@@ -22,12 +22,10 @@
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
+    html, body { overflow-x: clip; }
     .canvas-element { user-select: none; touch-action: none; }
     .canvas-element.selected { outline: 2px dashed #3b82f6; outline-offset: 2px; }
-    @page {
-      size: auto;
-      margin: 0mm;
-    }
+    @page { size: auto; margin: 0; }
     @media print {
       html, body {
         margin: 0 !important;
@@ -41,23 +39,29 @@
       .no-print { display: none !important; }
       
       .print-label, #label-canvas {
-        width: 100vw !important;
-        height: 100vh !important;
+        width: var(--print-label-width, 100vw) !important;
+        height: var(--print-label-height, 100vh) !important;
         margin: 0 !important;
-        padding: 8px !important;
+        padding: var(--print-label-padding, 8px) !important;
         box-sizing: border-box !important;
         display: flex !important;
         flex-direction: column !important;
         justify-content: space-around !important;
         align-items: center !important;
+        overflow: hidden !important;
         break-after: page !important;
         page-break-after: always !important;
         box-shadow: none !important;
         border: none !important;
       }
+      .print-label:last-child {
+        break-after: auto !important;
+        page-break-after: auto !important;
+      }
       .canvas-element.selected { outline: none !important; }
     }
   </style>
+  <style id="print-page-style"></style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col relative select-none">
 
@@ -70,24 +74,24 @@
     </div>
 
     <!-- Mode Navigation Tabs -->
-    <div class="flex items-center space-x-2 bg-slate-950 p-1 border border-slate-800 rounded-lg">
-      <button onclick="switchMode('editor')" id="tab-editor" class="px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition">
+    <div class="flex items-center space-x-2 bg-slate-950 p-1 border border-slate-800 rounded-lg w-full lg:w-auto max-w-full overflow-x-auto">
+      <button onclick="switchMode('editor')" id="tab-editor" class="px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition shrink-0 whitespace-nowrap">
         Custom Visual Editor
       </button>
-      <button onclick="switchMode('bin')" id="tab-bin" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition">
+      <button onclick="switchMode('bin')" id="tab-bin" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
         Warehouse Bins
       </button>
-      <button onclick="switchMode('whatnot')" id="tab-whatnot" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition">
+      <button onclick="switchMode('whatnot')" id="tab-whatnot" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
         Whatnot Numbers
       </button>
-      <button onclick="switchMode('fnsku')" id="tab-fnsku" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition">
+      <button onclick="switchMode('fnsku')" id="tab-fnsku" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
         FNSKU & CSV Batch
       </button>
     </div>
 
     <!-- Right Actions -->
     <div class="flex items-center space-x-3">
-      <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-4 py-2 rounded shadow transition flex items-center space-x-2">
+      <button onclick="printCurrentWorkspace()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-4 py-2 rounded shadow transition flex items-center space-x-2 whitespace-nowrap">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
         <span>Print Labels</span>
       </button>
@@ -95,9 +99,9 @@
   </header>
 
   <!-- MODE 1: Custom Visual Editor (Comprehensive Studio) -->
-  <div id="mode-editor" class="flex-1 flex overflow-hidden no-print">
+  <div id="mode-editor" class="flex-1 flex flex-col lg:flex-row overflow-auto lg:overflow-hidden no-print">
     <!-- Left Sidebar -->
-    <aside class="w-80 bg-slate-900 border-r border-slate-800 p-4 flex flex-col space-y-5 overflow-y-auto">
+    <aside class="w-full lg:w-80 lg:shrink-0 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 p-4 flex flex-col space-y-5 lg:overflow-y-auto">
       <div>
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Thermal Media Preset</h3>
         <select id="preset-size" onchange="changeCanvasSize()" class="w-full bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded px-3 py-2 font-mono">
@@ -117,6 +121,16 @@
             <option value="polybag_large">2.25" x 4" (Polybag Suffocation Warning)</option>
           </optgroup>
         </select>
+      </div>
+
+      <div>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Image &amp; Artwork</h3>
+        <label for="image-upload" class="flex cursor-pointer items-center justify-center rounded border border-blue-700 bg-blue-950/40 px-3 py-3 text-sm font-semibold text-blue-100 hover:bg-blue-900/50 focus-within:ring-2 focus-within:ring-blue-400">
+          Upload images
+        </label>
+        <input id="image-upload" type="file" accept="image/png,image/jpeg,image/webp" multiple class="sr-only" onchange="handleImageUpload(this.files); this.value = ''">
+        <p class="mt-2 text-[11px] leading-relaxed text-slate-500">PNG, JPEG, or WebP · up to 8 MB each · processed only in this browser.</p>
+        <p id="image-upload-status" class="mt-2 min-h-5 text-xs text-slate-400" role="status" aria-live="polite">Choose files or drop them onto the label.</p>
       </div>
 
       <div>
@@ -173,21 +187,27 @@
     </aside>
 
     <!-- Center Interactive Stage -->
-    <main class="flex-1 bg-slate-950/80 p-8 flex flex-col items-center justify-start overflow-auto relative">
-      <div id="formatting-bar" class="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 mb-6 flex items-center space-x-4 shadow-lg">
+    <main class="flex-1 min-w-0 bg-slate-950/80 p-4 lg:p-8 flex flex-col items-center justify-start overflow-auto relative">
+      <div id="formatting-bar" class="w-full max-w-5xl bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 mb-4 flex flex-wrap items-center gap-3 shadow-lg">
         <span class="text-xs text-slate-400 font-semibold">Inspector:</span>
         <div class="h-4 w-px bg-slate-800"></div>
 
-        <div class="flex items-center space-x-2">
+        <div id="text-size-controls" class="flex items-center space-x-2">
           <span class="text-xs text-slate-400">Font Size:</span>
           <input type="range" id="inspector-size" min="10" max="60" value="28" oninput="updateSelectedElement()" class="w-24">
           <span id="size-val" class="text-xs font-mono text-blue-400">28px</span>
         </div>
 
+        <div id="image-size-controls" class="hidden items-center space-x-2">
+          <span class="text-xs text-slate-400">Image Width:</span>
+          <input type="range" id="inspector-width" min="24" max="600" value="120" oninput="updateSelectedElement()" class="w-28">
+          <span id="width-val" class="text-xs font-mono text-blue-400">120px</span>
+        </div>
+
         <div class="h-4 w-px bg-slate-800"></div>
 
-        <div class="flex items-center space-x-2 flex-1">
-          <input type="text" id="inspector-text" oninput="updateSelectedElement()" placeholder="Edit text..." class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500 w-56 font-mono">
+        <div class="flex items-center space-x-2 flex-1 min-w-48">
+          <input type="text" id="inspector-text" aria-label="Selected element content" oninput="updateSelectedElement()" placeholder="Select an element to edit" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500 w-full font-mono disabled:text-slate-500">
         </div>
 
         <button onclick="deleteSelectedElement()" class="text-xs text-red-400 hover:text-red-300 font-semibold px-2 py-1 bg-red-950/40 border border-red-900 rounded">
@@ -195,8 +215,9 @@
         </button>
       </div>
 
-      <div id="label-canvas-container" class="flex items-center justify-center p-6 border border-dashed border-slate-800 bg-slate-900 rounded-xl shadow-xl">
-        <div id="label-canvas" class="bg-white text-black rounded shadow-2xl relative overflow-hidden transition-all duration-200" style="width: 360px; height: 200px;">
+      <p class="mb-3 text-center text-xs text-slate-400">Drop PNG, JPEG, or WebP artwork onto the label, then drag it into place and resize it in the inspector.</p>
+      <div id="label-canvas-container" class="flex max-w-full items-center justify-start lg:justify-center overflow-auto p-6 border border-dashed border-slate-700 bg-slate-900 rounded-xl shadow-xl transition-colors">
+        <div id="label-canvas" class="shrink-0 bg-white text-black rounded shadow-2xl relative overflow-hidden transition-all duration-200" style="width: 360px; height: 200px;">
           <!-- Canvas Elements -->
         </div>
       </div>
@@ -208,7 +229,7 @@
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-6">
       <div class="border-b border-slate-800 pb-4">
         <h2 class="text-xl font-bold text-white">Warehouse Bin Label Generator</h2>
-        <p class="text-xs text-slate-400 mt-1">Generates full-bleed, edge-to-edge bin labels formatted for Rollo, Dymo, and Zebra thermal printers.</p>
+        <p class="text-xs text-slate-400 mt-1">Generates one complete 4&quot; x 6&quot; bin label per page for Rollo, Zebra, and compatible thermal printers.</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -230,6 +251,10 @@
         </div>
       </div>
 
+      <div class="rounded-lg border border-amber-700/60 bg-amber-950/30 px-4 py-3 text-sm text-amber-100" role="status">
+        4&quot; x 6&quot; setup: choose 4 x 6 in (102 x 152 mm) paper, Portrait, Margins None, and Scale 100%. Each bin number and barcode prints together on one label.
+      </div>
+
       <button onclick="generateBinBatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
         <span>PRINT BIN LABELS NOW</span>
@@ -245,7 +270,7 @@
         <p class="text-xs text-slate-400 mt-1">Generates giant, high-contrast consecutive show numbers (#1, #2, C1, C2) for live auction streams.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
           <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Number Prefix</label>
           <input type="text" id="wn-prefix" value="#" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono font-bold">
@@ -258,7 +283,17 @@
           <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">End #</label>
           <input type="number" id="wn-end" value="50" min="1" max="999" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
         </div>
+        <div>
+          <label for="wn-stock" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Label Stock</label>
+          <select id="wn-stock" onchange="updateWhatnotPrintHint()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+            <option value="tiny" selected>1&quot; x 0.5&quot; (25.4 x 12.7 mm)</option>
+            <option value="fnsku">2&quot; x 1&quot; (50.8 x 25.4 mm)</option>
+            <option value="show">3&quot; x 2&quot; (76.2 x 50.8 mm)</option>
+          </select>
+        </div>
       </div>
+
+      <div id="wn-print-hint" class="rounded-lg border border-amber-700/60 bg-amber-950/30 px-4 py-3 text-sm text-amber-100" role="status"></div>
 
       <button onclick="generateWhatnotBatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
@@ -315,18 +350,99 @@
     let nextId = 1;
 
     const PRESETS = {
-      standard: { width: 360, height: 200, name: "2.25x1.25 Dymo 30336" },
-      fnsku: { width: 320, height: 180, name: "2x1 Dymo 30334" },
-      address: { width: 520, height: 160, name: "1.125x3.5 Address" },
-      small_sq: { width: 200, height: 200, name: "1x1 Square" },
-      small_bc: { width: 300, height: 120, name: "2x0.75 Barcode" },
-      large_multi: { width: 370, height: 640, name: "2.31x4 Large Multi" },
-      shipping: { width: 400, height: 600, name: "4x6 Box Shipping" },
-      box_3: { width: 400, height: 300, name: "4x3 Box Inventory" },
-      product_3x2: { width: 420, height: 280, name: "3x2 Whatnot Show" },
-      polybag: { width: 300, height: 300, name: "2x2 Square Polybag" },
-      polybag_large: { width: 360, height: 640, name: "2.25x4 Suffocation Warning" }
+      standard: { width: 360, height: 200, printWidth: 2.25, printHeight: 1.25, name: "2.25x1.25 Dymo 30336" },
+      fnsku: { width: 320, height: 180, printWidth: 2, printHeight: 1, name: "2x1 Dymo 30334" },
+      address: { width: 520, height: 160, printWidth: 3.5, printHeight: 1.125, name: "1.125x3.5 Address" },
+      small_sq: { width: 200, height: 200, printWidth: 1, printHeight: 1, name: "1x1 Square" },
+      small_bc: { width: 300, height: 120, printWidth: 2, printHeight: 0.75, name: "2x0.75 Barcode" },
+      large_multi: { width: 370, height: 640, printWidth: 2.3125, printHeight: 4, name: "2.31x4 Large Multi" },
+      shipping: { width: 400, height: 600, printWidth: 4, printHeight: 6, name: "4x6 Box Shipping" },
+      box_3: { width: 400, height: 300, printWidth: 4, printHeight: 3, name: "4x3 Box Inventory" },
+      product_3x2: { width: 420, height: 280, printWidth: 3, printHeight: 2, name: "3x2 Whatnot Show" },
+      polybag: { width: 300, height: 300, printWidth: 2, printHeight: 2, name: "2x2 Square Polybag" },
+      polybag_large: { width: 360, height: 640, printWidth: 2.25, printHeight: 4, name: "2.25x4 Suffocation Warning" }
     };
+
+    const WHATNOT_STOCKS = {
+      tiny: { width: 1, height: 0.5, padding: 0.02, name: '1" x 0.5"', driverSize: '25 x 13 mm' },
+      fnsku: { width: 2, height: 1, padding: 0.04, name: '2" x 1"', driverSize: '51 x 25 mm' },
+      show: { width: 3, height: 2, padding: 0.08, name: '3" x 2"', driverSize: '76 x 51 mm' }
+    };
+
+    const BIN_STOCK = { width: 4, height: 6, padding: 0.18 };
+
+    function getWhatnotStock() {
+      return WHATNOT_STOCKS[document.getElementById('wn-stock').value] || WHATNOT_STOCKS.tiny;
+    }
+
+    function setPrintStock(stock) {
+      document.documentElement.style.setProperty('--print-label-width', `${stock.width}in`);
+      document.documentElement.style.setProperty('--print-label-height', `${stock.height}in`);
+      document.documentElement.style.setProperty('--print-label-padding', `${stock.padding}in`);
+      document.getElementById('print-page-style').textContent = `@page { size: ${stock.width}in ${stock.height}in; margin: 0; }`;
+    }
+
+    function printCurrentWorkspace() {
+      const editor = document.getElementById('mode-editor');
+      if (!editor.classList.contains('hidden')) {
+        printEditorLabel();
+        return;
+      }
+      window.print();
+    }
+
+    function printEditorLabel() {
+      const presetKey = document.getElementById('preset-size').value;
+      const preset = PRESETS[presetKey] || PRESETS.standard;
+      const sourceCanvas = document.getElementById('label-canvas');
+      const printArea = document.getElementById('batch-print-area');
+      const pageWidthPx = preset.printWidth * 96;
+      const pageHeightPx = preset.printHeight * 96;
+      const scale = Math.min(pageWidthPx / preset.width, pageHeightPx / preset.height);
+      const offsetX = Math.max(0, (pageWidthPx - preset.width * scale) / 2);
+      const offsetY = Math.max(0, (pageHeightPx - preset.height * scale) / 2);
+
+      setPrintStock({ width: preset.printWidth, height: preset.printHeight, padding: 0 });
+      printArea.innerHTML = '';
+      printArea.dataset.transientEditorPrint = 'true';
+
+      const printPage = document.createElement('div');
+      printPage.className = 'print-label bg-white text-black relative overflow-hidden';
+      printPage.style.width = `${preset.printWidth}in`;
+      printPage.style.height = `${preset.printHeight}in`;
+      printPage.style.padding = '0';
+      printPage.style.boxSizing = 'border-box';
+
+      const canvasClone = sourceCanvas.cloneNode(true);
+      canvasClone.removeAttribute('id');
+      canvasClone.querySelectorAll('[id]').forEach((element) => element.removeAttribute('id'));
+      canvasClone.querySelectorAll('.selected').forEach((element) => element.classList.remove('selected'));
+      canvasClone.style.position = 'absolute';
+      canvasClone.style.left = `${offsetX}px`;
+      canvasClone.style.top = `${offsetY}px`;
+      canvasClone.style.width = `${preset.width}px`;
+      canvasClone.style.height = `${preset.height}px`;
+      canvasClone.style.transform = `scale(${scale})`;
+      canvasClone.style.transformOrigin = 'top left';
+      canvasClone.style.borderRadius = '0';
+      canvasClone.style.boxShadow = 'none';
+      printPage.appendChild(canvasClone);
+      printArea.appendChild(printPage);
+
+      setTimeout(() => window.print(), 100);
+    }
+
+    function updateWhatnotPrintHint() {
+      const stock = getWhatnotStock();
+      document.getElementById('wn-print-hint').textContent =
+        `${stock.name} setup: choose ${stock.driverSize} paper, Landscape, Margins None, and Scale 100%. Do not use the 10% scale shown in your previous print preview.`;
+    }
+
+    function getWhatnotFontSize(text, stock) {
+      const heightLimit = stock.height * 0.72;
+      const widthLimit = (stock.width * 0.9) / Math.max(1, text.length * 0.58);
+      return Math.max(0.12, Math.min(heightLimit, widthLimit));
+    }
 
     function switchMode(mode) {
       document.getElementById('mode-bin').classList.add('hidden');
@@ -335,34 +451,43 @@
       document.getElementById('mode-editor').classList.add('hidden');
       document.getElementById('mode-editor').classList.remove('flex');
 
-      document.getElementById('tab-bin').className = "px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition";
-      document.getElementById('tab-whatnot').className = "px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition";
-      document.getElementById('tab-fnsku').className = "px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition";
-      document.getElementById('tab-editor').className = "px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition";
+      const inactiveTabClass = "px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap";
+      const activeTabClass = "px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition shrink-0 whitespace-nowrap";
+      document.getElementById('tab-bin').className = inactiveTabClass;
+      document.getElementById('tab-whatnot').className = inactiveTabClass;
+      document.getElementById('tab-fnsku').className = inactiveTabClass;
+      document.getElementById('tab-editor').className = inactiveTabClass;
 
       if (mode === 'bin') {
         document.getElementById('mode-bin').classList.remove('hidden');
-        document.getElementById('tab-bin').className = "px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition";
+        document.getElementById('tab-bin').className = activeTabClass;
       } else if (mode === 'whatnot') {
         document.getElementById('mode-whatnot').classList.remove('hidden');
-        document.getElementById('tab-whatnot').className = "px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition";
+        document.getElementById('tab-whatnot').className = activeTabClass;
       } else if (mode === 'fnsku') {
         document.getElementById('mode-fnsku').classList.remove('hidden');
-        document.getElementById('tab-fnsku').className = "px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition";
+        document.getElementById('tab-fnsku').className = activeTabClass;
       } else if (mode === 'editor') {
         document.getElementById('mode-editor').classList.remove('hidden');
         document.getElementById('mode-editor').classList.add('flex');
-        document.getElementById('tab-editor').className = "px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition";
+        document.getElementById('tab-editor').className = activeTabClass;
         changeCanvasSize();
         if (!elements.length) loadTemplate('standard');
       }
     }
 
-    function generateBinBatch() {
+    function renderBinBatch() {
       const prefix = document.getElementById('bin-prefix').value || 'BIN ';
       const shelf = document.getElementById('bin-shelf').value || 'A';
       const start = parseInt(document.getElementById('bin-start').value || 1);
       const end = parseInt(document.getElementById('bin-end').value || 20);
+
+      if (!Number.isInteger(start) || !Number.isInteger(end) || start < 1 || end > 500 || end < start) {
+        window.alert('Choose a valid bin range from 1 to 500.');
+        return false;
+      }
+
+      setPrintStock(BIN_STOCK);
 
       const batchPrintArea = document.getElementById('batch-print-area');
       batchPrintArea.innerHTML = '';
@@ -372,29 +497,67 @@
         const barcodeCode = binText.replace(/\s+/g, '-');
 
         const labelDiv = document.createElement('div');
-        labelDiv.className = 'print-label bg-white text-black flex flex-col justify-around items-center';
+        labelDiv.className = 'print-label bin-print-label bg-white text-black flex flex-col justify-around items-center';
+        labelDiv.style.width = `${BIN_STOCK.width}in`;
+        labelDiv.style.height = `${BIN_STOCK.height}in`;
+        labelDiv.style.padding = `${BIN_STOCK.padding}in`;
+        labelDiv.style.boxSizing = 'border-box';
+        labelDiv.style.overflow = 'hidden';
 
         const svgId = `batch-bin-svg-${i}`;
-        labelDiv.innerHTML = `
-          <div style="font-size: 54px; font-weight: 900; line-height: 1; text-align: center; color: black; letter-spacing: 2px;">${binText}</div>
-          <div style="width: 90%; display: flex; justify-content: center;"><svg id="${svgId}" style="width: 100%; max-height: 80px;"></svg></div>
-        `;
+        const title = document.createElement('div');
+        title.textContent = binText;
+        title.style.fontSize = '0.72in';
+        title.style.fontWeight = '900';
+        title.style.lineHeight = '1';
+        title.style.textAlign = 'center';
+        title.style.color = 'black';
+        title.style.letterSpacing = '0.02in';
+        title.style.whiteSpace = 'nowrap';
+
+        const barcodeWrap = document.createElement('div');
+        barcodeWrap.style.width = '92%';
+        barcodeWrap.style.height = '2.45in';
+        barcodeWrap.style.display = 'flex';
+        barcodeWrap.style.alignItems = 'center';
+        barcodeWrap.style.justifyContent = 'center';
+
+        const barcodeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        barcodeSvg.id = svgId;
+        barcodeSvg.style.width = '100%';
+        barcodeSvg.style.height = '100%';
+        barcodeWrap.appendChild(barcodeSvg);
+        labelDiv.append(title, barcodeWrap);
         batchPrintArea.appendChild(labelDiv);
 
         setTimeout(() => {
           try {
-            JsBarcode(`#${svgId}`, barcodeCode, { format: "CODE128", width: 3, height: 60, displayValue: true, fontSize: 16, fontOptions: "bold", margin: 0 });
+            JsBarcode(`#${svgId}`, barcodeCode, { format: "CODE128", width: 3, height: 150, displayValue: true, fontSize: 28, fontOptions: "bold", margin: 0 });
           } catch(e) {}
         }, 10);
       }
 
-      setTimeout(() => { window.print(); }, 400);
+      return true;
+    }
+
+    function generateBinBatch() {
+      if (renderBinBatch()) {
+        setTimeout(() => { window.print(); }, 400);
+      }
     }
 
     function generateWhatnotBatch() {
       const prefix = document.getElementById('wn-prefix').value || '#';
       const start = parseInt(document.getElementById('wn-start').value || 1);
       const end = parseInt(document.getElementById('wn-end').value || 50);
+      const stock = getWhatnotStock();
+
+      if (!Number.isInteger(start) || !Number.isInteger(end) || end < start) {
+        window.alert('End number must be greater than or equal to the start number.');
+        return;
+      }
+
+      setPrintStock(stock);
 
       const batchPrintArea = document.getElementById('batch-print-area');
       batchPrintArea.innerHTML = '';
@@ -403,10 +566,22 @@
         const numText = `${prefix}${i}`;
 
         const labelDiv = document.createElement('div');
-        labelDiv.className = 'print-label bg-white text-black flex flex-col justify-center items-center';
-        labelDiv.innerHTML = `
-          <div style="font-size: 110px; font-weight: 900; line-height: 1; text-align: center; color: black; letter-spacing: -2px;">${numText}</div>
-        `;
+        labelDiv.className = 'print-label whatnot-print-label bg-white text-black flex flex-col justify-center items-center';
+        labelDiv.style.width = `${stock.width}in`;
+        labelDiv.style.height = `${stock.height}in`;
+        labelDiv.style.padding = `${stock.padding}in`;
+        labelDiv.style.boxSizing = 'border-box';
+        labelDiv.style.overflow = 'hidden';
+
+        const numberElement = document.createElement('div');
+        numberElement.textContent = numText;
+        numberElement.style.fontSize = `${getWhatnotFontSize(numText, stock)}in`;
+        numberElement.style.fontWeight = '900';
+        numberElement.style.lineHeight = '0.88';
+        numberElement.style.textAlign = 'center';
+        numberElement.style.color = 'black';
+        numberElement.style.whiteSpace = 'nowrap';
+        labelDiv.appendChild(numberElement);
         batchPrintArea.appendChild(labelDiv);
       }
 
@@ -439,12 +614,90 @@
     }
 
     // Canvas Editor Code
+    const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
+    const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+
+    function setImageUploadStatus(message, isError = false) {
+      const status = document.getElementById('image-upload-status');
+      status.textContent = message;
+      status.className = `mt-2 min-h-5 text-xs ${isError ? 'text-red-400' : 'text-slate-400'}`;
+    }
+
+    function readImageFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error(`Could not read ${file.name}.`));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function getImageDimensions(src) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+        image.onerror = () => reject(new Error('The image could not be decoded.'));
+        image.src = src;
+      });
+    }
+
+    async function handleImageUpload(fileList) {
+      const files = Array.from(fileList || []).slice(0, 10);
+      if (!files.length) return;
+
+      let added = 0;
+      const rejected = [];
+      setImageUploadStatus(`Reading ${files.length} image${files.length === 1 ? '' : 's'}...`);
+
+      for (const file of files) {
+        if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+          rejected.push(`${file.name}: use PNG, JPEG, or WebP`);
+          continue;
+        }
+        if (file.size > MAX_IMAGE_BYTES) {
+          rejected.push(`${file.name}: larger than 8 MB`);
+          continue;
+        }
+
+        try {
+          const src = await readImageFile(file);
+          const dimensions = await getImageDimensions(src);
+          const canvas = document.getElementById('label-canvas');
+          const maxWidth = Math.max(48, canvas.clientWidth * 0.65);
+          const maxHeight = Math.max(32, canvas.clientHeight * 0.65);
+          const scale = Math.min(1, maxWidth / dimensions.width, maxHeight / dimensions.height);
+          const width = Math.max(24, Math.round(dimensions.width * scale));
+          const height = Math.max(16, Math.round(dimensions.height * scale));
+
+          addElement('image', {
+            src,
+            text: file.name,
+            width,
+            aspectRatio: dimensions.width / dimensions.height,
+            x: Math.max(0, Math.round((canvas.clientWidth - width) / 2)),
+            y: Math.max(0, Math.round((canvas.clientHeight - height) / 2))
+          });
+          added += 1;
+        } catch (error) {
+          rejected.push(`${file.name}: ${error.message}`);
+        }
+      }
+
+      const result = `${added} image${added === 1 ? '' : 's'} added to the label.`;
+      setImageUploadStatus(rejected.length ? `${result} ${rejected.join(' · ')}` : result, rejected.length > 0 && added === 0);
+    }
+
     function changeCanvasSize() {
       const presetKey = document.getElementById('preset-size').value;
       const canvas = document.getElementById('label-canvas');
       const p = PRESETS[presetKey] || PRESETS.standard;
       canvas.style.width = p.width + 'px';
       canvas.style.height = p.height + 'px';
+      document.getElementById('inspector-width').max = p.width;
+      elements.forEach((element) => {
+        if (element.type === 'image') element.width = Math.min(element.width, p.width);
+      });
+      renderCanvas();
     }
 
     function addElement(type, customProps = {}) {
@@ -453,6 +706,7 @@
         id, type, x: 25, y: 20 + elements.length * 45,
         text: type === 'barcode' ? 'X001ABC123' : (type === 'badge' ? '$19.99' : (type === 'box' ? 'BORDER BOX' : 'SAMPLE TEXT')),
         fontSize: type === 'barcode' ? 14 : (type === 'badge' ? 16 : 24),
+        width: 120, aspectRatio: 1, src: '',
         align: 'center', bold: true, ...customProps
       };
       elements.push(newEl);
@@ -466,18 +720,21 @@
 
       elements.forEach(el => {
         const div = document.createElement('div');
-        div.className = `canvas-element absolute cursor-move p-1 ${el.id === selectedId ? 'selected' : ''}`;
+        div.className = `canvas-element absolute cursor-move ${el.type === 'image' ? 'p-0' : 'p-1'} ${el.id === selectedId ? 'selected' : ''}`;
         div.style.left = el.x + 'px';
         div.style.top = el.y + 'px';
         div.style.textAlign = el.align;
-        div.style.fontSize = el.fontSize + 'px';
-        div.style.fontWeight = el.bold ? 'bold' : 'normal';
+        if (el.type !== 'image') {
+          div.style.fontSize = el.fontSize + 'px';
+          div.style.fontWeight = el.bold ? 'bold' : 'normal';
+        }
 
         div.onclick = (e) => { e.stopPropagation(); selectElement(el.id); };
         makeDraggable(div, el);
 
         if (el.type === 'text') {
-          div.innerHTML = el.text.replace(/\n/g, '<br>');
+          div.style.whiteSpace = 'pre-wrap';
+          div.textContent = el.text;
         } else if (el.type === 'badge') {
           div.className += ' bg-black text-white px-3 py-1 font-mono font-bold rounded';
           div.innerText = el.text;
@@ -493,6 +750,16 @@
               JsBarcode(`#barcode-${el.id}`, el.text, { format: "CODE128", width: 2, height: 50, displayValue: true, fontSize: 13, fontOptions: "bold", margin: 0 });
             } catch(e) {}
           }, 0);
+        } else if (el.type === 'image') {
+          const image = document.createElement('img');
+          image.src = el.src;
+          image.alt = `Uploaded artwork: ${el.text}`;
+          image.draggable = false;
+          image.style.display = 'block';
+          image.style.width = `${el.width}px`;
+          image.style.height = 'auto';
+          image.style.maxWidth = 'none';
+          div.appendChild(image);
         }
 
         canvas.appendChild(div);
@@ -500,18 +767,32 @@
     }
 
     function makeDraggable(domEl, elObj) {
-      let isDragging = false, startX, startY, initialX, initialY;
-      domEl.onmousedown = (e) => {
-        isDragging = true; startX = e.clientX; startY = e.clientY;
-        initialX = elObj.x; initialY = elObj.y;
-        document.onmousemove = (e) => {
-          if (!isDragging) return;
-          elObj.x = Math.max(0, initialX + (e.clientX - startX));
-          elObj.y = Math.max(0, initialY + (e.clientY - startY));
+      domEl.onpointerdown = (event) => {
+        if (event.button !== 0) return;
+        event.preventDefault();
+        const startX = event.clientX;
+        const startY = event.clientY;
+        const initialX = elObj.x;
+        const initialY = elObj.y;
+        const canvas = document.getElementById('label-canvas');
+        domEl.setPointerCapture(event.pointerId);
+
+        domEl.onpointermove = (moveEvent) => {
+          const maxX = Math.max(0, canvas.clientWidth - domEl.offsetWidth);
+          const maxY = Math.max(0, canvas.clientHeight - domEl.offsetHeight);
+          elObj.x = Math.min(maxX, Math.max(0, initialX + (moveEvent.clientX - startX)));
+          elObj.y = Math.min(maxY, Math.max(0, initialY + (moveEvent.clientY - startY)));
           domEl.style.left = elObj.x + 'px';
           domEl.style.top = elObj.y + 'px';
         };
-        document.onmouseup = () => { isDragging = false; document.onmousemove = null; };
+
+        const finishDrag = () => {
+          domEl.onpointermove = null;
+          domEl.onpointerup = null;
+          domEl.onpointercancel = null;
+        };
+        domEl.onpointerup = finishDrag;
+        domEl.onpointercancel = finishDrag;
       };
     }
 
@@ -519,9 +800,19 @@
       selectedId = id;
       const hit = elements.find(e => e.id === id);
       if (hit) {
-        document.getElementById('inspector-text').value = hit.text;
+        const isImage = hit.type === 'image';
+        const textInput = document.getElementById('inspector-text');
+        textInput.value = hit.text;
+        textInput.disabled = isImage;
+        textInput.title = isImage ? 'Uploaded file name' : 'Edit selected element content';
+        document.getElementById('text-size-controls').classList.toggle('hidden', isImage);
+        document.getElementById('image-size-controls').classList.toggle('hidden', !isImage);
+        document.getElementById('image-size-controls').classList.toggle('flex', isImage);
         document.getElementById('inspector-size').value = hit.fontSize;
         document.getElementById('size-val').innerText = hit.fontSize + 'px';
+        document.getElementById('inspector-width').max = document.getElementById('label-canvas').clientWidth;
+        document.getElementById('inspector-width').value = hit.width || 120;
+        document.getElementById('width-val').innerText = (hit.width || 120) + 'px';
       }
       renderCanvas();
     }
@@ -530,9 +821,14 @@
       if (!selectedId) return;
       const hit = elements.find(e => e.id === selectedId);
       if (hit) {
-        hit.text = document.getElementById('inspector-text').value;
-        hit.fontSize = parseInt(document.getElementById('inspector-size').value);
-        document.getElementById('size-val').innerText = hit.fontSize + 'px';
+        if (hit.type === 'image') {
+          hit.width = parseInt(document.getElementById('inspector-width').value);
+          document.getElementById('width-val').innerText = hit.width + 'px';
+        } else {
+          hit.text = document.getElementById('inspector-text').value;
+          hit.fontSize = parseInt(document.getElementById('inspector-size').value);
+          document.getElementById('size-val').innerText = hit.fontSize + 'px';
+        }
         renderCanvas();
       }
     }
@@ -576,9 +872,31 @@
       changeCanvasSize();
     }
 
-    document.getElementById('label-canvas-container').onclick = () => { selectedId = null; renderCanvas(); };
+    const canvasDropZone = document.getElementById('label-canvas-container');
+    canvasDropZone.onclick = () => { selectedId = null; renderCanvas(); };
+    canvasDropZone.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      canvasDropZone.classList.add('border-blue-500', 'bg-blue-950/30');
+    });
+    canvasDropZone.addEventListener('dragleave', () => {
+      canvasDropZone.classList.remove('border-blue-500', 'bg-blue-950/30');
+    });
+    canvasDropZone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      canvasDropZone.classList.remove('border-blue-500', 'bg-blue-950/30');
+      handleImageUpload(event.dataTransfer.files);
+    });
+
+    window.addEventListener('afterprint', () => {
+      const printArea = document.getElementById('batch-print-area');
+      if (printArea.dataset.transientEditorPrint === 'true') {
+        printArea.innerHTML = '';
+        delete printArea.dataset.transientEditorPrint;
+      }
+    });
 
     window.onload = () => {
+      updateWhatnotPrintHint();
       switchMode('editor');
     };
   </script>
