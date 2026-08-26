@@ -3,12 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Label Ninja — Free Thermal Barcode & FNSKU Studio + AI Label Recreator</title>
-  <meta name="description" content="Free online thermal label generator, AI photo label recreator & bulk CSV barcode studio for Dymo, Rollo, Zebra, and Munbyn thermal printers.">
-  <meta name="keywords" content="fnsku label generator, photo to barcode ai, recreate blurry label, free dymo label maker, thermal barcode generator, amazon fba barcode generator, rollo label maker">
-  <meta name="author" content="Bisket LLC / Label Ninja">
-  <link rel="canonical" href="https://label-ninja.com">
-
+  <title>Label Ninja — Canva-Style Thermal Label Design Studio</title>
+  <meta name="description" content="Free Canva-style drag-and-drop thermal label editor for Amazon FBA, eBay, Whatnot, Dymo, Rollo, and Zebra printers.">
+  
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- JsBarcode library -->
@@ -17,612 +14,383 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <!-- QRCode library -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-  <!-- PDFMake for PDF export -->
+  <!-- PDFMake -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-  <!-- Tesseract.js for Client-Side AI Vision OCR -->
+  <!-- Tesseract.js for AI OCR -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
+    .canvas-element {
+      user-select: none;
+      touch-action: none;
+    }
+    .canvas-element.selected {
+      outline: 2px dashed #6366f1;
+      outline-offset: 2px;
+    }
     @media print {
       body * { visibility: hidden; }
-      #batch-print-area, #batch-print-area *, #single-print-wrapper, #single-print-wrapper * { visibility: visible; }
+      #label-canvas-container, #label-canvas-container *, #batch-print-area, #batch-print-area * { visibility: visible; }
       .no-print { display: none !important; }
       body { background: white !important; margin: 0 !important; padding: 0 !important; }
-      .print-label {
-        break-after: page;
-        page-break-after: always;
-        margin: 0 auto !important;
+      #label-canvas {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0 !important;
         box-shadow: none !important;
         border: none !important;
+        break-after: page;
+        page-break-after: always;
       }
+      .canvas-element.selected { outline: none !important; }
     }
   </style>
 </head>
-<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col relative">
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col relative select-none">
 
-  <!-- Header Nav -->
-  <header class="border-b border-gray-800 bg-gray-950 px-6 py-4 flex justify-between items-center no-print flex-wrap gap-4">
+  <!-- Top Canva-Style Navbar -->
+  <header class="border-b border-gray-800 bg-gray-950 px-6 py-3 flex justify-between items-center no-print flex-wrap gap-3">
     <div class="flex items-center space-x-3">
-      <div class="bg-indigo-600 text-white font-bold px-3 py-1.5 rounded-lg text-xl tracking-wider flex items-center space-x-2">
+      <div class="bg-indigo-600 text-white font-bold px-3 py-1 rounded-lg text-lg tracking-wider flex items-center space-x-2">
         <span>🥷</span>
         <span>LABEL NINJA</span>
       </div>
-      <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-mono font-semibold">100% FREE & UNLIMITED</span>
+      <span class="text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded font-mono font-semibold">CANVA STUDIO</span>
     </div>
-    <div class="flex items-center space-x-2">
-      <button onclick="switchTab('single')" id="tab-btn-single" class="bg-indigo-600 text-white font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow transition">
-        Single Label Studio
+
+    <!-- Center Preset & Media Switcher -->
+    <div class="flex items-center space-x-3">
+      <label class="text-xs text-gray-400 font-semibold uppercase">Label Size:</label>
+      <select id="preset-size" onchange="changeCanvasSize()" class="bg-gray-900 border border-gray-700 text-gray-200 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-mono">
+        <optgroup label="Amazon FBA & Dymo">
+          <option value="fnsku" selected>2" x 1" (Amazon FNSKU / Dymo 30334)</option>
+          <option value="standard">2.25" x 1.25" (Dymo 30336)</option>
+          <option value="address">1.125" x 3.5" (Dymo 30252)</option>
+          <option value="small_sq">1" x 1" (Dymo 30332)</option>
+        </optgroup>
+        <optgroup label="Rollo, Zebra & Whatnot">
+          <option value="shipping">4" x 6" (Rollo / Zebra Box Shipping)</option>
+          <option value="box_3">4" x 3" (Carton Box)</option>
+          <option value="polybag">2" x 2" (Polybag Warning)</option>
+          <option value="product_3x2">3" x 2" (Product / Whatnot Show)</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <!-- Right Export & Print Controls -->
+    <div class="flex items-center space-x-3">
+      <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow transition flex items-center space-x-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+        <span>Thermal Print</span>
       </button>
-      <button onclick="switchTab('photo')" id="tab-btn-photo" class="bg-gray-800 hover:bg-gray-700 text-indigo-300 font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow transition flex items-center space-x-1.5">
-        <span>📸 Photo to Label AI</span>
-        <span class="bg-indigo-500/20 text-indigo-300 text-[10px] px-1.5 py-0.5 rounded font-mono">NEW</span>
-      </button>
-      <button onclick="switchTab('batch')" id="tab-btn-batch" class="bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow transition flex items-center space-x-1.5">
-        <span>⚡ Bulk CSV Batch</span>
+      <button onclick="exportVectorPDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow transition flex items-center space-x-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <span>Download PDF</span>
       </button>
     </div>
   </header>
 
-  <!-- TAB 1: Single Label Studio -->
-  <main id="view-single" class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-    
-    <!-- Left Column: Controls -->
-    <div class="lg:col-span-5 bg-gray-950 border border-gray-800 rounded-xl p-6 shadow-xl space-y-5 no-print">
-      <h2 class="text-lg font-bold text-gray-200 border-b border-gray-800 pb-3 flex justify-between items-center">
-        <span>1. Label Settings</span>
-        <span class="text-xs text-indigo-400 font-mono">Dymo • Rollo • Zebra</span>
-      </h2>
+  <!-- Canva-Style Main Editor Workspace -->
+  <div class="flex-1 flex overflow-hidden">
 
-      <!-- Printer Media Preset Selector -->
+    <!-- Left Canva Sidebar Toolbar -->
+    <aside class="w-64 bg-gray-950 border-r border-gray-800 p-4 flex flex-col space-y-5 no-print overflow-y-auto">
+      
+      <!-- Add Elements Section -->
       <div>
-        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Thermal Label Media Preset</label>
-        <select id="preset-size" onchange="updateSingleLabel()" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 text-gray-100">
-          <optgroup label="Amazon FBA & Dymo Presets">
-            <option value="fnsku" selected>2" x 1" (Amazon FNSKU / Dymo 30334)</option>
-            <option value="standard">2.25" x 1.25" (Dymo 30336 Multipurpose)</option>
-            <option value="address">1.125" x 3.5" (Dymo 30252 Address / Barcode)</option>
-            <option value="small_sq">1" x 1" (Dymo 30332 Small Square)</option>
-            <option value="small_bc">2" x 0.75" (Dymo 30330 Small Barcode)</option>
-          </optgroup>
-          <optgroup label="Rollo, Zebra & Whatnot Show Presets">
-            <option value="shipping">4" x 6" (Rollo / Zebra Box Shipping)</option>
-            <option value="box_3">4" x 3" (FBA Carton / Box Inventory)</option>
-            <option value="polybag">2" x 2" (Suffocation Warning / Polybag)</option>
-            <option value="product_3x2">3" x 2" (Standard Product / Whatnot Number)</option>
-          </optgroup>
-        </select>
-      </div>
-
-      <!-- Quick Template Presets -->
-      <div>
-        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Label Templates</label>
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Add Elements</h3>
         <div class="grid grid-cols-2 gap-2">
-          <button onclick="applyTemplate('fnsku')" class="text-xs bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 py-1.5 px-2 rounded text-left truncate">
-            📦 Amazon FNSKU
+          <button onclick="addElement('text')" class="flex flex-col items-center justify-center p-3 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg text-xs font-semibold text-gray-200 transition">
+            <span class="text-lg mb-1">T</span>
+            <span>Add Text</span>
           </button>
-          <button onclick="applyTemplate('whatnot')" class="text-xs bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 py-1.5 px-2 rounded text-left truncate">
-            🏷️ Whatnot Show # Label
+          <button onclick="addElement('barcode')" class="flex flex-col items-center justify-center p-3 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg text-xs font-semibold text-gray-200 transition">
+            <span class="text-lg mb-1">║▌║</span>
+            <span>Add Barcode</span>
           </button>
-          <button onclick="applyTemplate('suffocation')" class="text-xs bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 py-1.5 px-2 rounded text-left truncate">
-            ⚠️ Suffocation Warning
+          <button onclick="addElement('qr')" class="flex flex-col items-center justify-center p-3 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg text-xs font-semibold text-gray-200 transition">
+            <span class="text-lg mb-1">🔳</span>
+            <span>Add QR Code</span>
           </button>
-          <button onclick="applyTemplate('sold_set')" class="text-xs bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 py-1.5 px-2 rounded text-left truncate">
-            🏷️ Sold As Set
+          <button onclick="addElement('badge')" class="flex flex-col items-center justify-center p-3 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg text-xs font-semibold text-gray-200 transition">
+            <span class="text-lg mb-1">🏷️</span>
+            <span>Price Badge</span>
           </button>
         </div>
       </div>
 
-      <!-- Symbology Selector -->
+      <!-- Quick Templates -->
       <div>
-        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Barcode Symbology</label>
-        <select id="barcode-type" onchange="updateSingleLabel()" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 text-gray-100">
-          <option value="CODE128">CODE128 (Amazon FNSKU / SKU Standard)</option>
-          <option value="UPC">UPC-A (US Retail Barcode)</option>
-          <option value="EAN13">EAN-13 (Global Retail Barcode)</option>
-          <option value="CODE39">CODE39 (Inventory Code)</option>
-          <option value="QR">QR Code (Website / Product Link)</option>
-          <option value="NONE">Text Only (Warning / Notice Label)</option>
-        </select>
-      </div>
-
-      <!-- Barcode Value -->
-      <div id="barcode-input-container">
-        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Barcode / FNSKU Data</label>
-        <input type="text" id="barcode-value" value="X001ABC123" oninput="updateSingleLabel()" placeholder="e.g. X001ABC123 or 793573109212" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm font-mono text-indigo-300 focus:outline-none focus:border-indigo-500">
-      </div>
-
-      <!-- Title / Header Text -->
-      <div>
-        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Item Title / Headline</label>
-        <input type="text" id="label-title" value="Wireless Bluetooth Earbuds - Noise Cancelling" oninput="updateSingleLabel()" placeholder="Item title text" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
-      </div>
-
-      <!-- Condition / Sub-text -->
-      <div>
-        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Condition / Footer Text</label>
-        <input type="text" id="label-condition" value="New" oninput="updateSingleLabel()" placeholder="e.g. New / Used - Good / $19.99" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="pt-4 border-t border-gray-800 grid grid-cols-2 gap-3">
-        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg shadow-lg transition flex justify-center items-center space-x-2 text-sm">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-          <span>Direct Print</span>
-        </button>
-        <button onclick="exportSinglePDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg shadow-lg transition flex justify-center items-center space-x-2 text-sm">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          <span>Download PDF</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Right Column: Live Thermal Print Preview -->
-    <div class="lg:col-span-7 flex flex-col items-center justify-start bg-gray-950 border border-gray-800 rounded-xl p-6 shadow-xl">
-      <div class="w-full flex justify-between items-center mb-6 no-print">
-        <h2 class="text-lg font-bold text-gray-200">2. Live Print Canvas</h2>
-        <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-1 rounded">Crisp High-Contrast Vector Output</span>
-      </div>
-
-      <!-- Thermal Label Container -->
-      <div class="flex-1 flex items-center justify-center p-8 w-full bg-gray-900/50 border border-dashed border-gray-800 rounded-lg overflow-auto">
-        <div id="single-print-wrapper" class="flex justify-center items-center">
-          <div id="single-label" class="print-label bg-white text-black p-4 rounded shadow-2xl flex flex-col justify-between items-center transition-all duration-300 overflow-hidden" style="width: 320px; height: 180px;">
-            <!-- Title -->
-            <div id="preview-title" class="text-xs font-semibold text-center leading-snug line-clamp-3 w-full text-black">
-              Wireless Bluetooth Earbuds - Noise Cancelling
-            </div>
-            
-            <!-- Barcode SVG Render -->
-            <div id="barcode-wrapper" class="my-1 flex justify-center w-full min-h-[55px] items-center">
-              <svg id="barcode-svg" class="w-full hidden"></svg>
-              <canvas id="qrcode-canvas" class="hidden"></canvas>
-            </div>
-
-            <!-- Condition / Sub-text -->
-            <div id="preview-condition" class="text-[11px] font-bold text-center tracking-wide uppercase text-black">
-              New
-            </div>
-          </div>
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Templates</h3>
+        <div class="space-y-2">
+          <button onclick="loadTemplate('fnsku')" class="w-full text-left p-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-lg text-xs text-gray-300 transition flex justify-between items-center">
+            <span>📦 Amazon FNSKU</span>
+            <span class="text-[10px] text-indigo-400">2x1</span>
+          </button>
+          <button onclick="loadTemplate('whatnot')" class="w-full text-left p-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-lg text-xs text-gray-300 transition flex justify-between items-center">
+            <span>🏷️ Whatnot Lot #</span>
+            <span class="text-[10px] text-indigo-400">3x2</span>
+          </button>
+          <button onclick="loadTemplate('suffocation')" class="w-full text-left p-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-lg text-xs text-gray-300 transition flex justify-between items-center">
+            <span>⚠️ Suffocation Warning</span>
+            <span class="text-[10px] text-indigo-400">2x2</span>
+          </button>
         </div>
       </div>
-    </div>
-  </main>
 
-  <!-- TAB 2: AI Photo to Label Recreator -->
-  <main id="view-photo" class="flex-1 max-w-7xl w-full mx-auto p-6 hidden flex-col space-y-6">
-    <div class="bg-gray-950 border border-gray-800 rounded-xl p-6 shadow-xl space-y-6 no-print">
-      <div class="border-b border-gray-800 pb-4">
-        <h2 class="text-xl font-bold text-white flex items-center space-x-2">
-          <span>📸 AI Photo & Grainy Label Recreator</span>
-          <span class="text-xs bg-indigo-950 text-indigo-400 border border-indigo-800 px-2 py-0.5 rounded font-mono">100% CLIENT-SIDE AI</span>
-        </h2>
-        <p class="text-xs text-gray-400 mt-1">Upload or drop any blurry photo, damaged tag, or worn-out FNSKU label. AI OCR will scan the image, extract the barcode & text, and recreate a crisp vector label instantly!</p>
-      </div>
-
-      <!-- Photo Drop Zone -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div class="lg:col-span-6 space-y-4">
-          <div class="border-2 border-dashed border-indigo-500/40 hover:border-indigo-500 bg-indigo-950/10 hover:bg-indigo-950/20 rounded-xl p-8 text-center cursor-pointer transition relative min-h-[220px] flex flex-col justify-center items-center">
-            <input type="file" id="photo-file-input" accept="image/*" onchange="handleLabelPhoto(this.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-            <svg class="w-12 h-12 text-indigo-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-            <div class="text-base font-semibold text-gray-200">Drop your label photo or screenshot here</div>
-            <div class="text-xs text-gray-400 mt-1">Reads FNSKU codes, UPC numbers, titles, and conditions automatically</div>
-          </div>
-
-          <!-- OCR Status Indicator -->
-          <div id="ocr-status" class="hidden p-4 rounded-lg bg-gray-900 border border-gray-800 space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-semibold text-indigo-400" id="ocr-msg">Scanning image text & barcodes...</span>
-              <span class="text-xs font-mono text-gray-400" id="ocr-progress">0%</span>
-            </div>
-            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
-              <div id="ocr-bar" class="bg-indigo-500 h-full w-0 transition-all duration-300"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Preview Uploaded Image -->
-        <div class="lg:col-span-6 flex flex-col items-center justify-center bg-gray-900 border border-gray-800 rounded-xl p-4 min-h-[220px]">
-          <div class="text-xs text-gray-500 mb-2 font-semibold uppercase tracking-wider">Uploaded Source Photo</div>
-          <img id="photo-preview" class="max-h-48 rounded shadow hidden object-contain border border-gray-700">
-          <div id="photo-placeholder" class="text-xs text-gray-500 text-center">No photo uploaded yet. Drop a label picture to test.</div>
+      <!-- AI Photo Recreator Button -->
+      <div class="pt-3 border-t border-gray-800">
+        <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">📸 AI Photo Recreator</label>
+        <div class="border border-dashed border-indigo-500/50 bg-indigo-950/20 hover:bg-indigo-950/40 rounded-lg p-3 text-center cursor-pointer relative">
+          <input type="file" accept="image/*" onchange="handleAIPhotoUpload(this.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+          <div class="text-xs font-semibold text-gray-200">Drop label photo here</div>
+          <div class="text-[10px] text-gray-400 mt-0.5">AI OCR auto-recreates layout</div>
         </div>
       </div>
-    </div>
-  </main>
+    </aside>
 
-  <!-- TAB 3: Bulk CSV Batch Generator -->
-  <main id="view-batch" class="flex-1 max-w-7xl w-full mx-auto p-6 hidden flex-col space-y-6">
-    <div class="bg-gray-950 border border-gray-800 rounded-xl p-6 shadow-xl space-y-6 no-print">
-      <div class="flex justify-between items-center border-b border-gray-800 pb-4">
-        <div>
-          <h2 class="text-xl font-bold text-white flex items-center space-x-2">
-            <span>⚡ Bulk CSV Thermal Batch Generator</span>
-            <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-mono">100% FREE</span>
-          </h2>
-          <p class="text-xs text-gray-400 mt-1">Upload Amazon FBA inventory manifests, InventoryLab CSV files, or Whatnot SKU lists.</p>
+    <!-- Center Canvas Stage -->
+    <main class="flex-1 bg-gray-900/60 p-8 flex flex-col items-center justify-start overflow-auto relative">
+      
+      <!-- Canva Top Element Formatting Toolbar -->
+      <div id="formatting-bar" class="bg-gray-950 border border-gray-800 rounded-xl px-4 py-2 mb-6 flex items-center space-x-4 no-print shadow-xl">
+        <span class="text-xs text-gray-400 font-semibold">Element Inspector:</span>
+        <div class="h-4 w-px bg-gray-800"></div>
+
+        <!-- Font Size Slider -->
+        <div class="flex items-center space-x-2">
+          <span class="text-xs text-gray-400">Size:</span>
+          <input type="range" id="inspector-size" min="8" max="48" value="14" oninput="updateSelectedElement()" class="w-24">
+          <span id="size-val" class="text-xs font-mono text-indigo-300">14px</span>
         </div>
-        <button onclick="downloadSampleCSV()" class="text-xs bg-gray-800 hover:bg-gray-700 text-indigo-300 border border-gray-700 px-3 py-2 rounded-lg font-mono">
-          📥 Download Sample CSV
+
+        <div class="h-4 w-px bg-gray-800"></div>
+
+        <!-- Alignment Buttons -->
+        <div class="flex space-x-1">
+          <button onclick="setAlign('left')" class="p-1.5 bg-gray-900 hover:bg-gray-800 rounded text-xs">⬅️</button>
+          <button onclick="setAlign('center')" class="p-1.5 bg-gray-900 hover:bg-gray-800 rounded text-xs">↔️</button>
+          <button onclick="setAlign('right')" class="p-1.5 bg-gray-900 hover:bg-gray-800 rounded text-xs">➡️</button>
+        </div>
+
+        <div class="h-4 w-px bg-gray-800"></div>
+
+        <!-- Text / Value Editor -->
+        <div class="flex items-center space-x-2 flex-1">
+          <input type="text" id="inspector-text" oninput="updateSelectedElement()" placeholder="Edit selected text/barcode..." class="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 w-48 font-mono">
+        </div>
+
+        <!-- Delete Element Button -->
+        <button onclick="deleteSelectedElement()" class="text-xs text-red-400 hover:text-red-300 font-bold px-2 py-1 bg-red-950/50 border border-red-900 rounded">
+          🗑️ Delete
         </button>
       </div>
 
-      <div class="border-2 border-dashed border-indigo-500/40 hover:border-indigo-500 bg-indigo-950/10 hover:bg-indigo-950/20 rounded-xl p-8 text-center cursor-pointer transition relative">
-        <input type="file" id="csv-file-input" accept=".csv" onchange="handleCSVFile(this.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-        <svg class="w-12 h-12 text-indigo-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-        <div class="text-base font-semibold text-gray-200">Click or Drag & Drop inventory CSV here</div>
-      </div>
-
-      <div id="batch-controls" class="hidden space-y-4">
-        <div class="flex justify-between items-center bg-gray-900 p-4 rounded-lg border border-gray-800">
-          <div>
-            <span class="text-sm text-gray-400">Parsed Inventory Items: </span>
-            <span id="batch-count" class="text-lg font-bold text-emerald-400 font-mono">0 items</span>
-          </div>
-          <div class="flex space-x-3">
-            <button onclick="printBatchLabels()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 py-2.5 rounded-lg shadow-lg transition text-sm">Direct Print Batch</button>
-            <button onclick="exportBatchPDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2.5 rounded-lg shadow-lg transition text-sm">Download Batch PDF</button>
-          </div>
-        </div>
-        <div class="max-h-64 overflow-y-auto border border-gray-800 rounded-lg">
-          <table class="w-full text-xs text-left text-gray-300">
-            <thead class="bg-gray-900 text-gray-400 uppercase border-b border-gray-800">
-              <tr>
-                <th class="px-4 py-2">#</th>
-                <th class="px-4 py-2">Barcode / FNSKU</th>
-                <th class="px-4 py-2">Title</th>
-                <th class="px-4 py-2">Condition</th>
-                <th class="px-4 py-2">Qty</th>
-              </tr>
-            </thead>
-            <tbody id="csv-preview-body" class="divide-y divide-gray-800"></tbody>
-          </table>
+      <!-- Thermal Printable Canvas Container -->
+      <div id="label-canvas-container" class="flex items-center justify-center p-6 border border-dashed border-gray-800 bg-gray-950 rounded-xl shadow-2xl">
+        <div id="label-canvas" class="bg-white text-black rounded shadow-2xl relative overflow-hidden transition-all duration-200" style="width: 320px; height: 180px;">
+          <!-- Dynamic Canvas Elements Rendered Here -->
         </div>
       </div>
-    </div>
-
-    <div id="batch-print-area" class="w-full flex flex-col items-center"></div>
-  </main>
-
-  <!-- Floating Ninja AI Chatbot Widget -->
-  <div class="fixed bottom-6 right-6 z-50 no-print">
-    <button onclick="toggleChatbot()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold p-3.5 rounded-full shadow-2xl transition flex items-center space-x-2 border-2 border-indigo-400/50">
-      <span class="text-xl">🥷</span>
-      <span class="text-xs font-semibold pr-1">Ninja AI Support</span>
-    </button>
+    </main>
   </div>
 
-  <!-- Chatbot Modal -->
-  <div id="chatbot-modal" class="fixed bottom-20 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-gray-950 border border-gray-800 rounded-2xl shadow-2xl hidden flex-col overflow-hidden no-print">
-    <div class="bg-indigo-950 border-b border-indigo-800 p-3.5 flex justify-between items-center">
-      <div class="flex items-center space-x-2">
-        <span class="text-lg">🥷</span>
-        <div>
-          <div class="text-sm font-bold text-white">Ninja AI Assistant</div>
-          <div class="text-[10px] text-indigo-300">Free Local LLM Printer Fixer</div>
-        </div>
-      </div>
-      <button onclick="toggleChatbot()" class="text-gray-400 hover:text-white font-bold text-lg">&times;</button>
-    </div>
-    
-    <div id="chat-messages" class="p-4 h-72 overflow-y-auto space-y-3 text-xs">
-      <div class="bg-gray-900 p-3 rounded-lg border border-gray-800 text-gray-300">
-        👋 <strong>Hey Reseller!</strong> I'm your AI Ninja assistant. Ask me anything about thermal printers (Dymo, Rollo, Zebra), FNSKU barcodes, margin fixes, or label sizes!
-      </div>
-    </div>
-
-    <div class="p-3 border-t border-gray-800 bg-gray-900 flex space-x-2">
-      <input type="text" id="chat-input" onkeydown="if(event.key==='Enter') sendChatMessage()" placeholder="Ask about Dymo, Rollo, or FNSKUs..." class="flex-1 bg-gray-950 border border-gray-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-      <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg text-xs font-bold transition">Send</button>
-    </div>
-  </div>
-
-  <footer class="border-t border-gray-800 bg-gray-950 px-6 py-4 text-center text-xs text-gray-500 no-print">
-    Label Ninja • Free Unlimited Thermal Barcode Studio • Bisket LLC
-  </footer>
+  <!-- Hidden Batch Print Container -->
+  <div id="batch-print-area" class="w-full flex flex-col items-center"></div>
 
   <script class="no-print">
-    let parsedBatchData = [];
+    let elements = [];
+    let selectedId = null;
+    let nextId = 1;
 
-    function switchTab(tab) {
-      const singleView = document.getElementById('view-single');
-      const photoView = document.getElementById('view-photo');
-      const batchView = document.getElementById('view-batch');
-      const singleBtn = document.getElementById('tab-btn-single');
-      const photoBtn = document.getElementById('tab-btn-photo');
-      const batchBtn = document.getElementById('tab-btn-batch');
+    const PRESETS = {
+      fnsku: { width: 320, height: 180, name: "2x1 Amazon FNSKU" },
+      standard: { width: 360, height: 200, name: "2.25x1.25 Dymo 30336" },
+      address: { width: 520, height: 160, name: "1.125x3.5 Address" },
+      small_sq: { width: 200, height: 200, name: "1x1 Square" },
+      shipping: { width: 400, height: 600, name: "4x6 Box Shipping" },
+      box_3: { width: 400, height: 300, name: "4x3 Box Inventory" },
+      polybag: { width: 300, height: 300, name: "2x2 Polybag Warning" },
+      product_3x2: { width: 420, height: 280, name: "3x2 Product Label" }
+    };
 
-      singleView.classList.add('hidden');
-      photoView.classList.add('hidden');
-      batchView.classList.add('hidden');
-      batchView.classList.remove('flex');
-      photoView.classList.remove('flex');
-
-      singleBtn.className = "bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow transition";
-      photoBtn.className = "bg-gray-800 hover:bg-gray-700 text-indigo-300 font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow transition flex items-center space-x-1.5";
-      batchBtn.className = "bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow transition flex items-center space-x-1.5";
-
-      if (tab === 'single') {
-        singleView.classList.remove('hidden');
-        singleBtn.className = "bg-indigo-600 text-white font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow transition";
-      } else if (tab === 'photo') {
-        photoView.classList.remove('hidden');
-        photoView.classList.add('flex');
-        photoBtn.className = "bg-indigo-600 text-white font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow transition flex items-center space-x-1.5";
-      } else if (tab === 'batch') {
-        batchView.classList.remove('hidden');
-        batchView.classList.add('flex');
-        batchBtn.className = "bg-indigo-600 text-white font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow transition flex items-center space-x-1.5";
-      }
+    function changeCanvasSize() {
+      const presetKey = document.getElementById('preset-size').value;
+      const canvas = document.getElementById('label-canvas');
+      const p = PRESETS[presetKey] || PRESETS.fnsku;
+      canvas.style.width = p.width + 'px';
+      canvas.style.height = p.height + 'px';
     }
 
-    function handleLabelPhoto(file) {
-      if (!file) return;
-      const preview = document.getElementById('photo-preview');
-      const placeholder = document.getElementById('photo-placeholder');
-      const statusDiv = document.getElementById('ocr-status');
-      const msg = document.getElementById('ocr-msg');
-      const progress = document.getElementById('ocr-progress');
-      const bar = document.getElementById('ocr-bar');
+    function addElement(type, customProps = {}) {
+      const id = 'el-' + (nextId++);
+      let newEl = {
+        id,
+        type,
+        x: 20,
+        y: 20 + elements.length * 35,
+        text: type === 'barcode' ? 'X001ABC123' : (type === 'qr' ? 'https://label-ninja.com' : (type === 'badge' ? '$19.99' : 'Sample Text')),
+        fontSize: type === 'badge' ? 16 : 13,
+        align: 'center',
+        bold: true,
+        ...customProps
+      };
+      elements.push(newEl);
+      selectElement(id);
+      renderCanvas();
+    }
 
-      preview.src = URL.createObjectURL(file);
-      preview.classList.remove('hidden');
-      placeholder.classList.add('hidden');
-      statusDiv.classList.remove('hidden');
+    function renderCanvas() {
+      const canvas = document.getElementById('label-canvas');
+      canvas.innerHTML = '';
 
-      Tesseract.recognize(file, 'eng', {
-        logger: m => {
-          if (m.status === 'recognizing text') {
-            const pct = Math.round((m.progress || 0) * 100);
-            progress.innerText = pct + '%';
-            bar.style.width = pct + '%';
-          }
+      elements.forEach(el => {
+        const div = document.createElement('div');
+        div.className = `canvas-element absolute cursor-move p-1 ${el.id === selectedId ? 'selected' : ''}`;
+        div.style.left = el.x + 'px';
+        div.style.top = el.y + 'px';
+        div.style.textAlign = el.align;
+        div.style.fontSize = el.fontSize + 'px';
+        div.style.fontWeight = el.bold ? 'bold' : 'normal';
+
+        div.onclick = (e) => { e.stopPropagation(); selectElement(el.id); };
+        makeDraggable(div, el);
+
+        if (el.type === 'text') {
+          div.innerText = el.text;
+        } else if (el.type === 'badge') {
+          div.className += ' bg-black text-white px-2 py-0.5 rounded font-mono';
+          div.innerText = el.text;
+        } else if (el.type === 'barcode') {
+          const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          svg.id = `barcode-${el.id}`;
+          div.appendChild(svg);
+          setTimeout(() => {
+            try {
+              JsBarcode(`#barcode-${el.id}`, el.text, { format: "CODE128", width: 2, height: 42, displayValue: true, fontSize: 11, fontOptions: "bold", margin: 0 });
+            } catch(e) {}
+          }, 0);
+        } else if (el.type === 'qr') {
+          const qrCanvas = document.createElement('canvas');
+          div.appendChild(qrCanvas);
+          setTimeout(() => {
+            QRCode.toCanvas(qrCanvas, el.text, { width: 70, margin: 1 });
+          }, 0);
         }
-      }).then(({ data: { text } }) => {
-        msg.innerText = "Scanning complete! Parsing label details...";
-        
-        // Extract FNSKU (e.g. X00...), UPC (12 digits), or SKU
-        const fnskuMatch = text.match(/\b(X[0-9A-Z]{9})\b/i);
-        const upcMatch = text.match(/\b(\d{12})\b/);
-        const skuMatch = text.match(/\b([A-Z0-9]{8,14})\b/i);
 
-        let detectedBarcode = 'X001ABC123';
-        if (fnskuMatch) detectedBarcode = fnskuMatch[1];
-        else if (upcMatch) detectedBarcode = upcMatch[1];
-        else if (skuMatch) detectedBarcode = skuMatch[1];
-
-        // Clean lines for title & condition
-        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 2);
-        const title = lines[0] || 'Recreated Product Label';
-        const condition = lines[1] || 'New';
-
-        // Populate Single Label Studio
-        document.getElementById('barcode-value').value = detectedBarcode;
-        document.getElementById('label-title').value = title;
-        document.getElementById('label-condition').value = condition;
-
-        switchTab('single');
-        updateSingleLabel();
-      }).catch(err => {
-        msg.innerText = "OCR Error scanning photo. Try another picture.";
-        console.error(err);
+        canvas.appendChild(div);
       });
     }
 
-    function toggleChatbot() {
-      const modal = document.getElementById('chatbot-modal');
-      modal.classList.toggle('hidden');
-      modal.classList.toggle('flex');
+    function makeDraggable(domEl, elObj) {
+      let isDragging = false;
+      let startX, startY, initialX, initialY;
+
+      domEl.onmousedown = (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        initialX = elObj.x;
+        initialY = elObj.y;
+        document.onmousemove = (e) => {
+          if (!isDragging) return;
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          elObj.x = Math.max(0, initialX + dx);
+          elObj.y = Math.max(0, initialY + dy);
+          domEl.style.left = elObj.x + 'px';
+          domEl.style.top = elObj.y + 'px';
+        };
+        document.onmouseup = () => { isDragging = false; document.onmousemove = null; };
+      };
     }
 
-    async function sendChatMessage() {
-      const input = document.getElementById('chat-input');
-      const q = input.value.trim();
-      if (!q) return;
-
-      const msgs = document.getElementById('chat-messages');
-      const uDiv = document.createElement('div');
-      uDiv.className = "bg-indigo-950 p-2.5 rounded-lg text-white font-semibold text-right";
-      uDiv.innerText = q;
-      msgs.appendChild(uDiv);
-      input.value = '';
-      msgs.scrollTop = msgs.scrollHeight;
-
-      // Smart Fallback Local Response Engine
-      let answer = "For Chrome thermal print setup: set Margins to None and Scale to 100%. Compatible with Dymo 30334 (2x1 FNSKU) and Rollo 4x6 shipping labels!";
-      const qL = q.toLowerCase();
-      if (qL.includes('dymo')) {
-        answer = "Dymo Tip: Use Dymo 30334 labels for 2\"x1\" Amazon FNSKUs. Set Chrome print dialog margins to 'None' and scale to 100%.";
-      } else if (qL.includes('rollo') || qL.includes('zebra')) {
-        answer = "Rollo/Zebra Tip: Select 4\"x6\" Box Shipping or 2\"x2\" Polybag presets in Label Ninja. Prints pixel-perfect vector lines.";
-      } else if (qL.includes('fnsku') || qL.includes('amazon')) {
-        answer = "FNSKU labels must use CODE128 format. Label Ninja auto-formats all X00... barcodes to Amazon FBA specifications.";
+    function selectElement(id) {
+      selectedId = id;
+      const hit = elements.find(e => e.id === id);
+      if (hit) {
+        document.getElementById('inspector-text').value = hit.text;
+        document.getElementById('inspector-size').value = hit.fontSize;
+        document.getElementById('size-val').innerText = hit.fontSize + 'px';
       }
-
-      // Try local LLM API endpoint if running locally
-      try {
-        const res = await fetch("http://localhost:11434/v1/chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "llama3",
-            messages: [{ role: "system", content: "You are Ninja AI, a reseller thermal printer expert." }, { role: "user", content: q }]
-          })
-        });
-        if (res.ok) {
-          const j = await res.json();
-          if (j.choices && j.choices[0]) answer = j.choices[0].message.content;
-        }
-      } catch(e) {}
-
-      const aDiv = document.createElement('div');
-      aDiv.className = "bg-gray-900 p-3 rounded-lg border border-gray-800 text-gray-300";
-      aDiv.innerText = "🥷 " + answer;
-      msgs.appendChild(aDiv);
-      msgs.scrollTop = msgs.scrollHeight;
+      renderCanvas();
     }
 
-    function applyTemplate(type) {
+    function updateSelectedElement() {
+      if (!selectedId) return;
+      const hit = elements.find(e => e.id === selectedId);
+      if (hit) {
+        hit.text = document.getElementById('inspector-text').value;
+        hit.fontSize = parseInt(document.getElementById('inspector-size').value);
+        document.getElementById('size-val').innerText = hit.fontSize + 'px';
+        renderCanvas();
+      }
+    }
+
+    function setAlign(align) {
+      if (!selectedId) return;
+      const hit = elements.find(e => e.id === selectedId);
+      if (hit) { hit.align = align; renderCanvas(); }
+    }
+
+    function deleteSelectedElement() {
+      if (!selectedId) return;
+      elements = elements.filter(e => e.id !== selectedId);
+      selectedId = null;
+      renderCanvas();
+    }
+
+    function loadTemplate(type) {
+      elements = [];
       if (type === 'fnsku') {
         document.getElementById('preset-size').value = 'fnsku';
-        document.getElementById('barcode-type').value = 'CODE128';
-        document.getElementById('barcode-value').value = 'X001ABC123';
-        document.getElementById('label-title').value = 'Wireless Bluetooth Earbuds - Noise Cancelling';
-        document.getElementById('label-condition').value = 'New';
+        addElement('text', { text: 'Wireless Bluetooth Earbuds', x: 20, y: 15, fontSize: 12 });
+        addElement('barcode', { text: 'X001ABC123', x: 35, y: 45 });
+        addElement('text', { text: 'New', x: 135, y: 140, fontSize: 11 });
       } else if (type === 'whatnot') {
         document.getElementById('preset-size').value = 'product_3x2';
-        document.getElementById('barcode-type').value = 'CODE128';
-        document.getElementById('barcode-value').value = 'LOT-104';
-        document.getElementById('label-title').value = 'WHATNOT LIVE SHOW - LOT #104';
-        document.getElementById('label-condition').value = 'STARTING BID $1 • FREE SHIPPING';
+        addElement('text', { text: 'WHATNOT LIVE SHOW - LOT #104', x: 30, y: 20, fontSize: 14 });
+        addElement('barcode', { text: 'LOT-104', x: 80, y: 65 });
+        addElement('badge', { text: 'STARTING BID $1', x: 110, y: 190, fontSize: 16 });
       } else if (type === 'suffocation') {
         document.getElementById('preset-size').value = 'polybag';
-        document.getElementById('barcode-type').value = 'NONE';
-        document.getElementById('label-title').value = 'WARNING: TO AVOID DANGER OF SUFFOCATION, KEEP THIS PLASTIC BAG AWAY FROM BABIES AND CHILDREN.';
-        document.getElementById('label-condition').value = 'DO NOT USE IN CRIBS, BEDS, CARRIAGES OR PLAYPENS. THIS BAG IS NOT A TOY.';
-      } else if (type === 'sold_set') {
-        document.getElementById('preset-size').value = 'standard';
-        document.getElementById('barcode-type').value = 'NONE';
-        document.getElementById('label-title').value = 'SOLD AS SET - DO NOT SEPARATE';
-        document.getElementById('label-condition').value = 'THIS IS A SINGLE ITEM READY FOR SHIPMENT';
+        addElement('text', { text: 'WARNING: TO AVOID DANGER OF SUFFOCATION, KEEP THIS BAG AWAY FROM BABIES AND CHILDREN.', x: 15, y: 30, fontSize: 12 });
+        addElement('text', { text: 'DO NOT USE IN CRIBS, BEDS, OR PLAYPENS. THIS BAG IS NOT A TOY.', x: 15, y: 140, fontSize: 11 });
       }
-      updateSingleLabel();
+      changeCanvasSize();
     }
 
-    function updateSingleLabel() {
-      const barcodeValue = document.getElementById('barcode-value').value.trim() || 'X001ABC123';
-      const title = document.getElementById('label-title').value || '';
-      const condition = document.getElementById('label-condition').value || '';
-      const size = document.getElementById('preset-size').value;
-      const type = document.getElementById('barcode-type').value;
-
-      document.getElementById('preview-title').innerText = title;
-      document.getElementById('preview-condition').innerText = condition;
-
-      const singleLabel = document.getElementById('single-label');
-      const barcodeWrapper = document.getElementById('barcode-wrapper');
-
-      if (size === 'fnsku') { singleLabel.style.width = '320px'; singleLabel.style.height = '180px'; }
-      else if (size === 'standard') { singleLabel.style.width = '360px'; singleLabel.style.height = '200px'; }
-      else if (size === 'address') { singleLabel.style.width = '520px'; singleLabel.style.height = '160px'; }
-      else if (size === 'small_sq') { singleLabel.style.width = '200px'; singleLabel.style.height = '200px'; }
-      else if (size === 'small_bc') { singleLabel.style.width = '300px'; singleLabel.style.height = '120px'; }
-      else if (size === 'shipping') { singleLabel.style.width = '400px'; singleLabel.style.height = '600px'; }
-      else if (size === 'box_3') { singleLabel.style.width = '400px'; singleLabel.style.height = '300px'; }
-      else if (size === 'polybag') { singleLabel.style.width = '300px'; singleLabel.style.height = '300px'; }
-      else if (size === 'product_3x2') { singleLabel.style.width = '420px'; singleLabel.style.height = '280px'; }
-
-      const svgEl = document.getElementById('barcode-svg');
-      const qrEl = document.getElementById('qrcode-canvas');
-
-      if (type === 'NONE') {
-        svgEl.classList.add('hidden');
-        qrEl.classList.add('hidden');
-        barcodeWrapper.classList.add('hidden');
-      } else {
-        barcodeWrapper.classList.remove('hidden');
-        if (type === 'QR') {
-          svgEl.classList.add('hidden');
-          qrEl.classList.remove('hidden');
-          QRCode.toCanvas(qrEl, barcodeValue, { width: 75, margin: 1 }, function (error) {
-            if (error) console.error("QR Code error:", error);
-          });
-        } else {
-          qrEl.classList.add('hidden');
-          svgEl.classList.remove('hidden');
-          try {
-            JsBarcode("#barcode-svg", barcodeValue, { format: type === 'UPC' ? 'UPC' : (type === 'EAN13' ? 'EAN13' : (type === 'CODE39' ? 'CODE39' : 'CODE128')), width: 2, height: 48, displayValue: true, fontSize: 12, fontOptions: "bold", margin: 0 });
-          } catch(e) {
-            JsBarcode("#barcode-svg", barcodeValue, { format: "CODE128", width: 2, height: 48, displayValue: true, fontSize: 12, fontOptions: "bold", margin: 0 });
-          }
-        }
-      }
+    function handleAIPhotoUpload(file) {
+      if (!file) return;
+      Tesseract.recognize(file, 'eng').then(({ data: { text } }) => {
+        const fnskuMatch = text.match(/\b(X[0-9A-Z]{9})\b/i);
+        const code = fnskuMatch ? fnskuMatch[1] : 'X001ABC123';
+        elements = [];
+        addElement('text', { text: text.split('\n')[0] || 'Recreated Label', x: 20, y: 15, fontSize: 12 });
+        addElement('barcode', { text: code, x: 35, y: 45 });
+        renderCanvas();
+      });
     }
 
-    function exportSinglePDF() {
-      const title = document.getElementById('label-title').value || '';
-      const condition = document.getElementById('label-condition').value || '';
-      const barcodeValue = document.getElementById('barcode-value').value || 'X001ABC123';
+    function exportVectorPDF() {
       const docDefinition = {
         pageSize: { width: 144, height: 72 },
         pageMargins: [6, 6, 6, 6],
-        content: [
-          { text: title, fontSize: 8, bold: true, alignment: 'center' },
-          { text: '\n' + barcodeValue + '\n', fontSize: 10, bold: true, alignment: 'center' },
-          { text: condition, fontSize: 7, bold: true, alignment: 'center' }
-        ]
+        content: elements.map(e => ({ text: e.text, fontSize: e.fontSize / 1.5, alignment: e.align, bold: e.bold }))
       };
-      pdfMake.createPdf(docDefinition).download(`label_${barcodeValue}.pdf`);
+      pdfMake.createPdf(docDefinition).download("canva_label.pdf");
     }
 
-    function handleCSVFile(file) {
-      if (!file) return;
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-          parsedBatchData = [];
-          results.data.forEach(row => {
-            const barcode = row.FNSKU || row.fnsku || row.Barcode || row.barcode || row.UPC || row.upc || row.SKU || row.sku || '';
-            const title = row.Title || row.title || row.Item || row.item || '';
-            const condition = row.Condition || row.condition || 'New';
-            const qty = parseInt(row.Qty || row.qty || 1);
-            if (barcode || title) {
-              for (let i = 0; i < qty; i++) parsedBatchData.push({ barcode, title, condition });
-            }
-          });
-          displayCSVPreview();
-        }
-      });
-    }
+    // Canvas Deselect Click
+    document.getElementById('label-canvas-container').onclick = () => { selectedId = null; renderCanvas(); };
 
-    function displayCSVPreview() {
-      const tbody = document.getElementById('csv-preview-body');
-      document.getElementById('batch-count').innerText = `${parsedBatchData.length} labels ready`;
-      document.getElementById('batch-controls').classList.remove('hidden');
-      tbody.innerHTML = '';
-      parsedBatchData.slice(0, 50).forEach((item, idx) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td class="px-4 py-2 font-mono">${idx + 1}</td><td class="px-4 py-2 font-mono text-indigo-300">${item.barcode}</td><td class="px-4 py-2 truncate max-w-xs">${item.title}</td><td class="px-4 py-2">${item.condition}</td><td class="px-4 py-2 font-mono">1</td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function printBatchLabels() {
-      const batchPrintArea = document.getElementById('batch-print-area');
-      batchPrintArea.innerHTML = '';
-      parsedBatchData.forEach((item, idx) => {
-        const labelDiv = document.createElement('div');
-        labelDiv.className = 'print-label bg-white text-black p-4 flex flex-col justify-between items-center my-4 shadow-lg overflow-hidden';
-        labelDiv.style.width = '320px'; labelDiv.style.height = '180px';
-        const svgId = `batch-barcode-${idx}`;
-        labelDiv.innerHTML = `<div class="text-xs font-semibold text-center line-clamp-2 w-full text-black">${item.title}</div><div class="my-1 flex justify-center w-full"><svg id="${svgId}" class="w-full"></svg></div><div class="text-[11px] font-bold text-center uppercase text-black">${item.condition}</div>`;
-        batchPrintArea.appendChild(labelDiv);
-        setTimeout(() => { try { JsBarcode(`#${svgId}`, item.barcode, { format: "CODE128", width: 2, height: 48, displayValue: true, fontSize: 11, fontOptions: "bold", margin: 0 }); } catch(e) {} }, 10);
-      });
-      setTimeout(() => { window.print(); }, 500);
-    }
-
-    function exportBatchPDF() {
-      const content = [];
-      parsedBatchData.forEach(item => {
-        content.push(
-          { text: item.title, fontSize: 8, bold: true, alignment: 'center' },
-          { text: '\n' + item.barcode + '\n', fontSize: 10, bold: true, alignment: 'center' },
-          { text: item.condition, fontSize: 7, bold: true, alignment: 'center', pageBreak: 'after' }
-        );
-      });
-      pdfMake.createPdf({ pageSize: { width: 144, height: 72 }, pageMargins: [6, 6, 6, 6], content: content }).download("batch_thermal_labels.pdf");
-    }
-
-    function downloadSampleCSV() {
-      const csvContent = "data:text/csv;charset=utf-8,FNSKU,Title,Condition,Qty\nX001ABC123,Wireless Bluetooth Earbuds,New,2\nX009XYZ789,USB-C Thermal Barcode Scanner,New,1\n793573109212,Heavy Duty Packing Tape 6-Pack,New,3";
-      const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", "sample_label_manifest.csv");
-      document.body.appendChild(link); link.click(); document.body.removeChild(link);
-    }
-
-    window.onload = updateSingleLabel;
+    // Initial Load
+    window.onload = () => {
+      changeCanvasSize();
+      loadTemplate('fnsku');
+    };
   </script>
 </body>
 </html>
