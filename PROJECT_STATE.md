@@ -1,20 +1,24 @@
 # PROJECT_STATE.md — Label Ninja State Snapshot
 
-## 1. Start Here Next Session (≤20 lines)
+## 1. Start Here Next Session
 
-- **Status:** Active & Ready for Cloudflare Pages / Edge deployment (2026-08-25).
-- **Domain:** `label-ninja.com` (Owned by Chris).
-- **Model:** 100% Freemium & Unlimited.
-- **Current Stack:** Client-side HTML5 studio with single barcode generator (FNSKU, UPC, EAN, CODE128, QR) & bulk CSV batch generator (PapaParse + JsBarcode + @media print).
-- **Next Brick:** Deploy static `public/` directory to Cloudflare Pages and attach custom domain `label-ninja.com`.
-
----
+- **Status:** LIVE and verified on 2026-08-26.
+- **Production:** `https://label-ninja.com` and `https://www.label-ninja.com`.
+- **Mirror:** `https://label-ninja.pages.dev`.
+- **Git:** GitHub `Chrisl252/label-ninja`, branch `master`, release commit `478ca96`.
+- **Hosting:** Cloudflare Worker Static Assets; Pages is a synchronized mirror.
+- **Worker version:** `d4135cb7-017a-4eef-a303-ba7096a77df7`.
+- **Verification:** all three live hosts returned HTTP 200 and matched local `public/index.html` SHA-256 `C3BC081E...F69B6F3E`.
+- **Next brick:** physical-printer acceptance on Chris's Rollo using 4x6 portrait stock and 1x0.5 landscape stock; no code or deployment blocker remains.
+- **Do not touch:** untracked `scratch/` and `src/` are preserved prior-session artifacts and are not part of the deployed static-assets path.
 
 ## 2. Feature Inventory
 
-- [x] House documentation & modular architecture scaffolded.
-- [x] Single-label interactive generator UI (FNSKU, Code128, UPC-A, EAN-13, QR Code).
-- [x] Thermal label size presets (2"x1" 30334, 2.25"x1.25" 30336, 1.125"x3.5" 30252, 2"x2" Square, 4"x6" Rollo/Zebra).
-- [x] Direct vector print styling (`@media print`) with page-break pagination for thermal printers.
-- [x] Unlimited Bulk CSV upload batch generator (PapaParse integration, auto column detection).
-- [x] 100% Freemium model (paywalls and MVP references removed).
+- [x] Custom visual editor with draggable text, barcode, badge, box, and uploaded-image elements.
+- [x] Browser-only PNG/JPEG/WebP uploads, drag-and-drop placement, and image resizing (8 MB per file limit).
+- [x] Responsive navigation and mobile-safe fixed-coordinate canvas workspace.
+- [x] Exact physical print sizing for editor presets, including 4x6 shipping labels.
+- [x] Warehouse bin batches: one complete 4x6 portrait label per page with bin text and Code128 barcode.
+- [x] Whatnot sequential numbers on selectable 1x0.5, 2x1, and 3x2 stock.
+- [x] FNSKU single-label and CSV batch tooling.
+- [x] Cloudflare Worker production deployment plus Pages mirror.

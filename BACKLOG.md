@@ -1,15 +1,18 @@
 # BACKLOG.md — Label Ninja Work Queue
 
-## Priority 1 — 1-Hour MVP Core
+## Launch Complete
 
-1. [ ] Create standalone `public/index.html` UI (Thermal Label Studio layout).
-2. [ ] Integrate `JsBarcode` CDN script for live Code128 / FNSKU rendering.
-3. [ ] Add label size switcher (2"x1" Amazon FNSKU vs 4"x6" Shipping/Box label).
-4. [ ] Implement direct vector PDF generation / browser print styling (`@media print`).
-5. [ ] Add CSV batch upload modal with LemonSqueezy/Stripe paywall integration.
+- [x] Custom visual label editor with local artwork uploads.
+- [x] Warehouse bin, Whatnot number, FNSKU, and CSV batch generators.
+- [x] Exact physical print contracts for 4x6 and small thermal stock.
+- [x] Responsive desktop/mobile UI.
+- [x] GitHub push and Cloudflare Worker production deployment.
+- [x] Synchronized Cloudflare Pages mirror.
 
-## Priority 2 — Post-Launch Polish
+## Next Acceptance Pass
 
-1. [ ] Add QR code support (for custom product URL labels).
-2. [ ] Add Dymo / Rollo / Zebra template selector dropdown.
-3. [ ] Deploy static host to Cloudflare Pages / Vercel under `label-ninja.com`.
+1. [ ] Print one warehouse bin label on Chris's Rollo with 4x6 portrait paper, zero margins, and 100% scale.
+2. [ ] Print a short Whatnot sequence on 1x0.5 landscape stock at 100% scale.
+3. [ ] Record the exact Rollo driver paper names that work on this PC in `SYSTEM_REFERENCE.md`.
+
+No open code or deployment blocker remains.
