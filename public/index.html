@@ -3,46 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Label Ninja — Canva-Style Thermal Label Design Studio</title>
-  <meta name="description" content="Free Canva-style drag-and-drop thermal label editor for Amazon FBA, eBay, Whatnot, Dymo, Rollo, and Zebra printers.">
+  <title>Label Ninja — Warehouse Bin & Thermal Barcode Studio</title>
+  <meta name="description" content="Free thermal label generator for warehouse rack bin labels, Amazon FNSKUs, and reseller inventory. Compatible with Dymo, Rollo, Zebra printers.">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- JsBarcode library -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-  <!-- PapaParse for CSVs -->
+  <!-- PapaParse -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <!-- QRCode library -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <!-- PDFMake -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-  <!-- Tesseract.js for AI OCR -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
-    .canvas-element {
-      user-select: none;
-      touch-action: none;
-    }
-    .canvas-element.selected {
-      outline: 2px dashed #6366f1;
-      outline-offset: 2px;
-    }
+    .canvas-element { user-select: none; touch-action: none; }
+    .canvas-element.selected { outline: 2px dashed #6366f1; outline-offset: 2px; }
     @media print {
       body * { visibility: hidden; }
       #label-canvas-container, #label-canvas-container *, #batch-print-area, #batch-print-area * { visibility: visible; }
       .no-print { display: none !important; }
       body { background: white !important; margin: 0 !important; padding: 0 !important; }
-      #label-canvas {
-        position: absolute;
-        left: 0;
-        top: 0;
-        margin: 0 !important;
+      .print-label, #label-canvas {
+        position: relative !important;
+        left: 0 !important; top: 0 !important;
+        margin: 0 auto 10px auto !important;
         box-shadow: none !important;
         border: none !important;
-        break-after: page;
-        page-break-after: always;
+        break-after: page; page-break-after: always;
       }
       .canvas-element.selected { outline: none !important; }
     }
@@ -50,40 +38,38 @@
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col relative select-none">
 
-  <!-- Top Canva-Style Navbar -->
+  <!-- Top Navbar -->
   <header class="border-b border-gray-800 bg-gray-950 px-6 py-3 flex justify-between items-center no-print flex-wrap gap-3">
     <div class="flex items-center space-x-3">
       <div class="bg-indigo-600 text-white font-bold px-3 py-1 rounded-lg text-lg tracking-wider flex items-center space-x-2">
         <span>🥷</span>
         <span>LABEL NINJA</span>
       </div>
-      <span class="text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded font-mono font-semibold">CANVA STUDIO</span>
+      <span class="text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded font-mono font-semibold">BIN & THERMAL STUDIO</span>
     </div>
 
-    <!-- Center Preset & Media Switcher -->
+    <!-- Center Label Size Selector -->
     <div class="flex items-center space-x-3">
       <label class="text-xs text-gray-400 font-semibold uppercase">Label Size:</label>
       <select id="preset-size" onchange="changeCanvasSize()" class="bg-gray-900 border border-gray-700 text-gray-200 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-mono">
-        <optgroup label="Amazon FBA & Dymo">
-          <option value="fnsku" selected>2" x 1" (Amazon FNSKU / Dymo 30334)</option>
-          <option value="standard">2.25" x 1.25" (Dymo 30336)</option>
-          <option value="address">1.125" x 3.5" (Dymo 30252)</option>
-          <option value="small_sq">1" x 1" (Dymo 30332)</option>
+        <optgroup label="Bin & Rack Labels">
+          <option value="standard" selected>2.25" x 1.25" (Dymo 30336 Bin Label)</option>
+          <option value="fnsku">2" x 1" (Dymo 30334 Small Bin / FNSKU)</option>
+          <option value="address">1.125" x 3.5" (Dymo 30252 Long Rack Label)</option>
         </optgroup>
-        <optgroup label="Rollo, Zebra & Whatnot">
-          <option value="shipping">4" x 6" (Rollo / Zebra Box Shipping)</option>
-          <option value="box_3">4" x 3" (Carton Box)</option>
-          <option value="polybag">2" x 2" (Polybag Warning)</option>
-          <option value="product_3x2">3" x 2" (Product / Whatnot Show)</option>
+        <optgroup label="Rollo & Zebra Shipping/Box">
+          <option value="shipping">4" x 6" (Rollo / Zebra Carton)</option>
+          <option value="box_3">4" x 3" (Box Inventory)</option>
+          <option value="polybag">2" x 2" (Square Bin / Polybag)</option>
         </optgroup>
       </select>
     </div>
 
-    <!-- Right Export & Print Controls -->
+    <!-- Right Controls -->
     <div class="flex items-center space-x-3">
       <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow transition flex items-center space-x-1.5">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-        <span>Thermal Print</span>
+        <span>Print Labels</span>
       </button>
       <button onclick="exportVectorPDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow transition flex items-center space-x-1.5">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -92,106 +78,105 @@
     </div>
   </header>
 
-  <!-- Canva-Style Main Editor Workspace -->
+  <!-- Workspace -->
   <div class="flex-1 flex overflow-hidden">
 
-    <!-- Left Canva Sidebar Toolbar -->
-    <aside class="w-64 bg-gray-950 border-r border-gray-800 p-4 flex flex-col space-y-5 no-print overflow-y-auto">
+    <!-- Left Sidebar -->
+    <aside class="w-72 bg-gray-950 border-r border-gray-800 p-4 flex flex-col space-y-5 no-print overflow-y-auto">
       
-      <!-- Add Elements Section -->
-      <div>
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Add Elements</h3>
+      <!-- Quick Bin Generator Tool -->
+      <div class="bg-indigo-950/40 border border-indigo-800/60 rounded-xl p-3.5 space-y-3">
+        <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center space-x-1.5">
+          <span>📦</span>
+          <span>Batch Rack BIN Generator</span>
+        </h3>
+        <p class="text-[11px] text-gray-300 leading-snug">Generate a whole rack of sequential bin labels (e.g. BIN 1A to 20A) in 1 click.</p>
+        
         <div class="grid grid-cols-2 gap-2">
-          <button onclick="addElement('text')" class="flex flex-col items-center justify-center p-3 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg text-xs font-semibold text-gray-200 transition">
-            <span class="text-lg mb-1">T</span>
-            <span>Add Text</span>
+          <div>
+            <label class="block text-[10px] text-gray-400 font-semibold uppercase">Shelf Letter</label>
+            <input type="text" id="bin-shelf" value="A" class="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white uppercase font-mono">
+          </div>
+          <div>
+            <label class="block text-[10px] text-gray-400 font-semibold uppercase">Prefix</label>
+            <input type="text" id="bin-prefix" value="BIN " class="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-gray-400 font-semibold uppercase">Start #</label>
+            <input type="number" id="bin-start" value="1" min="1" max="500" class="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white font-mono">
+          </div>
+          <div>
+            <label class="block text-[10px] text-gray-400 font-semibold uppercase">End #</label>
+            <input type="number" id="bin-end" value="20" min="1" max="500" class="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white font-mono">
+          </div>
+        </div>
+
+        <button onclick="generateBinBatch()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 rounded text-xs transition shadow">
+          ⚡ Generate Batch Bin Labels
+        </button>
+      </div>
+
+      <!-- Single Element Tools -->
+      <div>
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Single Add Tools</h3>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="addElement('text')" class="flex items-center justify-center space-x-1 p-2 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded text-xs font-semibold text-gray-200">
+            <span>T</span> <span>Add Text</span>
           </button>
-          <button onclick="addElement('barcode')" class="flex flex-col items-center justify-center p-3 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg text-xs font-semibold text-gray-200 transition">
-            <span class="text-lg mb-1">║▌║</span>
-            <span>Add Barcode</span>
-          </button>
-          <button onclick="addElement('qr')" class="flex flex-col items-center justify-center p-3 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg text-xs font-semibold text-gray-200 transition">
-            <span class="text-lg mb-1">🔳</span>
-            <span>Add QR Code</span>
-          </button>
-          <button onclick="addElement('badge')" class="flex flex-col items-center justify-center p-3 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg text-xs font-semibold text-gray-200 transition">
-            <span class="text-lg mb-1">🏷️</span>
-            <span>Price Badge</span>
+          <button onclick="addElement('barcode')" class="flex items-center justify-center space-x-1 p-2 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded text-xs font-semibold text-gray-200">
+            <span>║▌║</span> <span>Add Barcode</span>
           </button>
         </div>
       </div>
 
       <!-- Quick Templates -->
       <div>
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Templates</h3>
-        <div class="space-y-2">
-          <button onclick="loadTemplate('fnsku')" class="w-full text-left p-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-lg text-xs text-gray-300 transition flex justify-between items-center">
-            <span>📦 Amazon FNSKU</span>
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Preset Templates</h3>
+        <div class="space-y-1.5">
+          <button onclick="loadTemplate('single_bin')" class="w-full text-left p-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded text-xs text-gray-300 transition flex justify-between">
+            <span>📦 Single BIN Label (BIN 1A)</span>
+            <span class="text-[10px] text-indigo-400">Bold</span>
+          </button>
+          <button onclick="loadTemplate('fnsku')" class="w-full text-left p-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded text-xs text-gray-300 transition flex justify-between">
+            <span>📦 Amazon FNSKU Label</span>
             <span class="text-[10px] text-indigo-400">2x1</span>
           </button>
-          <button onclick="loadTemplate('whatnot')" class="w-full text-left p-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-lg text-xs text-gray-300 transition flex justify-between items-center">
-            <span>🏷️ Whatnot Lot #</span>
-            <span class="text-[10px] text-indigo-400">3x2</span>
-          </button>
-          <button onclick="loadTemplate('suffocation')" class="w-full text-left p-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-lg text-xs text-gray-300 transition flex justify-between items-center">
-            <span>⚠️ Suffocation Warning</span>
-            <span class="text-[10px] text-indigo-400">2x2</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- AI Photo Recreator Button -->
-      <div class="pt-3 border-t border-gray-800">
-        <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">📸 AI Photo Recreator</label>
-        <div class="border border-dashed border-indigo-500/50 bg-indigo-950/20 hover:bg-indigo-950/40 rounded-lg p-3 text-center cursor-pointer relative">
-          <input type="file" accept="image/*" onchange="handleAIPhotoUpload(this.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-          <div class="text-xs font-semibold text-gray-200">Drop label photo here</div>
-          <div class="text-[10px] text-gray-400 mt-0.5">AI OCR auto-recreates layout</div>
         </div>
       </div>
     </aside>
 
-    <!-- Center Canvas Stage -->
+    <!-- Center Stage -->
     <main class="flex-1 bg-gray-900/60 p-8 flex flex-col items-center justify-start overflow-auto relative">
       
-      <!-- Canva Top Element Formatting Toolbar -->
+      <!-- Formatting Toolbar -->
       <div id="formatting-bar" class="bg-gray-950 border border-gray-800 rounded-xl px-4 py-2 mb-6 flex items-center space-x-4 no-print shadow-xl">
-        <span class="text-xs text-gray-400 font-semibold">Element Inspector:</span>
+        <span class="text-xs text-gray-400 font-semibold">Inspector:</span>
         <div class="h-4 w-px bg-gray-800"></div>
 
-        <!-- Font Size Slider -->
         <div class="flex items-center space-x-2">
-          <span class="text-xs text-gray-400">Size:</span>
-          <input type="range" id="inspector-size" min="8" max="48" value="14" oninput="updateSelectedElement()" class="w-24">
-          <span id="size-val" class="text-xs font-mono text-indigo-300">14px</span>
+          <span class="text-xs text-gray-400">Font Size:</span>
+          <input type="range" id="inspector-size" min="10" max="60" value="28" oninput="updateSelectedElement()" class="w-24">
+          <span id="size-val" class="text-xs font-mono text-indigo-300">28px</span>
         </div>
 
         <div class="h-4 w-px bg-gray-800"></div>
 
-        <!-- Alignment Buttons -->
-        <div class="flex space-x-1">
-          <button onclick="setAlign('left')" class="p-1.5 bg-gray-900 hover:bg-gray-800 rounded text-xs">⬅️</button>
-          <button onclick="setAlign('center')" class="p-1.5 bg-gray-900 hover:bg-gray-800 rounded text-xs">↔️</button>
-          <button onclick="setAlign('right')" class="p-1.5 bg-gray-900 hover:bg-gray-800 rounded text-xs">➡️</button>
-        </div>
-
-        <div class="h-4 w-px bg-gray-800"></div>
-
-        <!-- Text / Value Editor -->
         <div class="flex items-center space-x-2 flex-1">
-          <input type="text" id="inspector-text" oninput="updateSelectedElement()" placeholder="Edit selected text/barcode..." class="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 w-48 font-mono">
+          <input type="text" id="inspector-text" oninput="updateSelectedElement()" placeholder="Edit text or bin location..." class="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 w-48 font-mono">
         </div>
 
-        <!-- Delete Element Button -->
         <button onclick="deleteSelectedElement()" class="text-xs text-red-400 hover:text-red-300 font-bold px-2 py-1 bg-red-950/50 border border-red-900 rounded">
           🗑️ Delete
         </button>
       </div>
 
-      <!-- Thermal Printable Canvas Container -->
+      <!-- Printable Canvas -->
       <div id="label-canvas-container" class="flex items-center justify-center p-6 border border-dashed border-gray-800 bg-gray-950 rounded-xl shadow-2xl">
-        <div id="label-canvas" class="bg-white text-black rounded shadow-2xl relative overflow-hidden transition-all duration-200" style="width: 320px; height: 180px;">
-          <!-- Dynamic Canvas Elements Rendered Here -->
+        <div id="label-canvas" class="bg-white text-black rounded shadow-2xl relative overflow-hidden transition-all duration-200" style="width: 360px; height: 200px;">
+          <!-- Dynamic Canvas Elements -->
         </div>
       </div>
     </main>
@@ -206,20 +191,18 @@
     let nextId = 1;
 
     const PRESETS = {
-      fnsku: { width: 320, height: 180, name: "2x1 Amazon FNSKU" },
       standard: { width: 360, height: 200, name: "2.25x1.25 Dymo 30336" },
+      fnsku: { width: 320, height: 180, name: "2x1 Dymo 30334" },
       address: { width: 520, height: 160, name: "1.125x3.5 Address" },
-      small_sq: { width: 200, height: 200, name: "1x1 Square" },
       shipping: { width: 400, height: 600, name: "4x6 Box Shipping" },
       box_3: { width: 400, height: 300, name: "4x3 Box Inventory" },
-      polybag: { width: 300, height: 300, name: "2x2 Polybag Warning" },
-      product_3x2: { width: 420, height: 280, name: "3x2 Product Label" }
+      polybag: { width: 300, height: 300, name: "2x2 Square" }
     };
 
     function changeCanvasSize() {
       const presetKey = document.getElementById('preset-size').value;
       const canvas = document.getElementById('label-canvas');
-      const p = PRESETS[presetKey] || PRESETS.fnsku;
+      const p = PRESETS[presetKey] || PRESETS.standard;
       canvas.style.width = p.width + 'px';
       canvas.style.height = p.height + 'px';
     }
@@ -227,15 +210,10 @@
     function addElement(type, customProps = {}) {
       const id = 'el-' + (nextId++);
       let newEl = {
-        id,
-        type,
-        x: 20,
-        y: 20 + elements.length * 35,
-        text: type === 'barcode' ? 'X001ABC123' : (type === 'qr' ? 'https://label-ninja.com' : (type === 'badge' ? '$19.99' : 'Sample Text')),
-        fontSize: type === 'badge' ? 16 : 13,
-        align: 'center',
-        bold: true,
-        ...customProps
+        id, type, x: 25, y: 20 + elements.length * 45,
+        text: type === 'barcode' ? 'BIN-1A' : 'BIN 1A',
+        fontSize: type === 'barcode' ? 14 : 32,
+        align: 'center', bold: true, ...customProps
       };
       elements.push(newEl);
       selectElement(id);
@@ -260,23 +238,14 @@
 
         if (el.type === 'text') {
           div.innerText = el.text;
-        } else if (el.type === 'badge') {
-          div.className += ' bg-black text-white px-2 py-0.5 rounded font-mono';
-          div.innerText = el.text;
         } else if (el.type === 'barcode') {
           const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
           svg.id = `barcode-${el.id}`;
           div.appendChild(svg);
           setTimeout(() => {
             try {
-              JsBarcode(`#barcode-${el.id}`, el.text, { format: "CODE128", width: 2, height: 42, displayValue: true, fontSize: 11, fontOptions: "bold", margin: 0 });
+              JsBarcode(`#barcode-${el.id}`, el.text, { format: "CODE128", width: 2, height: 50, displayValue: true, fontSize: 13, fontOptions: "bold", margin: 0 });
             } catch(e) {}
-          }, 0);
-        } else if (el.type === 'qr') {
-          const qrCanvas = document.createElement('canvas');
-          div.appendChild(qrCanvas);
-          setTimeout(() => {
-            QRCode.toCanvas(qrCanvas, el.text, { width: 70, margin: 1 });
           }, 0);
         }
 
@@ -285,21 +254,14 @@
     }
 
     function makeDraggable(domEl, elObj) {
-      let isDragging = false;
-      let startX, startY, initialX, initialY;
-
+      let isDragging = false, startX, startY, initialX, initialY;
       domEl.onmousedown = (e) => {
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        initialX = elObj.x;
-        initialY = elObj.y;
+        isDragging = true; startX = e.clientX; startY = e.clientY;
+        initialX = elObj.x; initialY = elObj.y;
         document.onmousemove = (e) => {
           if (!isDragging) return;
-          const dx = e.clientX - startX;
-          const dy = e.clientY - startY;
-          elObj.x = Math.max(0, initialX + dx);
-          elObj.y = Math.max(0, initialY + dy);
+          elObj.x = Math.max(0, initialX + (e.clientX - startX));
+          elObj.y = Math.max(0, initialY + (e.clientY - startY));
           domEl.style.left = elObj.x + 'px';
           domEl.style.top = elObj.y + 'px';
         };
@@ -329,12 +291,6 @@
       }
     }
 
-    function setAlign(align) {
-      if (!selectedId) return;
-      const hit = elements.find(e => e.id === selectedId);
-      if (hit) { hit.align = align; renderCanvas(); }
-    }
-
     function deleteSelectedElement() {
       if (!selectedId) return;
       elements = elements.filter(e => e.id !== selectedId);
@@ -344,52 +300,68 @@
 
     function loadTemplate(type) {
       elements = [];
-      if (type === 'fnsku') {
+      if (type === 'single_bin') {
+        document.getElementById('preset-size').value = 'standard';
+        addElement('text', { text: 'BIN 1A', x: 80, y: 15, fontSize: 34 });
+        addElement('barcode', { text: 'BIN-1A', x: 60, y: 75 });
+      } else if (type === 'fnsku') {
         document.getElementById('preset-size').value = 'fnsku';
-        addElement('text', { text: 'Wireless Bluetooth Earbuds', x: 20, y: 15, fontSize: 12 });
-        addElement('barcode', { text: 'X001ABC123', x: 35, y: 45 });
-        addElement('text', { text: 'New', x: 135, y: 140, fontSize: 11 });
-      } else if (type === 'whatnot') {
-        document.getElementById('preset-size').value = 'product_3x2';
-        addElement('text', { text: 'WHATNOT LIVE SHOW - LOT #104', x: 30, y: 20, fontSize: 14 });
-        addElement('barcode', { text: 'LOT-104', x: 80, y: 65 });
-        addElement('badge', { text: 'STARTING BID $1', x: 110, y: 190, fontSize: 16 });
-      } else if (type === 'suffocation') {
-        document.getElementById('preset-size').value = 'polybag';
-        addElement('text', { text: 'WARNING: TO AVOID DANGER OF SUFFOCATION, KEEP THIS BAG AWAY FROM BABIES AND CHILDREN.', x: 15, y: 30, fontSize: 12 });
-        addElement('text', { text: 'DO NOT USE IN CRIBS, BEDS, OR PLAYPENS. THIS BAG IS NOT A TOY.', x: 15, y: 140, fontSize: 11 });
+        addElement('text', { text: 'Wireless Bluetooth Earbuds', x: 15, y: 10, fontSize: 12 });
+        addElement('barcode', { text: 'X001ABC123', x: 35, y: 40 });
+        addElement('text', { text: 'New', x: 135, y: 135, fontSize: 11 });
       }
       changeCanvasSize();
     }
 
-    function handleAIPhotoUpload(file) {
-      if (!file) return;
-      Tesseract.recognize(file, 'eng').then(({ data: { text } }) => {
-        const fnskuMatch = text.match(/\b(X[0-9A-Z]{9})\b/i);
-        const code = fnskuMatch ? fnskuMatch[1] : 'X001ABC123';
-        elements = [];
-        addElement('text', { text: text.split('\n')[0] || 'Recreated Label', x: 20, y: 15, fontSize: 12 });
-        addElement('barcode', { text: code, x: 35, y: 45 });
-        renderCanvas();
-      });
+    function generateBinBatch() {
+      const prefix = document.getElementById('bin-prefix').value || 'BIN ';
+      const shelf = document.getElementById('bin-shelf').value || 'A';
+      const start = parseInt(document.getElementById('bin-start').value || 1);
+      const end = parseInt(document.getElementById('bin-end').value || 20);
+
+      const batchPrintArea = document.getElementById('batch-print-area');
+      batchPrintArea.innerHTML = '';
+
+      for (let i = start; i <= end; i++) {
+        const binText = `${prefix}${i}${shelf}`;
+        const barcodeCode = binText.replace(/\s+/g, '-');
+
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'print-label bg-white text-black p-4 flex flex-col justify-between items-center shadow-lg border border-gray-300';
+        labelDiv.style.width = '360px';
+        labelDiv.style.height = '200px';
+
+        const svgId = `batch-bin-svg-${i}`;
+        labelDiv.innerHTML = `
+          <div class="text-3xl font-black tracking-wider text-black mt-1">${binText}</div>
+          <div class="my-1 flex justify-center w-full"><svg id="${svgId}" class="w-full"></svg></div>
+        `;
+        batchPrintArea.appendChild(labelDiv);
+
+        setTimeout(() => {
+          try {
+            JsBarcode(`#${svgId}`, barcodeCode, { format: "CODE128", width: 2, height: 50, displayValue: true, fontSize: 12, fontOptions: "bold", margin: 0 });
+          } catch(e) {}
+        }, 10);
+      }
+
+      setTimeout(() => { window.print(); }, 400);
     }
 
     function exportVectorPDF() {
       const docDefinition = {
-        pageSize: { width: 144, height: 72 },
+        pageSize: { width: 162, height: 90 },
         pageMargins: [6, 6, 6, 6],
-        content: elements.map(e => ({ text: e.text, fontSize: e.fontSize / 1.5, alignment: e.align, bold: e.bold }))
+        content: elements.map(e => ({ text: e.text, fontSize: e.fontSize / 1.5, alignment: 'center', bold: true }))
       };
-      pdfMake.createPdf(docDefinition).download("canva_label.pdf");
+      pdfMake.createPdf(docDefinition).download("bin_labels.pdf");
     }
 
-    // Canvas Deselect Click
     document.getElementById('label-canvas-container').onclick = () => { selectedId = null; renderCanvas(); };
 
-    // Initial Load
     window.onload = () => {
       changeCanvasSize();
-      loadTemplate('fnsku');
+      loadTemplate('single_bin');
     };
   </script>
 </body>
