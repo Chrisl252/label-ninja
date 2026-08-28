@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Label Ninja — Thermal Barcode Studio & Custom Label Editor</title>
-  <meta name="description" content="Free thermal label generator & comprehensive drag-and-drop label editor for warehouse bins, Whatnot live numbers, Amazon FNSKUs, and 4x6 shipping labels. Compatible with Rollo, Dymo, Zebra.">
+  <title>Label Ninja — Thermal Label Generator, Printer Setup Guides & Custom Label Editor</title>
+  <meta name="description" content="Free thermal label generator with warehouse bin labels, Whatnot numbers, Amazon FNSKUs, custom barcode labels, thermal printer setup guides, and best label printer picks for Rollo, DYMO, Zebra, and small businesses.">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9909892821021346" crossorigin="anonymous"></script>
   
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
@@ -58,6 +59,11 @@
         break-after: auto !important;
         page-break-after: auto !important;
       }
+      .bin-landscape-print-label {
+        flex-direction: column !important;
+        justify-content: center !important;
+        gap: 0.28in !important;
+      }
       .canvas-element.selected { outline: none !important; }
     }
   </style>
@@ -86,6 +92,9 @@
       </button>
       <button onclick="switchMode('fnsku')" id="tab-fnsku" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
         FNSKU & CSV Batch
+      </button>
+      <button onclick="switchMode('guides')" id="tab-guides" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
+        Printer Guides
       </button>
     </div>
 
@@ -251,7 +260,38 @@
         </div>
       </div>
 
-      <div class="rounded-lg border border-amber-700/60 bg-amber-950/30 px-4 py-3 text-sm text-amber-100" role="status">
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div class="md:col-span-2 lg:col-span-2">
+          <label for="bin-layout" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Label Layout</label>
+          <select id="bin-layout" onchange="updateBinPrintHint()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+            <option value="portrait" selected>Vertical 4&quot; x 6&quot;</option>
+            <option value="landscape">Horizontal 6&quot; x 4&quot;</option>
+          </select>
+        </div>
+        <div>
+          <label for="bin-title-size" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Text Size</label>
+          <input type="number" id="bin-title-size" value="0.72" min="0.25" max="1.4" step="0.05" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+        </div>
+        <div>
+          <label for="bin-barcode-height" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Barcode Height</label>
+          <input type="number" id="bin-barcode-height" value="2.45" min="0.75" max="4" step="0.05" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+        </div>
+        <div>
+          <label for="bin-barcode-width" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Line Width</label>
+          <input type="number" id="bin-barcode-width" value="3" min="1" max="5" step="0.25" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+        </div>
+        <div>
+          <label for="bin-padding" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Padding</label>
+          <input type="number" id="bin-padding" value="0.18" min="0" max="0.6" step="0.02" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+        </div>
+      </div>
+
+      <label class="flex items-center gap-2 text-sm font-semibold text-slate-200">
+        <input type="checkbox" id="bin-show-value" checked class="h-4 w-4 rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-blue-500">
+        Show barcode text under bars
+      </label>
+
+      <div id="bin-print-hint" class="rounded-lg border border-amber-700/60 bg-amber-950/30 px-4 py-3 text-sm text-amber-100" role="status">
         4&quot; x 6&quot; setup: choose 4 x 6 in (102 x 152 mm) paper, Portrait, Margins None, and Scale 100%. Each bin number and barcode prints together on one label.
       </div>
 
@@ -332,6 +372,200 @@
     </div>
   </main>
 
+  <!-- MODE 5: Printer Setup & Buying Guides -->
+  <main id="mode-guides" class="flex-1 max-w-6xl w-full mx-auto p-6 flex flex-col space-y-6 hidden no-print">
+    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
+      <div class="border-b border-slate-800 pb-4">
+        <p class="text-xs font-bold uppercase tracking-[0.22em] text-blue-300">Thermal Label Printer Guides</p>
+        <h1 class="mt-2 text-3xl font-black text-white">How to set up a label printer for 4x6 shipping labels, bin labels, barcodes, and FNSKU labels</h1>
+        <p class="mt-3 max-w-4xl text-sm leading-6 text-slate-300">Most label-printer searches are not looking for theory. They are trying to fix a bad print right now: blank labels, sideways labels, skipped labels, wrong 4x6 sizing, margins, scale, calibration, or which thermal printer to buy for eBay, Amazon, Shopify, Etsy, Whatnot, or warehouse bins. This guide targets those jobs directly and links each setup path back to the matching Label Ninja tool.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="#printer-setup-checklist" class="rounded-xl border border-slate-700 bg-slate-950 p-4 hover:border-blue-500">
+          <h2 class="text-base font-extrabold text-white">Universal Setup Checklist</h2>
+          <p class="mt-2 text-sm text-slate-400">Driver, paper size, orientation, margins, scale, calibration, and test print.</p>
+        </a>
+        <a href="#best-label-printers" class="rounded-xl border border-slate-700 bg-slate-950 p-4 hover:border-blue-500">
+          <h2 class="text-base font-extrabold text-white">Best Label Printers</h2>
+          <p class="mt-2 text-sm text-slate-400">Rollo, Zebra, DYMO, MUNBYN, Brother, and budget Bluetooth options.</p>
+        </a>
+        <a href="#seo-keywords" class="rounded-xl border border-slate-700 bg-slate-950 p-4 hover:border-blue-500">
+          <h2 class="text-base font-extrabold text-white">What People Search</h2>
+          <p class="mt-2 text-sm text-slate-400">Click intent pulled from SERP patterns and support-guide snippets.</p>
+        </a>
+      </div>
+    </section>
+
+    <section id="printer-setup-checklist" class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
+      <h2 class="text-2xl font-black text-white">Universal thermal label printer setup checklist</h2>
+      <p class="text-sm leading-6 text-slate-300">Use this first for Rollo, Zebra, DYMO 4XL, Brother, MUNBYN, Nelko, Polono, Jadens, and most 203 DPI direct thermal printers. It matches the recurring setup pattern shown by official Rollo setup pages, Zebra's ZD421 documentation, DYMO LabelWriter help, and shipping-platform support guides.</p>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="rounded-xl border border-slate-700 bg-slate-950 p-4">
+          <h3 class="font-extrabold text-white">1. Install the real driver before plugging in</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-400">Download the current driver or setup utility from the printer maker. On Windows, this prevents the printer from showing up as a generic USB device. If it already did, unplug it, install the driver, reboot if needed, then reconnect.</p>
+        </div>
+        <div class="rounded-xl border border-slate-700 bg-slate-950 p-4">
+          <h3 class="font-extrabold text-white">2. Set the exact label size</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-400">For shipping labels use 4&quot; x 6&quot; or the closest driver option, often 100 x 150 mm, 102 x 152 mm, or 4 x 6 in. For small barcode labels use the exact stock size such as 2&quot; x 1&quot;, 1&quot; x 0.5&quot;, or 3&quot; x 2&quot;.</p>
+        </div>
+        <div class="rounded-xl border border-slate-700 bg-slate-950 p-4">
+          <h3 class="font-extrabold text-white">3. Print at 100% scale with no margins</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-400">In Chrome or the system print dialog, choose Scale 100%, Margins None, and the correct orientation. Do not use Fit to page if your barcode is shrinking, blurring, or printing off-center.</p>
+        </div>
+        <div class="rounded-xl border border-slate-700 bg-slate-950 p-4">
+          <h3 class="font-extrabold text-white">4. Calibrate after changing label rolls</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-400">If labels skip, feed continuously, stop halfway, or start in the wrong spot, run printer calibration. Zebra calls this SmartCal on ZD421/ZD621 models; other printers usually have a feed-button calibration sequence or setup utility.</p>
+        </div>
+      </div>
+      <div class="rounded-xl border border-blue-800 bg-blue-950/40 p-4">
+        <h3 class="font-extrabold text-blue-100">Label Ninja print settings that usually work</h3>
+        <p class="mt-2 text-sm leading-6 text-blue-100">Warehouse bins: 4&quot; x 6&quot; portrait or 6&quot; x 4&quot; landscape, no margins, 100% scale. Whatnot numbers: choose matching stock in Label Ninja, then choose the same paper size in the driver. FNSKU/barcode labels: start with 2&quot; x 1&quot;, 100% scale, and make sure the barcode is not stretched by the print dialog.</p>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
+      <h2 class="text-2xl font-black text-white">Brand setup guides</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <article id="rollo-setup" class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
+          <h3 class="text-xl font-black text-white">Rollo printer setup for 4x6 labels</h3>
+          <p class="text-sm leading-6 text-slate-400">Best target keywords: how to set up Rollo printer, Rollo 4x6 label setup, Rollo printing sideways, Rollo blank labels, Rollo skipping labels.</p>
+          <ol class="list-decimal pl-5 text-sm leading-6 text-slate-300 space-y-1">
+            <li>Install the Rollo wired or wireless setup path from Rollo's setup page.</li>
+            <li>Set paper size to 4 x 6 in, 100 x 150 mm, or 102 x 152 mm depending on driver.</li>
+            <li>In Chrome print preview choose the Rollo printer, margins none, and scale 100%.</li>
+            <li>If the print is sideways, change orientation first before changing Label Ninja layout.</li>
+            <li>If labels feed wrong, recalibrate from the Rollo utility or feed-button sequence.</li>
+          </ol>
+          <div class="flex flex-wrap gap-2">
+            <a href="https://www.rollo.com/setup/" rel="noopener" target="_blank" class="rounded-lg bg-slate-800 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700">Official setup</a>
+            <a href="#tools/warehouse-rack-bin-label-generator" onclick="switchMode('bin')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-500">Make bin labels</a>
+          </div>
+        </article>
+        <article id="zebra-setup" class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
+          <h3 class="text-xl font-black text-white">Zebra ZD421 setup for labels</h3>
+          <p class="text-sm leading-6 text-slate-400">Best target keywords: Zebra ZD421 setup, Zebra ZD421 label size, Zebra SmartCal, Zebra printer calibration, Zebra ZD421 4x6 labels.</p>
+          <ol class="list-decimal pl-5 text-sm leading-6 text-slate-300 space-y-1">
+            <li>Load media, close the printer, and run SmartCal media calibration.</li>
+            <li>Install Zebra Setup Utilities or the current Zebra driver before configuring Windows.</li>
+            <li>Set label width, label length, label type, darkness, and speed in the driver.</li>
+            <li>Use 203 DPI-friendly barcode sizing unless you specifically own the 300 DPI model.</li>
+            <li>For web printing, verify Chrome print preview keeps paper size, orientation, and scale at 100%.</li>
+          </ol>
+          <div class="flex flex-wrap gap-2">
+            <a href="https://www.zebra.com/us/en/support-downloads/printers/desktop/zd421.html" rel="noopener" target="_blank" class="rounded-lg bg-slate-800 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700">Zebra drivers</a>
+            <a href="#tools/amazon-fba-fnsku-generator" onclick="switchMode('fnsku')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-500">Make FNSKU labels</a>
+          </div>
+        </article>
+        <article id="dymo-setup" class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
+          <h3 class="text-xl font-black text-white">DYMO LabelWriter setup</h3>
+          <p class="text-sm leading-6 text-slate-400">Best target keywords: DYMO LabelWriter 450 setup, DYMO 4XL 4x6 shipping labels, DYMO label size, DYMO blank labels, DYMO labels not aligned.</p>
+          <ol class="list-decimal pl-5 text-sm leading-6 text-slate-300 space-y-1">
+            <li>Use DYMO-compatible label rolls and load them from underneath the roll into the guide.</li>
+            <li>Install DYMO Connect or the correct legacy driver for older LabelWriter models.</li>
+            <li>Choose the exact DYMO stock code or physical size in printer preferences.</li>
+            <li>For 4x6 shipping labels, use DYMO 4XL-class hardware rather than small address-label models.</li>
+            <li>If alignment drifts, reseat the spool tightly and confirm the label guide is snug.</li>
+          </ol>
+          <div class="flex flex-wrap gap-2">
+            <a href="https://help.dymo.com/" rel="noopener" target="_blank" class="rounded-lg bg-slate-800 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700">DYMO help</a>
+            <a href="#tools/whatnot-live-show-number-generator" onclick="switchMode('whatnot')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-500">Make number labels</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="best-label-printers" class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
+      <div>
+        <h2 class="text-2xl font-black text-white">Best thermal label printers for small business</h2>
+        <p class="mt-2 text-sm leading-6 text-slate-300">Use these as affiliate slots. I did not find a saved Amazon Associates tag in this repo, so the links are safe product/search destinations with `rel="sponsored noopener"` ready for your real affiliate URLs.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <article class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
+          <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">Best overall for resellers</p>
+          <h3 class="text-xl font-black text-white">Rollo Wireless Label Printer</h3>
+          <p class="text-sm leading-6 text-slate-400">Good pick for eBay, Shopify, Etsy, Amazon FBM, Pirate Ship, and warehouse bin labels when you want 4x6 shipping plus browser-based tools.</p>
+          <a href="https://www.amazon.com/s?k=Rollo+Wireless+Label+Printer" rel="sponsored noopener" target="_blank" class="inline-flex rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-500">Check price</a>
+        </article>
+        <article class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
+          <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">Best simple USB setup</p>
+          <h3 class="text-xl font-black text-white">Rollo USB Thermal Printer</h3>
+          <p class="text-sm leading-6 text-slate-400">Strong choice for a packing table that stays connected to one Windows or Mac workstation. Fewer wireless variables, reliable 4x6 output.</p>
+          <a href="https://www.amazon.com/s?k=Rollo+USB+Thermal+Label+Printer" rel="sponsored noopener" target="_blank" class="inline-flex rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-500">Check price</a>
+        </article>
+        <article class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
+          <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">Best warehouse-grade desktop</p>
+          <h3 class="text-xl font-black text-white">Zebra ZD421</h3>
+          <p class="text-sm leading-6 text-slate-400">Best fit when uptime, calibration controls, replaceable parts, and business support matter more than the lowest purchase price.</p>
+          <a href="https://www.amazon.com/s?k=Zebra+ZD421+thermal+label+printer" rel="sponsored noopener" target="_blank" class="inline-flex rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-500">Check price</a>
+        </article>
+        <article class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
+          <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">Best DYMO 4x6 option</p>
+          <h3 class="text-xl font-black text-white">DYMO LabelWriter 4XL</h3>
+          <p class="text-sm leading-6 text-slate-400">Useful if you already live in DYMO software or find one used, but verify label compatibility and driver support before buying older hardware.</p>
+          <a href="https://www.amazon.com/s?k=DYMO+LabelWriter+4XL" rel="sponsored noopener" target="_blank" class="inline-flex rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-500">Check price</a>
+        </article>
+        <article class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
+          <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">Best budget 4x6 printer</p>
+          <h3 class="text-xl font-black text-white">MUNBYN 4x6 Thermal Printer</h3>
+          <p class="text-sm leading-6 text-slate-400">Budget-friendly for new sellers who need shipping labels now. Good target for comparison traffic against Rollo and Zebra.</p>
+          <a href="https://www.amazon.com/s?k=MUNBYN+4x6+thermal+label+printer" rel="sponsored noopener" target="_blank" class="inline-flex rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-500">Check price</a>
+        </article>
+        <article class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
+          <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">Best small-label ecosystem</p>
+          <h3 class="text-xl font-black text-white">Brother QL Series</h3>
+          <p class="text-sm leading-6 text-slate-400">Useful for address labels, badges, file labels, and smaller workflow labels. Check maximum label width before buying for 4x6 shipping.</p>
+          <a href="https://www.amazon.com/s?k=Brother+QL+label+printer" rel="sponsored noopener" target="_blank" class="inline-flex rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-500">Check price</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="seo-keywords" class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
+      <h2 class="text-2xl font-black text-white">Search intent map: how Label Ninja gets the clicks</h2>
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="min-w-full divide-y divide-slate-800 text-left text-sm">
+          <thead class="bg-slate-950 text-xs uppercase tracking-wider text-slate-400">
+            <tr><th class="px-4 py-3">Keyword theme</th><th class="px-4 py-3">Searcher problem</th><th class="px-4 py-3">Page angle</th><th class="px-4 py-3">Click hook</th></tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300">
+            <tr><td class="px-4 py-3 font-bold text-white">how to print 4x6 shipping labels</td><td class="px-4 py-3">Needs labels to fit a thermal printer.</td><td class="px-4 py-3">Universal setup checklist.</td><td class="px-4 py-3">Exact paper size, margins none, 100% scale.</td></tr>
+            <tr><td class="px-4 py-3 font-bold text-white">Rollo printer setup</td><td class="px-4 py-3">Driver install and 4x6 setup.</td><td class="px-4 py-3">Rollo guide plus bin-label generator.</td><td class="px-4 py-3">Fix sideways/blank/skipping labels.</td></tr>
+            <tr><td class="px-4 py-3 font-bold text-white">Zebra ZD421 setup</td><td class="px-4 py-3">Calibration and label-size settings.</td><td class="px-4 py-3">Zebra guide with SmartCal language.</td><td class="px-4 py-3">Warehouse-grade setup without ZebraDesigner.</td></tr>
+            <tr><td class="px-4 py-3 font-bold text-white">DYMO LabelWriter 450 setup</td><td class="px-4 py-3">Older DYMO users need driver and roll help.</td><td class="px-4 py-3">DYMO guide plus stock-size warnings.</td><td class="px-4 py-3">Know when you need 4XL for 4x6 labels.</td></tr>
+            <tr><td class="px-4 py-3 font-bold text-white">best thermal label printer for small business</td><td class="px-4 py-3">Buyer wants the right model.</td><td class="px-4 py-3">Best printer comparison.</td><td class="px-4 py-3">Pick by use case: reselling, warehouse, budget, small labels.</td></tr>
+            <tr><td class="px-4 py-3 font-bold text-white">free barcode label generator</td><td class="px-4 py-3">Needs a printable barcode now.</td><td class="px-4 py-3">Custom editor and FNSKU tool.</td><td class="px-4 py-3">Browser-only, no signup, thermal-ready output.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rounded-xl border border-slate-700 bg-slate-950 p-4">
+        <h3 class="font-extrabold text-white">Content expansion backlog</h3>
+        <p class="mt-2 text-sm leading-6 text-slate-400">Next SEO bricks should become dedicated URLs or routed sections: Rollo setup guide, Zebra ZD421 setup guide, DYMO 4XL setup guide, best thermal label printer for eBay sellers, best label printer for Amazon FBA, how to fix thermal label printer printing sideways, how to calibrate a thermal label printer, and how to print warehouse bin labels.</p>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
+      <h2 class="text-2xl font-black text-white">Thermal label printer FAQ</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <article class="rounded-xl border border-slate-700 bg-slate-950 p-4">
+          <h3 class="font-extrabold text-white">Why is my 4x6 label printing too small?</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-400">The print dialog is usually scaling it down. Choose the exact 4x6 paper size, set margins to none, and set scale to 100% instead of fit to page.</p>
+        </article>
+        <article class="rounded-xl border border-slate-700 bg-slate-950 p-4">
+          <h3 class="font-extrabold text-white">Why is my thermal label printing sideways?</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-400">The driver orientation does not match the label design. Change Portrait/Landscape in the print dialog, then choose the matching Label Ninja layout.</p>
+        </article>
+        <article class="rounded-xl border border-slate-700 bg-slate-950 p-4">
+          <h3 class="font-extrabold text-white">Why is my label printer feeding blank labels?</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-400">Blank feeds usually mean calibration, wrong media sensing, upside-down thermal labels, or the wrong label type in the driver. Recalibrate after reseating the roll.</p>
+        </article>
+        <article class="rounded-xl border border-slate-700 bg-slate-950 p-4">
+          <h3 class="font-extrabold text-white">What printer should I buy for eBay and Amazon labels?</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-400">For most resellers, a 4-inch direct thermal printer is the safest starting point. Rollo is simple, Zebra is more warehouse-grade, and budget 4x6 printers work if driver support is acceptable.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
   <!-- Live Batch Print Container -->
   <div id="batch-print-area" class="w-full flex flex-col items-center"></div>
 
@@ -341,6 +575,7 @@
       <a href="/sitemap.xml" class="hover:text-slate-300">Sitemap XML</a>
       <a href="#tools/amazon-fba-fnsku-generator" class="hover:text-slate-300">FNSKU Tool</a>
       <a href="#tools/whatnot-live-show-number-generator" class="hover:text-slate-300">Whatnot Tool</a>
+      <a href="#best-label-printers" onclick="switchMode('guides')" class="hover:text-slate-300">Best Printers</a>
     </div>
   </footer>
 
@@ -369,10 +604,44 @@
       show: { width: 3, height: 2, padding: 0.08, name: '3" x 2"', driverSize: '76 x 51 mm' }
     };
 
-    const BIN_STOCK = { width: 4, height: 6, padding: 0.18 };
+    const BIN_LAYOUTS = {
+      portrait: { width: 4, height: 6, name: '4" x 6"', orientation: 'Portrait', driverSize: '102 x 152 mm' },
+      landscape: { width: 6, height: 4, name: '6" x 4"', orientation: 'Landscape', driverSize: '152 x 102 mm' }
+    };
 
     function getWhatnotStock() {
       return WHATNOT_STOCKS[document.getElementById('wn-stock').value] || WHATNOT_STOCKS.tiny;
+    }
+
+    function getBinSettings() {
+      const layout = BIN_LAYOUTS[document.getElementById('bin-layout').value] || BIN_LAYOUTS.portrait;
+      return {
+        ...layout,
+        padding: clampNumber(document.getElementById('bin-padding').value, 0, 0.6, 0.18),
+        titleSize: clampNumber(document.getElementById('bin-title-size').value, 0.25, 1.4, 0.72),
+        barcodeHeight: clampNumber(document.getElementById('bin-barcode-height').value, 0.75, 4, 2.45),
+        barcodeWidth: clampNumber(document.getElementById('bin-barcode-width').value, 1, 5, 3),
+        showValue: document.getElementById('bin-show-value').checked
+      };
+    }
+
+    function clampNumber(value, min, max, fallback) {
+      const parsed = parseFloat(value);
+      if (!Number.isFinite(parsed)) return fallback;
+      return Math.min(max, Math.max(min, parsed));
+    }
+
+    function updateBinPrintHint() {
+      const stock = getBinSettings();
+      document.getElementById('bin-print-hint').textContent =
+        `${stock.name} setup: choose ${stock.driverSize} paper, ${stock.orientation}, Margins None, and Scale 100%. Each bin number and barcode prints together on one label.`;
+    }
+
+    function getBinTitleSize(binText, stock) {
+      if (stock.orientation !== 'Landscape') return stock.titleSize;
+      const maxTitleWidth = stock.width * 0.88;
+      const fittedSize = maxTitleWidth / Math.max(1, binText.length * 0.56);
+      return Math.min(stock.titleSize, fittedSize);
     }
 
     function setPrintStock(stock) {
@@ -448,6 +717,7 @@
       document.getElementById('mode-bin').classList.add('hidden');
       document.getElementById('mode-whatnot').classList.add('hidden');
       document.getElementById('mode-fnsku').classList.add('hidden');
+      document.getElementById('mode-guides').classList.add('hidden');
       document.getElementById('mode-editor').classList.add('hidden');
       document.getElementById('mode-editor').classList.remove('flex');
 
@@ -456,6 +726,7 @@
       document.getElementById('tab-bin').className = inactiveTabClass;
       document.getElementById('tab-whatnot').className = inactiveTabClass;
       document.getElementById('tab-fnsku').className = inactiveTabClass;
+      document.getElementById('tab-guides').className = inactiveTabClass;
       document.getElementById('tab-editor').className = inactiveTabClass;
 
       if (mode === 'bin') {
@@ -467,6 +738,9 @@
       } else if (mode === 'fnsku') {
         document.getElementById('mode-fnsku').classList.remove('hidden');
         document.getElementById('tab-fnsku').className = activeTabClass;
+      } else if (mode === 'guides') {
+        document.getElementById('mode-guides').classList.remove('hidden');
+        document.getElementById('tab-guides').className = activeTabClass;
       } else if (mode === 'editor') {
         document.getElementById('mode-editor').classList.remove('hidden');
         document.getElementById('mode-editor').classList.add('flex');
@@ -481,13 +755,14 @@
       const shelf = document.getElementById('bin-shelf').value || 'A';
       const start = parseInt(document.getElementById('bin-start').value || 1);
       const end = parseInt(document.getElementById('bin-end').value || 20);
+      const stock = getBinSettings();
 
       if (!Number.isInteger(start) || !Number.isInteger(end) || start < 1 || end > 500 || end < start) {
         window.alert('Choose a valid bin range from 1 to 500.');
         return false;
       }
 
-      setPrintStock(BIN_STOCK);
+      setPrintStock(stock);
 
       const batchPrintArea = document.getElementById('batch-print-area');
       batchPrintArea.innerHTML = '';
@@ -497,27 +772,30 @@
         const barcodeCode = binText.replace(/\s+/g, '-');
 
         const labelDiv = document.createElement('div');
-        labelDiv.className = 'print-label bin-print-label bg-white text-black flex flex-col justify-around items-center';
-        labelDiv.style.width = `${BIN_STOCK.width}in`;
-        labelDiv.style.height = `${BIN_STOCK.height}in`;
-        labelDiv.style.padding = `${BIN_STOCK.padding}in`;
+        labelDiv.className = `print-label bin-print-label ${stock.orientation === 'Landscape' ? 'bin-landscape-print-label' : ''} bg-white text-black flex ${stock.orientation === 'Landscape' ? 'flex-col justify-center gap-6' : 'flex-col justify-around'} items-center`;
+        labelDiv.style.width = `${stock.width}in`;
+        labelDiv.style.height = `${stock.height}in`;
+        labelDiv.style.padding = `${stock.padding}in`;
         labelDiv.style.boxSizing = 'border-box';
         labelDiv.style.overflow = 'hidden';
 
         const svgId = `batch-bin-svg-${i}`;
         const title = document.createElement('div');
         title.textContent = binText;
-        title.style.fontSize = '0.72in';
+        title.style.fontSize = `${getBinTitleSize(binText, stock)}in`;
         title.style.fontWeight = '900';
         title.style.lineHeight = '1';
         title.style.textAlign = 'center';
         title.style.color = 'black';
         title.style.letterSpacing = '0.02in';
         title.style.whiteSpace = 'nowrap';
+        title.style.width = stock.orientation === 'Landscape' ? '92%' : '100%';
+        title.style.flexShrink = '0';
+        title.style.overflow = 'hidden';
 
         const barcodeWrap = document.createElement('div');
         barcodeWrap.style.width = '92%';
-        barcodeWrap.style.height = '2.45in';
+        barcodeWrap.style.height = `${stock.barcodeHeight}in`;
         barcodeWrap.style.display = 'flex';
         barcodeWrap.style.alignItems = 'center';
         barcodeWrap.style.justifyContent = 'center';
@@ -532,7 +810,7 @@
 
         setTimeout(() => {
           try {
-            JsBarcode(`#${svgId}`, barcodeCode, { format: "CODE128", width: 3, height: 150, displayValue: true, fontSize: 28, fontOptions: "bold", margin: 0 });
+            JsBarcode(`#${svgId}`, barcodeCode, { format: "CODE128", width: stock.barcodeWidth, height: Math.round(stock.barcodeHeight * 72), displayValue: stock.showValue, fontSize: 28, fontOptions: "bold", margin: 0 });
           } catch(e) {}
         }, 10);
       }
@@ -895,9 +1173,19 @@
       }
     });
 
+    function getInitialModeFromHash() {
+      const hash = window.location.hash;
+      if (hash.includes('best-label-printers') || hash.includes('printer-setup') || hash.includes('seo-keywords') || hash.includes('rollo-setup') || hash.includes('zebra-setup') || hash.includes('dymo-setup')) return 'guides';
+      if (hash.includes('warehouse-rack-bin-label-generator')) return 'bin';
+      if (hash.includes('whatnot-live-show-number-generator')) return 'whatnot';
+      if (hash.includes('amazon-fba-fnsku-generator')) return 'fnsku';
+      return 'editor';
+    }
+
     window.onload = () => {
+      updateBinPrintHint();
       updateWhatnotPrintHint();
-      switchMode('editor');
+      switchMode(getInitialModeFromHash());
     };
   </script>
 </body>
