@@ -1,5 +1,11 @@
 # DECISIONS_LOG.md — Label Ninja Decision Record
 
+## 2026-08-29: Adsterra display ads + privacy page
+
+- **Decision:** Add Adsterra 728x90 and 300x250 display units across Label Ninja, plus a dedicated `/privacy.html` for AdSense qualification.
+- **Reason:** Google allows other networks on the same site if the page still follows publisher policy. Popunder, Social Bar, and Smartlink stay off. Ads load in sandboxed srcdoc iframes because Adsterra `invoke.js` uses `document.write`.
+- **Placement:** Leaderboard under the header on every view. Rectangle on the editor (below the canvas), each tool, Printer Guides, and the privacy page. Slots in hidden tabs do not load until that tab is shown.
+
 ## 2026-08-25: Freemium Pivot & Domain Acquisition
 
 - **Decision:** Chris acquired `label-ninja.com`. Pivot project to 100% Freemium & Unlimited tool.
