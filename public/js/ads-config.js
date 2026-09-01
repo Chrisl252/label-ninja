@@ -6,7 +6,9 @@
  * while the site is in Google AdSense qualification.
  */
 export const ADS = {
-  enabled: true,
+  // Disabled 2026-08-31: SaaS pivot — operational pages are ad-free. Loader
+  // no-ops when false; re-enable only for public SEO guide pages.
+  enabled: false,
   invokeHost: "https://thrillingdeepcutlery.com",
 
   leaderboard: [

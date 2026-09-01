@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Label Ninja — Thermal Label Generator, Printer Setup Guides & Custom Label Editor</title>
   <meta name="description" content="Free thermal label generator with warehouse bin labels, Whatnot numbers, Amazon FNSKUs, custom barcode labels, thermal printer setup guides, and best label printer picks for Rollo, DYMO, Zebra, and small businesses.">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9909892821021346" crossorigin="anonymous"></script>
-  
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
   
@@ -24,11 +22,6 @@
 
   <style>
     html, body { overflow-x: clip; }
-    .ad-slot { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
-    .ad-kicker { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #64748b; }
-    .ad-well[data-ad-slot="leaderboard"] { min-height: 90px; width: 728px; max-width: 100%; }
-    .ad-well[data-ad-slot="rectangle"] { min-height: 250px; width: 300px; }
-    .ad-well[data-ad-state="empty"] { display: none; min-height: 0; }
     .canvas-element { user-select: none; touch-action: none; }
     .canvas-element.selected { outline: 2px dashed #3b82f6; outline-offset: 2px; }
     @page { size: auto; margin: 0; }
@@ -111,11 +104,6 @@
       </button>
     </div>
   </header>
-
-  <aside class="ad-slot no-print border-b border-slate-800 bg-slate-950 px-4 py-3" aria-label="Advertisement">
-    <p class="ad-kicker">Advertisement</p>
-    <div class="ad-well" data-ad-slot="leaderboard"></div>
-  </aside>
 
   <!-- MODE 1: Custom Visual Editor (Comprehensive Studio) -->
   <div id="mode-editor" class="flex-1 flex flex-col lg:flex-row overflow-auto lg:overflow-hidden no-print">
@@ -240,10 +228,6 @@
           <!-- Canvas Elements -->
         </div>
       </div>
-      <aside class="ad-slot no-print mt-8" aria-label="Advertisement">
-        <p class="ad-kicker">Advertisement</p>
-        <div class="ad-well" data-ad-slot="rectangle"></div>
-      </aside>
     </main>
   </div>
 
@@ -314,10 +298,6 @@
         <span>PRINT BIN LABELS NOW</span>
       </button>
     </div>
-    <aside class="ad-slot" aria-label="Advertisement">
-      <p class="ad-kicker">Advertisement</p>
-      <div class="ad-well" data-ad-slot="rectangle"></div>
-    </aside>
   </main>
 
   <!-- MODE 3: Whatnot Live Show Numbers -->
@@ -358,10 +338,6 @@
         <span>PRINT WHATNOT NUMBERS NOW</span>
       </button>
     </div>
-    <aside class="ad-slot" aria-label="Advertisement">
-      <p class="ad-kicker">Advertisement</p>
-      <div class="ad-well" data-ad-slot="rectangle"></div>
-    </aside>
   </main>
 
   <!-- MODE 4: FNSKU & CSV Batch Studio -->
@@ -392,10 +368,6 @@
         <span>PRINT FNSKU LABEL NOW</span>
       </button>
     </div>
-    <aside class="ad-slot" aria-label="Advertisement">
-      <p class="ad-kicker">Advertisement</p>
-      <div class="ad-well" data-ad-slot="rectangle"></div>
-    </aside>
   </main>
 
   <!-- MODE 5: Printer Setup & Buying Guides -->
@@ -449,11 +421,6 @@
         <p class="mt-2 text-sm leading-6 text-blue-100">Warehouse bins: 4&quot; x 6&quot; portrait or 6&quot; x 4&quot; landscape, no margins, 100% scale. Whatnot numbers: choose matching stock in Label Ninja, then choose the same paper size in the driver. FNSKU/barcode labels: start with 2&quot; x 1&quot;, 100% scale, and make sure the barcode is not stretched by the print dialog.</p>
       </div>
     </section>
-
-    <aside class="ad-slot" aria-label="Advertisement">
-      <p class="ad-kicker">Advertisement</p>
-      <div class="ad-well" data-ad-slot="rectangle"></div>
-    </aside>
 
     <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
       <h2 class="text-2xl font-black text-white">Brand setup guides</h2>
@@ -779,9 +746,6 @@
         document.getElementById('tab-editor').className = activeTabClass;
         changeCanvasSize();
         if (!elements.length) loadTemplate('standard');
-      }
-      if (window.labelNinjaAds && typeof window.labelNinjaAds.paintWells === 'function') {
-        window.labelNinjaAds.paintWells();
       }
     }
 
@@ -1223,6 +1187,5 @@
       switchMode(getInitialModeFromHash());
     };
   </script>
-  <script type="module" src="/js/ads.js"></script>
 </body>
 </html>
