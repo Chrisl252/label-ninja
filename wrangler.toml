@@ -1,5 +1,6 @@
 name = "label-ninja"
 compatibility_date = "2024-09-23"
+main = "src/worker.js"
 
 routes = [
   { pattern = "label-ninja.com", custom_domain = true },
@@ -10,3 +11,11 @@ routes = [
 directory = "./public"
 html_handling = "auto-trailing-slash"
 not_found_handling = "single-page-application"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "label-ninja-db"
+database_id = "852d3ccd-83b6-4ab9-9c39-49a1cf77b88b"
+
+[vars]
+ADMIN_EMAILS = "chrislucas252@gmail.com"
