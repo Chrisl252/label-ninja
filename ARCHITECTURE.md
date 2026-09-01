@@ -58,8 +58,12 @@ label-ninja/
 │   ├── test-export-local.ps1 # 13-case + bonus export suite (metering/idempotency/race/limits)
 │   ├── test-billing-local.ps1 # 34-check billing suite (Phase A -NoKey / Phase B signed webhooks)
 │   ├── test-export-prod.ps1  # production canary evidence (burns exactly 1 use)
-│   └── verify-pdf.mjs        # PDF dimension proof (page count + pt/in per page, optional asserts)
-├── public/                # static SPA (frontend — unchanged in brick 1)
+│   ├── verify-pdf.mjs        # PDF dimension proof (page count + pt/in per page, optional asserts)
+│   ├── test-spec-builders.mjs # 61-check unit proof of the pure spec builders + hash routing (no server)
+│   └── test-b3-integration.mjs # 41-check frontend↔backend contract vs a running server (LN_BASE, LN_CANARY=1 for prod canary)
+├── public/                # static SPA
+│   ├── index.html          # markup + single module tag; inline handlers via window.LN.*
+│   └── js/app/             # 13 ES modules (see §4); js/ads*.js disabled leftovers — never referenced
 └── scratch/, src/index.js # preserved prior-session artifacts (NOT deployed, do not touch)
 ```
 
@@ -80,14 +84,25 @@ label-ninja/
 | **crypto** | — | `src/db.js` — `pbkdf2$100000$salt$hash` passwords, SHA-256(token) storage, constant-time compare |
 | **guards** | — | `src/http.js` (JSON errors `{"error":{code,message,...extra}}`, body cap → 413), `src/validate.js`, `src/ratelimit.js` (10/h per IP auth, 30/h per user export) |
 
-## 4. Frontend (static SPA — unchanged)
+## 4. Frontend (static SPA — brick 3: metered export wiring)
+
+Entry: `public/index.html` (markup + one `<script type="module" src="/js/app/app.js">`). Inline handlers call the `window.LN` namespace (listener migration is a later polish brick). No build step — plain ESM served as static assets.
 
 | Module | Location | Description |
 |---|---|---|
-| **UI Shell** | `public/index.html` | Single-page label studio layout |
-| **Barcode Engine** | `public/app.js` | 1D/2D barcodes via JsBarcode |
-| **PDF Generator** | `public/app.js` | Inch-precise canvas & PDF output for thermal printers |
-| **Preset Configurator** | `public/app.js` | Label specs (Dymo 30334/30336, 4x6 Rollo, Whatnot stock) |
+| **entry/router** | `public/js/app/app.js` | `switchMode`, hash + `/pricing` + `/reset` path routing, `window.LN` namespace, per-mode dirty-flag listeners, init order (editor → authUi → paywall → exporter → session watch) |
+| **presets** | `public/js/app/presets.js` | PRESETS (11 editor stocks, px + inches), WHATNOT_STOCKS, BIN_LAYOUTS, `clampNumber` — pure data |
+| **spec builders** | `public/js/app/spec-builders.js` | **The correctness core** — pure DOM-free builders mirroring the legacy print layout math: `buildBinSpec` (justify-around/center spacing, landscape title fit), `buildWhatnotSpec` (fitted font), `buildFnskuSpec` (2x1 at old 320px-canvas scale), `buildEditorSpec` (px→in/pt via preset scale; badge→rect+text, box→rect+text, image dataURL strip; throws on webp), `buildTestPrintJob`, `parseDataUrl`, `modeFromHash` helpers live in guides.js. Covered by `scripts/test-spec-builders.mjs` |
+| **api client** | `public/js/app/api.js` | fetch wrapper: `credentials:'same-origin'`, JSON in/out, `ApiError` with backend `{error:{code,message,...extra}}` shape, `apiFetchBlob` for PDFs |
+| **session** | `public/js/app/session.js` | `/api/auth/me` bootstrap, focus + 5-min poll, `onSessionChange` events, `isPro` |
+| **auth ui** | `public/js/app/auth-ui.js` | header usage chip (`9 of 10 free`/`PRO`) + sign-in area, auth modal (sign in / create account / reset-request / reset-confirm), `setAfterAuth` continuation hook |
+| **paywall** | `public/js/app/paywall.js` | 402 `free_limit_reached` modal; price area from `/api/config/pricing` (`configured:false` → coming-soon + notify); never touches tool state |
+| **exporter** | `public/js/app/exporter.js` | idempotency-key lifecycle (regenerate when tool state dirty), `runExport` flow (auth gate → POST → download → save + Open-PDF toast), pending-export-after-auth resume, My Exports drawer (list/re-download/delete, 7-day expiry) |
+| **editor** | `public/js/app/editor.js` | Element state machine: addElement/renderCanvas/makeDraggable/select/update/delete, `loadTemplate`, `changeCanvasSize`, image uploads incl. WebP→PNG canvas conversion |
+| **tools** | `public/js/app/bin-tool.js`, `whatnot-tool.js`, `fnsku-tool.js` | DOM settings collection + range validation (200-page cap messaging) → builder → `runExport` |
+| **guides** | `public/js/app/guides.js` | Pure hash routing: `modeFromHash` (7 guide hashes + 3 tool hashes), `sectionIdFromHash` scroll targets |
+
+**Export seam contract:** every "Download PDF" button → `runExport(tool, buildBody, button)` → `{idempotency_key, format:'pdf', ...buildBody()}` → `POST /api/export` → blob save. The browser-print bypass was removed deliberately (server metering authoritative; printing happens from the downloaded PDF).
 
 ## 5. Conventions
 

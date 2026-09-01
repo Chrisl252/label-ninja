@@ -2,20 +2,18 @@
 
 ## 1. Start Here Next Session
 
-- **Status:** LIVE — static site + auth API + server-authoritative PDF export + **Stripe billing backend** (brick 4, 2026-08-31). Worker version `5e799b62-7c72-4fb8-bce5-4e421fd5b30a`.
-- **Billing (src/billing.js, REST-only, no SDK):** `GET /api/config/pricing` (cached real Stripe prices; graceful `price_fetch_failed` degrade), `POST /api/billing/checkout` (ensure-customer + Checkout Session), `POST /api/billing/portal`, `POST /api/webhooks/stripe` (HMAC t±300s + constant-time v1 verify; idempotent via `webhook_events` with release-on-error so Stripe retries work; anti-hijack: a user never relinks to a different Stripe customer). Entitlement semantics FIXED: access persists through `paid_through` after cancellation (`canceled|past_due` + future `paid_through` = pro; `incomplete`/`unpaid` never grant; `plan` is a display column synced FROM the predicate).
-- **THE remaining external step (Chris):** enable test-mode billing — 4× `npx wrangler secret put` (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_MONTHLY, STRIPE_PRICE_ANNUAL) + Stripe dashboard product/prices/webhook endpoint. Exact list: `SYSTEM_REFERENCE.md` § Stripe billing setup. Until then everything billing returns structured 503s / `configured:false` (verified in prod).
-- **Frontend (brick 5?):** billing UI pages (`/pricing`, `/billing`) + export wiring still client-side only — another brick owns `public/`; brick 4 touched zero frontend files.
-- **Local verify:** start `npx wrangler dev` (needs `.dev.vars` with the fakes — see `.dev.vars.example`), then `scripts/test-billing-local.ps1` (Phase A: rename `.dev.vars` away, run with `-NoKey`; Phase B: restore + default run — signs its own webhooks). Clear `rate_limits` between suite runs (shared bucket; auth/export suites unchanged: 24/24, 27/27).
-- **Do not touch:** `scratch/` and `src/index.js` are preserved prior-session artifacts; `src/*.js` modules are the live backend. A stale `wrangler dev` on 8787 from brick 3's session was killed during brick 4 (its runtime had crashed; dev-local.log is now exclusively owned by whoever starts dev next).
+- **Status:** LIVE SaaS end-to-end — static studio + auth + server-authoritative metered PDF exports + Stripe billing backend + **frontend export wiring (brick 3, 2026-09-01)**. Worker version `b639a3d9-c7cb-406f-8a91-bea4fa7af5dc`; Pages mirror `f3f75af2.label-ninja.pages.dev`.
+- **Frontend (brick 3):** all 5 export seams are metered server exports (browser-print bypass removed — server metering is authoritative). ES modules under `public/js/app/` (13 files, entry `app.js`, inline handlers via `window.LN.*`). Spec builders are pure/DOM-free in `spec-builders.js` (node-testable). Auth modal + usage chip, 402 paywall (price area from `/api/config/pricing`), My Exports drawer (re-download/delete, 7-day expiry), WebP→PNG at upload, idempotency key regenerated on any tool-state change. `/pricing` (SPA → guides `#pricing` section) and `/reset?token=` routes work.
+- **THE remaining external step (Chris):** enable test-mode billing — 4× `npx wrangler secret put` (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_MONTHLY, STRIPE_PRICE_ANNUAL) + Stripe dashboard product/prices/webhook endpoint. Exact list: `SYSTEM_REFERENCE.md` § Stripe billing setup. Until then everything billing returns structured 503s / `configured:false` (verified in prod) — the paywall shows "pricing coming soon".
+- **Next brick candidates:** B5/B6 billing UI pages (`/pricing` real page, `/billing` portal); B7 CSV batch (PapaParse already loaded; `pdf_convert` tool still 501 server-side). Full listener migration off inline `onclick` is a later polish brick.
+- **Local verify:** start `npx wrangler dev` (port 8787; `.dev.vars` has the fakes), then `node scripts/test-spec-builders.mjs` (61 checks, no server needed) and `node scripts/test-b3-integration.mjs` (41 checks vs dev). Older suites: `test-auth-local.ps1` 24/24, `test-export-local.ps1` 27/27, `test-billing-local.ps1` (clear `rate_limits` between runs; shared bucket).
+- **Do not touch:** `scratch/` + `src/index.js` are preserved prior-session artifacts; `src/*.js` is the live backend (brick 3 touched zero src files). `public/js/ads.js`/`ads-config.js` stay disabled-at-config (do not re-reference).
 
 ## 2. Feature Inventory
 
-- [x] Custom visual editor with draggable text, barcode, badge, box, and uploaded-image elements.
+- [x] Custom visual editor with draggable text, barcode, badge, box, and uploaded-image elements (WebP auto-converts to PNG).
 - [x] Browser-only PNG/JPEG/WebP uploads, drag-and-drop placement, and image resizing (8 MB per file limit).
-- [x] Responsive navigation and mobile-safe fixed-coordinate canvas workspace.
-- [x] Exact physical print sizing for editor presets, including 4x6 shipping labels.
-- [x] Warehouse bin batches: one complete 4x6 portrait label per page with bin text and Code128 barcode.
-- [x] Whatnot sequential numbers on selectable 1x0.5, 2x1, and 3x2 stock.
-- [x] FNSKU single-label and CSV batch tooling.
-- [x] Cloudflare Worker production deployment plus Pages mirror.
+- [x] Exact physical print sizing for editor presets via server PDF export (px→inch conversion through the active preset).
+- [x] Warehouse bin batches (4x6 portrait / 6x4 landscape), Whatnot sequences (3 stocks), FNSKU single labels — all metered server PDFs.
+- [x] Accounts: register/login/logout/reset, usage chip, My Exports history drawer, 402 paywall modal, 10 free exports.
+- [x] Cloudflare Worker production deployment plus Pages mirror; SPA fallback routes `/pricing` and `/reset`.
