@@ -5,11 +5,18 @@
 import { api } from './api.js';
 import { getUser, isSignedIn, onSessionChange, applyUser, refreshSession } from './session.js';
 
-let afterAuthCallback = null;
+let afterAuthBaseline = null; // persistent: exporter's pending-export resume (setAfterAuth)
+const afterAuthOnce = []; // one-shot continuations: pending save, pending upgrade…
 let initialized = false;
 
 export function setAfterAuth(fn) {
-  afterAuthCallback = fn;
+  afterAuthBaseline = typeof fn === 'function' ? fn : null;
+}
+
+// Queue a one-shot continuation that runs on the NEXT successful auth, after
+// the baseline resume. Cleared once run.
+export function addAfterAuth(fn) {
+  if (typeof fn === 'function') afterAuthOnce.push(fn);
 }
 
 function el(id) {
@@ -87,6 +94,12 @@ export function openAuthModal({ mode = 'signin', intent = null, token = null } =
   if (intent === 'export') {
     msg.textContent = 'Create a free account to export — you get 10 free exports.';
     msg.classList.remove('hidden');
+  } else if (intent === 'save') {
+    msg.textContent = 'Create a free account to save your project right here.';
+    msg.classList.remove('hidden');
+  } else if (intent === 'upgrade') {
+    msg.textContent = 'Create a free account, then upgrade to Pro.';
+    msg.classList.remove('hidden');
   } else {
     msg.classList.add('hidden');
   }
@@ -115,9 +128,21 @@ function authError(message) {
 async function handleAuthSuccess() {
   await refreshSession(); // register/login responses lack free_uses — /me has the full shape
   closeAuthModal();
-  const cb = afterAuthCallback;
-  afterAuthCallback = null;
-  if (typeof cb === 'function') cb();
+  if (typeof afterAuthBaseline === 'function') {
+    try {
+      await afterAuthBaseline();
+    } catch {
+      // baseline continuation failing must not block one-shots
+    }
+  }
+  const once = afterAuthOnce.splice(0);
+  for (const cb of once) {
+    try {
+      await cb();
+    } catch {
+      // one continuation failing must not block the rest
+    }
+  }
 }
 
 function wireForm(formId, submitFn) {

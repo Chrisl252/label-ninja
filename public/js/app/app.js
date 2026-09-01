@@ -3,7 +3,7 @@
 // lives in the sibling modules; this file only wires.
 
 import { modeFromHash, sectionIdFromHash } from './guides.js';
-import { startSessionWatch } from './session.js';
+import { startSessionWatch, onSessionChange, isSignedIn } from './session.js';
 import { initAuthUi, openAuthModal, closeAuthModal, authSignOut } from './auth-ui.js';
 import { initPaywall, openPaywall, closePaywall } from './paywall.js';
 import { initExporter, runExport, markDirty, openExportsDrawer, closeExportsDrawer } from './exporter.js';
@@ -15,29 +15,41 @@ import {
 import { updateBinPrintHint, exportBinBatch } from './bin-tool.js';
 import { updateWhatnotPrintHint, exportWhatnotBatch } from './whatnot-tool.js';
 import { exportFnskuLabel } from './fnsku-tool.js';
+import { initToast } from './toast.js';
+import { initProjects, saveProject } from './projects.js';
+import { refreshDashboard } from './dashboard.js';
+import { initPricing, renderPricing, startCheckout } from './pricing.js';
+import { initAccount, showAccount } from './account.js';
 
-const MODES = ['editor', 'bin', 'whatnot', 'fnsku', 'guides'];
+const MODES = ['dashboard', 'editor', 'bin', 'whatnot', 'fnsku', 'guides', 'pricing', 'account'];
+const AUTH_ONLY_MODES = new Set(['dashboard', 'account']);
 
 export function switchMode(mode) {
   for (const m of MODES) {
-    document.getElementById(`mode-${m}`).classList.add('hidden');
+    const container = document.getElementById(`mode-${m}`);
+    if (container) container.classList.add('hidden');
   }
   document.getElementById('mode-editor').classList.remove('flex');
 
   const inactiveTabClass = 'px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap';
   const activeTabClass = 'px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition shrink-0 whitespace-nowrap';
   for (const m of MODES) {
-    document.getElementById(`tab-${m}`).className = inactiveTabClass;
+    const tab = document.getElementById(`tab-${m}`);
+    if (tab) tab.className = inactiveTabClass;
   }
 
-  if (!MODES.includes(mode)) mode = 'editor';
+  if (!MODES.includes(mode) || (AUTH_ONLY_MODES.has(mode) && !isSignedIn())) mode = 'editor';
   document.getElementById(`mode-${mode}`).classList.remove('hidden');
-  document.getElementById(`tab-${mode}`).className = activeTabClass;
+  const activeTab = document.getElementById(`tab-${mode}`);
+  if (activeTab && !activeTab.classList.contains('hidden')) activeTab.className = activeTabClass;
   if (mode === 'editor') {
     document.getElementById('mode-editor').classList.add('flex');
     changeCanvasSize();
     if (!getElements().length) loadTemplate('standard');
   }
+  if (mode === 'dashboard') refreshDashboard();
+  if (mode === 'pricing') renderPricing();
+  if (mode === 'account') showAccount();
 }
 
 function scrollToHashSection() {
@@ -49,20 +61,27 @@ function scrollToHashSection() {
   }
 }
 
+let navigatedExplicitly = false;
+
 function routeFromLocation() {
   const path = window.location.pathname;
   const hash = window.location.hash;
 
   // SPA fallback paths served by the worker (real URLs, not just hashes).
   if (path === '/pricing') {
-    switchMode('guides');
-    window.location.hash = '#pricing';
-    scrollToHashSection();
+    navigatedExplicitly = true;
+    switchMode('pricing');
+    return true;
+  }
+  if (path === '/billing' || path === '/account') {
+    navigatedExplicitly = true;
+    switchMode('account'); // /billing carries ?checkout=success — banner shown by showAccount
     return true;
   }
   if (path === '/reset') {
     const token = new URLSearchParams(window.location.search).get('token');
     if (token) {
+      navigatedExplicitly = true;
       switchMode('editor');
       openAuthModal({ mode: 'reset-confirm', token });
       return true;
@@ -70,6 +89,7 @@ function routeFromLocation() {
   }
 
   const mode = modeFromHash(hash);
+  if (hash) navigatedExplicitly = true;
   switchMode(mode);
   if (mode === 'guides') scrollToHashSection();
   return true;
@@ -90,6 +110,16 @@ function runTestPrint(widthIn, heightIn, button) {
   runExport('test_print', () => buildTestPrintJob(widthIn, heightIn), button);
 }
 
+// Common-sizes shortcuts (dashboard): open the editor on a given preset.
+function openEditorPreset(presetKey) {
+  switchMode('editor');
+  const select = document.getElementById('preset-size');
+  if ([...select.options].some((o) => o.value === presetKey)) {
+    select.value = presetKey;
+    changeCanvasSize();
+  }
+}
+
 // One namespace for every inline handler (full listener migration is a later
 // polish brick). Old global names map to their new export-flow implementations.
 window.LN = {
@@ -104,6 +134,7 @@ window.LN = {
   exportEditorLabel,
   printEditorLabel: exportEditorLabel,
   printCurrentWorkspace: exportCurrentWorkspace,
+  openEditorPreset,
   // tools (old names kept so legacy handlers can never 500 the console)
   updateBinPrintHint,
   updateWhatnotPrintHint,
@@ -112,6 +143,11 @@ window.LN = {
   printSingleFNSKU: exportFnskuLabel,
   exportCurrentWorkspace,
   runTestPrint,
+  // projects
+  saveProject,
+  refreshDashboard,
+  // pricing
+  startCheckout,
   // auth + exports + paywall
   openAuthSignIn: () => openAuthModal({ mode: 'signin' }),
   openAuthRegister: () => openAuthModal({ mode: 'register' }),
@@ -139,12 +175,38 @@ function wireDirtyFlags() {
   }
 }
 
+function renderAuthNav(user) {
+  const dashTab = document.getElementById('tab-dashboard');
+  if (dashTab) dashTab.classList.toggle('hidden', !user);
+}
+
+function wireSessionDefaults() {
+  onSessionChange((user) => {
+    renderAuthNav(user);
+    const visible = MODES.find((m) => !document.getElementById(`mode-${m}`).classList.contains('hidden')) || 'editor';
+    if (!user && (visible === 'dashboard' || visible === 'account')) {
+      switchMode('editor'); // signed out of an authed view — fall back to the tools
+      return;
+    }
+    // First load, signed in, no explicit route: the account home is Dashboard.
+    if (user && !navigatedExplicitly && visible === 'editor') {
+      navigatedExplicitly = true;
+      switchMode('dashboard');
+    }
+  });
+}
+
 function init() {
+  initToast();
   initEditor();
   initAuthUi();
   initPaywall();
   initExporter();
+  initProjects();
+  initPricing();
+  initAccount();
   startSessionWatch();
+  wireSessionDefaults();
   wireDirtyFlags();
   updateBinPrintHint();
   updateWhatnotPrintHint();

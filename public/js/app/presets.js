@@ -7,6 +7,7 @@ export const PRESETS = {
   address: { width: 520, height: 160, printWidth: 3.5, printHeight: 1.125, name: '1.125x3.5 Address' },
   small_sq: { width: 200, height: 200, printWidth: 1, printHeight: 1, name: '1x1 Square' },
   small_bc: { width: 300, height: 120, printWidth: 2, printHeight: 0.75, name: '2x0.75 Barcode' },
+  tiny: { width: 200, height: 100, printWidth: 1, printHeight: 0.5, name: '1x0.5 (25x13mm)' },
   large_multi: { width: 370, height: 640, printWidth: 2.3125, printHeight: 4, name: '2.31x4 Large Multi' },
   shipping: { width: 400, height: 600, printWidth: 4, printHeight: 6, name: '4x6 Box Shipping' },
   box_3: { width: 400, height: 300, printWidth: 4, printHeight: 3, name: '4x3 Box Inventory' },

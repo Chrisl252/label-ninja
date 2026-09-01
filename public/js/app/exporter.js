@@ -11,6 +11,7 @@ import { openPaywall } from './paywall.js';
 
 const idemKeys = Object.create(null);
 const dirty = Object.create(null);
+const dirtyListeners = new Set();
 let pendingExport = null;
 let initialized = false;
 let activeButton = null;
@@ -34,6 +35,20 @@ export function getIdempotencyKey(tool) {
 
 export function markDirty(tool) {
   dirty[tool] = true;
+  for (const fn of dirtyListeners) {
+    try {
+      fn(tool);
+    } catch {
+      // subscriber bugs never break the dirty bus
+    }
+  }
+}
+
+// Subscribe to every tool mutation that already invalidates idempotency keys
+// (projects.js uses this for "changed since last save" tracking).
+export function onToolDirty(fn) {
+  dirtyListeners.add(fn);
+  return () => dirtyListeners.delete(fn);
 }
 
 function setBusy(button, busy, label) {
@@ -141,7 +156,7 @@ export async function runExport(tool, buildBody, button) {
 
 // ---- My Exports drawer ----
 
-function fmtDate(ms) {
+export function fmtDate(ms) {
   try {
     return new Date(ms).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
   } catch {
@@ -149,7 +164,7 @@ function fmtDate(ms) {
   }
 }
 
-function fmtBytes(n) {
+export function fmtBytes(n) {
   if (!n && n !== 0) return '';
   if (n < 1024) return `${n} B`;
   if (n < 1024 * 1024) return `${Math.round(n / 1024)} KB`;

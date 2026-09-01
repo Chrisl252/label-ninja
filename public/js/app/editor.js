@@ -340,6 +340,20 @@ export function exportEditorLabel(button) {
   runExport('editor', () => buildEditorSpec({ elements, preset: getCurrentPreset() }), button);
 }
 
+// Hydrate the editor from a saved project (projects.js data shape v1):
+// re-id elements (nextId stays monotonic), set the preset, render.
+export function applyProjectState(presetKey, savedElements) {
+  const list = Array.isArray(savedElements) ? savedElements : [];
+  elements = list.map((el) => ({ ...el, id: 'el-' + nextId++ }));
+  selectedId = null;
+  const select = document.getElementById('preset-size');
+  if (presetKey && [...select.options].some((o) => o.value === presetKey)) {
+    select.value = presetKey;
+  }
+  changeCanvasSize();
+  markDirty('editor');
+}
+
 export function initEditor() {
   const canvasDropZone = document.getElementById('label-canvas-container');
   canvasDropZone.onclick = () => {

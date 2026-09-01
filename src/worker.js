@@ -4,6 +4,7 @@ import { errorResponse, HttpError } from './http.js';
 import { handleApi } from './auth.js';
 import { handleExportApi } from './export.js';
 import { handleBillingApi } from './billing.js';
+import { handleProjectsApi } from './projects.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -11,6 +12,9 @@ export default {
     try {
       if (url.pathname.startsWith('/api/export')) {
         return await handleExportApi(request, env, url.pathname, url.searchParams);
+      }
+      if (url.pathname.startsWith('/api/projects')) {
+        return await handleProjectsApi(request, env, url.pathname, url.searchParams);
       }
       if (
         url.pathname === '/api/config/pricing' ||

@@ -9,11 +9,11 @@ const GUIDE_HASH_HINTS = [
   'rollo-setup',
   'zebra-setup',
   'dymo-setup',
-  'pricing',
 ];
 
 export function modeFromHash(hash) {
   const h = String(hash || '');
+  if (h.includes('#pricing')) return 'pricing';
   for (const hint of GUIDE_HASH_HINTS) {
     if (h.includes(hint)) return 'guides';
   }
