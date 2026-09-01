@@ -2,14 +2,12 @@
 
 ## 1. Start Here Next Session
 
-- **Status:** LIVE — static site + auth API + **server-authoritative PDF export pipeline** (brick 2, 2026-08-31). Worker version `d73cb865-5ca4-4c78-9a02-a2ed39495df8`.
-- **Export engine:** `POST /api/export` renders real PDFs server-side (pdf-lib) from validated job specs (text/CODE128/rect/line/PNG-JPEG elements, exact pt sizing), stores bytes in D1 `output_chunks` (400KB chunks, `migrations/0002_outputs.sql`), serves authorized downloads (7-day expiry, `private, no-store`), `GET /api/exports` history, `DELETE /api/export/:id`.
-- **Metering:** atomic `INSERT..SELECT..WHERE remaining>0` reservation in `usage_ledger`; `changes=0` → 402 `free_limit_reached` (+`upgrade_url`). Failed renders compensate (delete ledger row) — zero consumption. Idempotency key replays the same job. Pro-active users skip reservation (`src/entitlements.js` = the one formula, used by auth + export). 30 exports/hour/user.
-- **Verified:** 13/13 local cases (`scripts/test-export-local.ps1`, incl. race 200+402, compensation, dimension proofs 288x432 / 70.87x36.85pt) + prod canary (`ln-canary-b2+20260831181300@bisket.com`, 1 use burned, remaining 9, exact-dim download proof). Auth suite still 24/24.
-- **R2:** still unavailable (error 10042) — D1 blobs are the storage design, not a fallback hack.
-- **Frontend:** untouched this brick — still client-side only; wiring the UI to `/api/export` is the next brick (Brick 3 = pdf_convert tool + UI).
-- **Local verify:** start `npx wrangler dev`, then `scripts/test-export-local.ps1`; clear `rate_limits` table between full re-runs (both suites share it). `scripts/verify-pdf.mjs <pdf> [w h pages]` proves dimensions.
-- **Do not touch:** `scratch/` and `src/index.js` are preserved prior-session artifacts; `src/*.js` modules are the live backend.
+- **Status:** LIVE — static site + auth API + server-authoritative PDF export + **Stripe billing backend** (brick 4, 2026-08-31). Worker version `5e799b62-7c72-4fb8-bce5-4e421fd5b30a`.
+- **Billing (src/billing.js, REST-only, no SDK):** `GET /api/config/pricing` (cached real Stripe prices; graceful `price_fetch_failed` degrade), `POST /api/billing/checkout` (ensure-customer + Checkout Session), `POST /api/billing/portal`, `POST /api/webhooks/stripe` (HMAC t±300s + constant-time v1 verify; idempotent via `webhook_events` with release-on-error so Stripe retries work; anti-hijack: a user never relinks to a different Stripe customer). Entitlement semantics FIXED: access persists through `paid_through` after cancellation (`canceled|past_due` + future `paid_through` = pro; `incomplete`/`unpaid` never grant; `plan` is a display column synced FROM the predicate).
+- **THE remaining external step (Chris):** enable test-mode billing — 4× `npx wrangler secret put` (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_MONTHLY, STRIPE_PRICE_ANNUAL) + Stripe dashboard product/prices/webhook endpoint. Exact list: `SYSTEM_REFERENCE.md` § Stripe billing setup. Until then everything billing returns structured 503s / `configured:false` (verified in prod).
+- **Frontend (brick 5?):** billing UI pages (`/pricing`, `/billing`) + export wiring still client-side only — another brick owns `public/`; brick 4 touched zero frontend files.
+- **Local verify:** start `npx wrangler dev` (needs `.dev.vars` with the fakes — see `.dev.vars.example`), then `scripts/test-billing-local.ps1` (Phase A: rename `.dev.vars` away, run with `-NoKey`; Phase B: restore + default run — signs its own webhooks). Clear `rate_limits` between suite runs (shared bucket; auth/export suites unchanged: 24/24, 27/27).
+- **Do not touch:** `scratch/` and `src/index.js` are preserved prior-session artifacts; `src/*.js` modules are the live backend. A stale `wrangler dev` on 8787 from brick 3's session was killed during brick 4 (its runtime had crashed; dev-local.log is now exclusively owned by whoever starts dev next).
 
 ## 2. Feature Inventory
 
