@@ -7,65 +7,19 @@
   <meta name="description" content="Free thermal label generator with warehouse bin labels, Whatnot numbers, Amazon FNSKUs, custom barcode labels, thermal printer setup guides, and best label printer picks for Rollo, DYMO, Zebra, and small businesses.">
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- JsBarcode library -->
+  <!-- JsBarcode library (client-side barcode previews) -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <!-- PapaParse -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <!-- PDFMake -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-  <!-- Tesseract.js for OCR -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
     html, body { overflow-x: clip; }
     .canvas-element { user-select: none; touch-action: none; }
     .canvas-element.selected { outline: 2px dashed #3b82f6; outline-offset: 2px; }
-    @page { size: auto; margin: 0; }
-    @media print {
-      html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: white !important;
-        width: 100% !important;
-        height: 100% !important;
-      }
-      body * { visibility: hidden; }
-      #batch-print-area, #batch-print-area *, #label-canvas-container, #label-canvas-container * { visibility: visible; }
-      .no-print { display: none !important; }
-      
-      .print-label, #label-canvas {
-        width: var(--print-label-width, 100vw) !important;
-        height: var(--print-label-height, 100vh) !important;
-        margin: 0 !important;
-        padding: var(--print-label-padding, 8px) !important;
-        box-sizing: border-box !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        overflow: hidden !important;
-        break-after: page !important;
-        page-break-after: always !important;
-        box-shadow: none !important;
-        border: none !important;
-      }
-      .print-label:last-child {
-        break-after: auto !important;
-        page-break-after: auto !important;
-      }
-      .bin-landscape-print-label {
-        flex-direction: column !important;
-        justify-content: center !important;
-        gap: 0.28in !important;
-      }
-      .canvas-element.selected { outline: none !important; }
-    }
   </style>
-  <style id="print-page-style"></style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col relative select-none">
 
@@ -79,28 +33,35 @@
 
     <!-- Mode Navigation Tabs -->
     <div class="flex items-center space-x-2 bg-slate-950 p-1 border border-slate-800 rounded-lg w-full lg:w-auto max-w-full overflow-x-auto">
-      <button onclick="switchMode('editor')" id="tab-editor" class="px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition shrink-0 whitespace-nowrap">
+      <button onclick="LN.switchMode('editor')" id="tab-editor" class="px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition shrink-0 whitespace-nowrap">
         Custom Visual Editor
       </button>
-      <button onclick="switchMode('bin')" id="tab-bin" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
+      <button onclick="LN.switchMode('bin')" id="tab-bin" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
         Warehouse Bins
       </button>
-      <button onclick="switchMode('whatnot')" id="tab-whatnot" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
+      <button onclick="LN.switchMode('whatnot')" id="tab-whatnot" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
         Whatnot Numbers
       </button>
-      <button onclick="switchMode('fnsku')" id="tab-fnsku" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
+      <button onclick="LN.switchMode('fnsku')" id="tab-fnsku" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
         FNSKU & CSV Batch
       </button>
-      <button onclick="switchMode('guides')" id="tab-guides" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
+      <button onclick="LN.switchMode('guides')" id="tab-guides" class="px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap">
         Printer Guides
       </button>
     </div>
 
-    <!-- Right Actions -->
-    <div class="flex items-center space-x-3">
-      <button onclick="printCurrentWorkspace()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-4 py-2 rounded shadow transition flex items-center space-x-2 whitespace-nowrap">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-        <span>Print Labels</span>
+    <!-- Right Actions: usage chip + auth + exports -->
+    <div class="flex items-center space-x-2 flex-wrap justify-end">
+      <span id="usage-chip" class="hidden text-[11px] font-mono px-2 py-1 rounded border border-slate-700 bg-slate-950 text-slate-300 whitespace-nowrap"></span>
+      <button id="my-exports-btn" onclick="LN.openExportsDrawer()" class="hidden border border-slate-700 hover:border-slate-500 text-slate-300 font-semibold text-xs px-3 py-2 rounded transition whitespace-nowrap">
+        My Exports
+      </button>
+      <span id="user-email" class="hidden text-xs text-slate-400 font-mono max-w-48 truncate" title=""></span>
+      <button id="signout-btn" onclick="LN.authSignOut()" class="hidden text-slate-400 hover:text-white font-semibold text-xs px-2 py-2 transition whitespace-nowrap">
+        Sign out
+      </button>
+      <button id="signin-btn" onclick="LN.openAuthSignIn()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-4 py-2 rounded shadow transition whitespace-nowrap">
+        Sign in
       </button>
     </div>
   </header>
@@ -111,7 +72,7 @@
     <aside class="w-full lg:w-80 lg:shrink-0 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 p-4 flex flex-col space-y-5 lg:overflow-y-auto">
       <div>
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Thermal Media Preset</h3>
-        <select id="preset-size" onchange="changeCanvasSize()" class="w-full bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded px-3 py-2 font-mono">
+        <select id="preset-size" onchange="LN.changeCanvasSize()" class="w-full bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded px-3 py-2 font-mono">
           <optgroup label="Amazon FBA & Dymo Rolls">
             <option value="fnsku">2" x 1" (Dymo 30334 FNSKU)</option>
             <option value="standard" selected>2.25" x 1.25" (Dymo 30336 Multipurpose)</option>
@@ -135,7 +96,7 @@
         <label for="image-upload" class="flex cursor-pointer items-center justify-center rounded border border-blue-700 bg-blue-950/40 px-3 py-3 text-sm font-semibold text-blue-100 hover:bg-blue-900/50 focus-within:ring-2 focus-within:ring-blue-400">
           Upload images
         </label>
-        <input id="image-upload" type="file" accept="image/png,image/jpeg,image/webp" multiple class="sr-only" onchange="handleImageUpload(this.files); this.value = ''">
+        <input id="image-upload" type="file" accept="image/png,image/jpeg,image/webp" multiple class="sr-only" onchange="LN.handleImageUpload(this.files); this.value = ''">
         <p class="mt-2 text-[11px] leading-relaxed text-slate-500">PNG, JPEG, or WebP · up to 8 MB each · processed only in this browser.</p>
         <p id="image-upload-status" class="mt-2 min-h-5 text-xs text-slate-400" role="status" aria-live="polite">Choose files or drop them onto the label.</p>
       </div>
@@ -143,16 +104,16 @@
       <div>
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Add Elements</h3>
         <div class="grid grid-cols-2 gap-2">
-          <button onclick="addElement('text')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
+          <button onclick="LN.addElement('text')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
             <span>Add Text</span>
           </button>
-          <button onclick="addElement('barcode')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
+          <button onclick="LN.addElement('barcode')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
             <span>Add Barcode</span>
           </button>
-          <button onclick="addElement('badge')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
+          <button onclick="LN.addElement('badge')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
             <span>Price Badge</span>
           </button>
-          <button onclick="addElement('box')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
+          <button onclick="LN.addElement('box')" class="flex items-center justify-center space-x-1.5 p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-semibold text-slate-300">
             <span>Border Box</span>
           </button>
         </div>
@@ -161,31 +122,31 @@
       <div>
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">One-Click Templates</h3>
         <div class="space-y-1.5">
-          <button onclick="loadTemplate('fnsku')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+          <button onclick="LN.loadTemplate('fnsku')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
             <span>Amazon FNSKU Label</span>
             <span class="text-[10px] text-slate-500 font-mono">2x1</span>
           </button>
-          <button onclick="loadTemplate('shipping_4x6')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+          <button onclick="LN.loadTemplate('shipping_4x6')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
             <span>4" x 6" Thermal Shipping Label</span>
             <span class="text-[10px] text-slate-500 font-mono">4x6</span>
           </button>
-          <button onclick="loadTemplate('suffocation')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+          <button onclick="LN.loadTemplate('suffocation')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
             <span>Polybag Suffocation Warning</span>
             <span class="text-[10px] text-slate-500 font-mono">2x2</span>
           </button>
-          <button onclick="loadTemplate('suffocation_large')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+          <button onclick="LN.loadTemplate('suffocation_large')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
             <span>Large Suffocation Warning</span>
             <span class="text-[10px] text-slate-500 font-mono">2.25x4</span>
           </button>
-          <button onclick="loadTemplate('sold_set')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+          <button onclick="LN.loadTemplate('sold_set')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
             <span>Sold As Set - Do Not Separate</span>
             <span class="text-[10px] text-slate-500 font-mono">2.25x1.25</span>
           </button>
-          <button onclick="loadTemplate('fragile')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+          <button onclick="LN.loadTemplate('fragile')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
             <span>Fragile Handle With Care</span>
             <span class="text-[10px] text-slate-500 font-mono">2.25x1.25</span>
           </button>
-          <button onclick="loadTemplate('single_bin')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
+          <button onclick="LN.loadTemplate('single_bin')" class="w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs text-slate-300 transition flex justify-between">
             <span>Warehouse Bin Label</span>
             <span class="text-[10px] text-slate-500 font-mono">BIN 1A</span>
           </button>
@@ -201,23 +162,23 @@
 
         <div id="text-size-controls" class="flex items-center space-x-2">
           <span class="text-xs text-slate-400">Font Size:</span>
-          <input type="range" id="inspector-size" min="10" max="60" value="28" oninput="updateSelectedElement()" class="w-24">
+          <input type="range" id="inspector-size" min="10" max="60" value="28" oninput="LN.updateSelectedElement()" class="w-24">
           <span id="size-val" class="text-xs font-mono text-blue-400">28px</span>
         </div>
 
         <div id="image-size-controls" class="hidden items-center space-x-2">
           <span class="text-xs text-slate-400">Image Width:</span>
-          <input type="range" id="inspector-width" min="24" max="600" value="120" oninput="updateSelectedElement()" class="w-28">
+          <input type="range" id="inspector-width" min="24" max="600" value="120" oninput="LN.updateSelectedElement()" class="w-28">
           <span id="width-val" class="text-xs font-mono text-blue-400">120px</span>
         </div>
 
         <div class="h-4 w-px bg-slate-800"></div>
 
         <div class="flex items-center space-x-2 flex-1 min-w-48">
-          <input type="text" id="inspector-text" aria-label="Selected element content" oninput="updateSelectedElement()" placeholder="Select an element to edit" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500 w-full font-mono disabled:text-slate-500">
+          <input type="text" id="inspector-text" aria-label="Selected element content" oninput="LN.updateSelectedElement()" placeholder="Select an element to edit" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500 w-full font-mono disabled:text-slate-500">
         </div>
 
-        <button onclick="deleteSelectedElement()" class="text-xs text-red-400 hover:text-red-300 font-semibold px-2 py-1 bg-red-950/40 border border-red-900 rounded">
+        <button onclick="LN.deleteSelectedElement()" class="text-xs text-red-400 hover:text-red-300 font-semibold px-2 py-1 bg-red-950/40 border border-red-900 rounded">
           Delete
         </button>
       </div>
@@ -228,6 +189,12 @@
           <!-- Canvas Elements -->
         </div>
       </div>
+
+      <button onclick="LN.exportEditorLabel(this)" class="mt-5 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base px-8 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        <span>Download PDF</span>
+      </button>
+      <p class="mt-2 text-[11px] text-slate-500">Exact physical size · print from the downloaded file at 100% scale, margins none.</p>
     </main>
   </div>
 
@@ -261,7 +228,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <div class="md:col-span-2 lg:col-span-2">
           <label for="bin-layout" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Label Layout</label>
-          <select id="bin-layout" onchange="updateBinPrintHint()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+          <select id="bin-layout" onchange="LN.updateBinPrintHint()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
             <option value="portrait" selected>Vertical 4&quot; x 6&quot;</option>
             <option value="landscape">Horizontal 6&quot; x 4&quot;</option>
           </select>
@@ -290,13 +257,14 @@
       </label>
 
       <div id="bin-print-hint" class="rounded-lg border border-amber-700/60 bg-amber-950/30 px-4 py-3 text-sm text-amber-100" role="status">
-        4&quot; x 6&quot; setup: choose 4 x 6 in (102 x 152 mm) paper, Portrait, Margins None, and Scale 100%. Each bin number and barcode prints together on one label.
+        4&quot; x 6&quot; setup: your PDF is exactly 4&quot; x 6&quot; — print at 100% scale with margins none (102 x 152 mm paper, Portrait). Each bin number and barcode prints together on one label.
       </div>
 
-      <button onclick="generateBinBatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-        <span>PRINT BIN LABELS NOW</span>
+      <button onclick="LN.generateBinBatch(this)" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        <span>DOWNLOAD BIN LABELS (PDF)</span>
       </button>
+      <p class="text-center text-[11px] text-slate-500 -mt-3">One 4x6 page per bin · exact physical size · free account includes 10 exports.</p>
     </div>
   </main>
 
@@ -323,7 +291,7 @@
         </div>
         <div>
           <label for="wn-stock" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Label Stock</label>
-          <select id="wn-stock" onchange="updateWhatnotPrintHint()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
+          <select id="wn-stock" onchange="LN.updateWhatnotPrintHint()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono">
             <option value="tiny" selected>1&quot; x 0.5&quot; (25.4 x 12.7 mm)</option>
             <option value="fnsku">2&quot; x 1&quot; (50.8 x 25.4 mm)</option>
             <option value="show">3&quot; x 2&quot; (76.2 x 50.8 mm)</option>
@@ -333,10 +301,11 @@
 
       <div id="wn-print-hint" class="rounded-lg border border-amber-700/60 bg-amber-950/30 px-4 py-3 text-sm text-amber-100" role="status"></div>
 
-      <button onclick="generateWhatnotBatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-        <span>PRINT WHATNOT NUMBERS NOW</span>
+      <button onclick="LN.generateWhatnotBatch(this)" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        <span>DOWNLOAD WHATNOT NUMBERS (PDF)</span>
       </button>
+      <p class="text-center text-[11px] text-slate-500 -mt-3">One label per number on your chosen stock · exact physical size · free account includes 10 exports.</p>
     </div>
   </main>
 
@@ -363,10 +332,11 @@
         </div>
       </div>
 
-      <button onclick="printSingleFNSKU()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-        <span>PRINT FNSKU LABEL NOW</span>
+      <button onclick="LN.printSingleFNSKU(this)" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        <span>DOWNLOAD FNSKU LABEL (PDF)</span>
       </button>
+      <p class="text-center text-[11px] text-slate-500 -mt-3">Title + CODE128 barcode + condition on a 2&quot; x 1&quot; label · free account includes 10 exports.</p>
     </div>
   </main>
 
@@ -374,7 +344,7 @@
   <main id="mode-guides" class="flex-1 max-w-6xl w-full mx-auto p-6 flex flex-col space-y-6 hidden no-print">
     <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
       <div class="border-b border-slate-800 pb-4">
-        <p class="text-xs font-bold uppercase tracking-[0.22em] text-blue-300">Thermal Label Printer Guides</p>
+        <p class="text-xs font-bold uppercase tracking-[.22em] text-blue-300">Thermal Label Printer Guides</p>
         <h1 class="mt-2 text-3xl font-black text-white">How to set up a label printer for 4x6 shipping labels, bin labels, barcodes, and FNSKU labels</h1>
         <p class="mt-3 max-w-4xl text-sm leading-6 text-slate-300">Most label-printer searches are not looking for theory. They are trying to fix a bad print right now: blank labels, sideways labels, skipped labels, wrong 4x6 sizing, margins, scale, calibration, or which thermal printer to buy for eBay, Amazon, Shopify, Etsy, Whatnot, or warehouse bins. This guide targets those jobs directly and links each setup path back to the matching Label Ninja tool.</p>
       </div>
@@ -419,6 +389,10 @@
       <div class="rounded-xl border border-blue-800 bg-blue-950/40 p-4">
         <h3 class="font-extrabold text-blue-100">Label Ninja print settings that usually work</h3>
         <p class="mt-2 text-sm leading-6 text-blue-100">Warehouse bins: 4&quot; x 6&quot; portrait or 6&quot; x 4&quot; landscape, no margins, 100% scale. Whatnot numbers: choose matching stock in Label Ninja, then choose the same paper size in the driver. FNSKU/barcode labels: start with 2&quot; x 1&quot;, 100% scale, and make sure the barcode is not stretched by the print dialog.</p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <button onclick="LN.runTestPrint(4,6,this)" class="rounded-lg bg-blue-600 hover:bg-blue-500 px-3 py-2 text-xs font-bold text-white">Test print 4x6 (PDF)</button>
+          <button onclick="LN.runTestPrint(2,1,this)" class="rounded-lg bg-slate-800 hover:bg-slate-700 px-3 py-2 text-xs font-bold text-white">Test print 2x1 (PDF)</button>
+        </div>
       </div>
     </section>
 
@@ -437,7 +411,7 @@
           </ol>
           <div class="flex flex-wrap gap-2">
             <a href="https://www.rollo.com/setup/" rel="noopener" target="_blank" class="rounded-lg bg-slate-800 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700">Official setup</a>
-            <a href="#tools/warehouse-rack-bin-label-generator" onclick="switchMode('bin')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-500">Make bin labels</a>
+            <a href="#tools/warehouse-rack-bin-label-generator" onclick="LN.switchMode('bin')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-500">Make bin labels</a>
           </div>
         </article>
         <article id="zebra-setup" class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
@@ -452,7 +426,7 @@
           </ol>
           <div class="flex flex-wrap gap-2">
             <a href="https://www.zebra.com/us/en/support-downloads/printers/desktop/zd421.html" rel="noopener" target="_blank" class="rounded-lg bg-slate-800 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700">Zebra drivers</a>
-            <a href="#tools/amazon-fba-fnsku-generator" onclick="switchMode('fnsku')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-500">Make FNSKU labels</a>
+            <a href="#tools/amazon-fba-fnsku-generator" onclick="LN.switchMode('fnsku')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-500">Make FNSKU labels</a>
           </div>
         </article>
         <article id="dymo-setup" class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
@@ -467,7 +441,7 @@
           </ol>
           <div class="flex flex-wrap gap-2">
             <a href="https://help.dymo.com/" rel="noopener" target="_blank" class="rounded-lg bg-slate-800 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700">DYMO help</a>
-            <a href="#tools/whatnot-live-show-number-generator" onclick="switchMode('whatnot')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-500">Make number labels</a>
+            <a href="#tools/whatnot-live-show-number-generator" onclick="LN.switchMode('whatnot')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-500">Make number labels</a>
           </div>
         </article>
       </div>
@@ -476,7 +450,7 @@
     <section id="best-label-printers" class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
       <div>
         <h2 class="text-2xl font-black text-white">Best thermal label printers for small business</h2>
-        <p class="mt-2 text-sm leading-6 text-slate-300">These are the 4-inch thermal printers I see on reseller packing tables. Links go to Amazon product searches so you can compare current prices. They are marked as sponsored.</p>
+        <p class="mt-2 max-w-4xl text-sm leading-6 text-slate-300">These are the 4-inch thermal printers I see on reseller packing tables. Links go to Amazon product searches so you can compare current prices. They are marked as sponsored.</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <article class="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
@@ -515,6 +489,21 @@
           <p class="text-sm leading-6 text-slate-400">Useful for address labels, badges, file labels, and smaller workflow labels. Check maximum label width before buying for 4x6 shipping.</p>
           <a href="https://www.amazon.com/s?k=Brother+QL+label+printer" rel="sponsored noopener" target="_blank" class="inline-flex rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-500">Check price</a>
         </article>
+      </div>
+    </section>
+
+    <section id="pricing" class="bg-slate-900 border border-emerald-900 rounded-xl p-6 shadow-xl space-y-4">
+      <p class="text-xs font-bold uppercase tracking-[.22em] text-emerald-300">Label Ninja Pro</p>
+      <h2 class="text-2xl font-black text-white">Unlimited label exports for power sellers</h2>
+      <p class="max-w-3xl text-sm leading-6 text-slate-300">The free plan includes 10 PDF exports to try every tool. Pro is for the packing table that prints every day — bin resets, Whatnot shows, FNSKU batches, and custom labels without counting.</p>
+      <ul class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+        <li class="rounded-xl border border-slate-700 bg-slate-950 p-4"><span class="font-bold text-white">Unlimited exports</span><span class="block mt-1 text-slate-400">Every tool, every batch size, no counters.</span></li>
+        <li class="rounded-xl border border-slate-700 bg-slate-950 p-4"><span class="font-bold text-white">Saved projects</span><span class="block mt-1 text-slate-400">Keep label designs and export history at your fingertips.</span></li>
+        <li class="rounded-xl border border-slate-700 bg-slate-950 p-4"><span class="font-bold text-white">No ads</span><span class="block mt-1 text-slate-400">A clean workspace, forever.</span></li>
+      </ul>
+      <div class="rounded-xl border border-slate-800 bg-slate-950 p-4">
+        <p class="text-sm font-bold text-white">Pro pricing coming soon — early access</p>
+        <p class="mt-1 text-xs text-slate-400">Want in at launch? <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20Pro%20early%20access" class="text-blue-400 hover:text-blue-300 underline">Get notified when Pro goes live</a>.</p>
       </div>
     </section>
 
@@ -564,9 +553,6 @@
     </section>
   </main>
 
-  <!-- Live Batch Print Container -->
-  <div id="batch-print-area" class="w-full flex flex-col items-center"></div>
-
   <footer class="border-t border-slate-800 bg-slate-900 px-6 py-4 text-center text-xs text-slate-500 no-print flex justify-between items-center">
     <div>Label Ninja • Bisket LLC</div>
     <div class="space-x-4 font-mono text-[11px]">
@@ -574,618 +560,129 @@
       <a href="/sitemap.xml" class="hover:text-slate-300">Sitemap XML</a>
       <a href="#tools/amazon-fba-fnsku-generator" class="hover:text-slate-300">FNSKU Tool</a>
       <a href="#tools/whatnot-live-show-number-generator" class="hover:text-slate-300">Whatnot Tool</a>
-      <a href="#best-label-printers" onclick="switchMode('guides')" class="hover:text-slate-300">Best Printers</a>
+      <a href="#best-label-printers" onclick="LN.switchMode('guides')" class="hover:text-slate-300">Best Printers</a>
     </div>
   </footer>
 
-  <script class="no-print">
-    let elements = [];
-    let selectedId = null;
-    let nextId = 1;
-
-    const PRESETS = {
-      standard: { width: 360, height: 200, printWidth: 2.25, printHeight: 1.25, name: "2.25x1.25 Dymo 30336" },
-      fnsku: { width: 320, height: 180, printWidth: 2, printHeight: 1, name: "2x1 Dymo 30334" },
-      address: { width: 520, height: 160, printWidth: 3.5, printHeight: 1.125, name: "1.125x3.5 Address" },
-      small_sq: { width: 200, height: 200, printWidth: 1, printHeight: 1, name: "1x1 Square" },
-      small_bc: { width: 300, height: 120, printWidth: 2, printHeight: 0.75, name: "2x0.75 Barcode" },
-      large_multi: { width: 370, height: 640, printWidth: 2.3125, printHeight: 4, name: "2.31x4 Large Multi" },
-      shipping: { width: 400, height: 600, printWidth: 4, printHeight: 6, name: "4x6 Box Shipping" },
-      box_3: { width: 400, height: 300, printWidth: 4, printHeight: 3, name: "4x3 Box Inventory" },
-      product_3x2: { width: 420, height: 280, printWidth: 3, printHeight: 2, name: "3x2 Whatnot Show" },
-      polybag: { width: 300, height: 300, printWidth: 2, printHeight: 2, name: "2x2 Square Polybag" },
-      polybag_large: { width: 360, height: 640, printWidth: 2.25, printHeight: 4, name: "2.25x4 Suffocation Warning" }
-    };
-
-    const WHATNOT_STOCKS = {
-      tiny: { width: 1, height: 0.5, padding: 0.02, name: '1" x 0.5"', driverSize: '25 x 13 mm' },
-      fnsku: { width: 2, height: 1, padding: 0.04, name: '2" x 1"', driverSize: '51 x 25 mm' },
-      show: { width: 3, height: 2, padding: 0.08, name: '3" x 2"', driverSize: '76 x 51 mm' }
-    };
-
-    const BIN_LAYOUTS = {
-      portrait: { width: 4, height: 6, name: '4" x 6"', orientation: 'Portrait', driverSize: '102 x 152 mm' },
-      landscape: { width: 6, height: 4, name: '6" x 4"', orientation: 'Landscape', driverSize: '152 x 102 mm' }
-    };
-
-    function getWhatnotStock() {
-      return WHATNOT_STOCKS[document.getElementById('wn-stock').value] || WHATNOT_STOCKS.tiny;
-    }
-
-    function getBinSettings() {
-      const layout = BIN_LAYOUTS[document.getElementById('bin-layout').value] || BIN_LAYOUTS.portrait;
-      return {
-        ...layout,
-        padding: clampNumber(document.getElementById('bin-padding').value, 0, 0.6, 0.18),
-        titleSize: clampNumber(document.getElementById('bin-title-size').value, 0.25, 1.4, 0.72),
-        barcodeHeight: clampNumber(document.getElementById('bin-barcode-height').value, 0.75, 4, 2.45),
-        barcodeWidth: clampNumber(document.getElementById('bin-barcode-width').value, 1, 5, 3),
-        showValue: document.getElementById('bin-show-value').checked
-      };
-    }
-
-    function clampNumber(value, min, max, fallback) {
-      const parsed = parseFloat(value);
-      if (!Number.isFinite(parsed)) return fallback;
-      return Math.min(max, Math.max(min, parsed));
-    }
-
-    function updateBinPrintHint() {
-      const stock = getBinSettings();
-      document.getElementById('bin-print-hint').textContent =
-        `${stock.name} setup: choose ${stock.driverSize} paper, ${stock.orientation}, Margins None, and Scale 100%. Each bin number and barcode prints together on one label.`;
-    }
-
-    function getBinTitleSize(binText, stock) {
-      if (stock.orientation !== 'Landscape') return stock.titleSize;
-      const maxTitleWidth = stock.width * 0.88;
-      const fittedSize = maxTitleWidth / Math.max(1, binText.length * 0.56);
-      return Math.min(stock.titleSize, fittedSize);
-    }
-
-    function setPrintStock(stock) {
-      document.documentElement.style.setProperty('--print-label-width', `${stock.width}in`);
-      document.documentElement.style.setProperty('--print-label-height', `${stock.height}in`);
-      document.documentElement.style.setProperty('--print-label-padding', `${stock.padding}in`);
-      document.getElementById('print-page-style').textContent = `@page { size: ${stock.width}in ${stock.height}in; margin: 0; }`;
-    }
-
-    function printCurrentWorkspace() {
-      const editor = document.getElementById('mode-editor');
-      if (!editor.classList.contains('hidden')) {
-        printEditorLabel();
-        return;
-      }
-      window.print();
-    }
-
-    function printEditorLabel() {
-      const presetKey = document.getElementById('preset-size').value;
-      const preset = PRESETS[presetKey] || PRESETS.standard;
-      const sourceCanvas = document.getElementById('label-canvas');
-      const printArea = document.getElementById('batch-print-area');
-      const pageWidthPx = preset.printWidth * 96;
-      const pageHeightPx = preset.printHeight * 96;
-      const scale = Math.min(pageWidthPx / preset.width, pageHeightPx / preset.height);
-      const offsetX = Math.max(0, (pageWidthPx - preset.width * scale) / 2);
-      const offsetY = Math.max(0, (pageHeightPx - preset.height * scale) / 2);
-
-      setPrintStock({ width: preset.printWidth, height: preset.printHeight, padding: 0 });
-      printArea.innerHTML = '';
-      printArea.dataset.transientEditorPrint = 'true';
-
-      const printPage = document.createElement('div');
-      printPage.className = 'print-label bg-white text-black relative overflow-hidden';
-      printPage.style.width = `${preset.printWidth}in`;
-      printPage.style.height = `${preset.printHeight}in`;
-      printPage.style.padding = '0';
-      printPage.style.boxSizing = 'border-box';
-
-      const canvasClone = sourceCanvas.cloneNode(true);
-      canvasClone.removeAttribute('id');
-      canvasClone.querySelectorAll('[id]').forEach((element) => element.removeAttribute('id'));
-      canvasClone.querySelectorAll('.selected').forEach((element) => element.classList.remove('selected'));
-      canvasClone.style.position = 'absolute';
-      canvasClone.style.left = `${offsetX}px`;
-      canvasClone.style.top = `${offsetY}px`;
-      canvasClone.style.width = `${preset.width}px`;
-      canvasClone.style.height = `${preset.height}px`;
-      canvasClone.style.transform = `scale(${scale})`;
-      canvasClone.style.transformOrigin = 'top left';
-      canvasClone.style.borderRadius = '0';
-      canvasClone.style.boxShadow = 'none';
-      printPage.appendChild(canvasClone);
-      printArea.appendChild(printPage);
-
-      setTimeout(() => window.print(), 100);
-    }
-
-    function updateWhatnotPrintHint() {
-      const stock = getWhatnotStock();
-      document.getElementById('wn-print-hint').textContent =
-        `${stock.name} setup: choose ${stock.driverSize} paper, Landscape, Margins None, and Scale 100%. Do not use the 10% scale shown in your previous print preview.`;
-    }
-
-    function getWhatnotFontSize(text, stock) {
-      const heightLimit = stock.height * 0.72;
-      const widthLimit = (stock.width * 0.9) / Math.max(1, text.length * 0.58);
-      return Math.max(0.12, Math.min(heightLimit, widthLimit));
-    }
-
-    function switchMode(mode) {
-      document.getElementById('mode-bin').classList.add('hidden');
-      document.getElementById('mode-whatnot').classList.add('hidden');
-      document.getElementById('mode-fnsku').classList.add('hidden');
-      document.getElementById('mode-guides').classList.add('hidden');
-      document.getElementById('mode-editor').classList.add('hidden');
-      document.getElementById('mode-editor').classList.remove('flex');
-
-      const inactiveTabClass = "px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap";
-      const activeTabClass = "px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition shrink-0 whitespace-nowrap";
-      document.getElementById('tab-bin').className = inactiveTabClass;
-      document.getElementById('tab-whatnot').className = inactiveTabClass;
-      document.getElementById('tab-fnsku').className = inactiveTabClass;
-      document.getElementById('tab-guides').className = inactiveTabClass;
-      document.getElementById('tab-editor').className = inactiveTabClass;
-
-      if (mode === 'bin') {
-        document.getElementById('mode-bin').classList.remove('hidden');
-        document.getElementById('tab-bin').className = activeTabClass;
-      } else if (mode === 'whatnot') {
-        document.getElementById('mode-whatnot').classList.remove('hidden');
-        document.getElementById('tab-whatnot').className = activeTabClass;
-      } else if (mode === 'fnsku') {
-        document.getElementById('mode-fnsku').classList.remove('hidden');
-        document.getElementById('tab-fnsku').className = activeTabClass;
-      } else if (mode === 'guides') {
-        document.getElementById('mode-guides').classList.remove('hidden');
-        document.getElementById('tab-guides').className = activeTabClass;
-      } else if (mode === 'editor') {
-        document.getElementById('mode-editor').classList.remove('hidden');
-        document.getElementById('mode-editor').classList.add('flex');
-        document.getElementById('tab-editor').className = activeTabClass;
-        changeCanvasSize();
-        if (!elements.length) loadTemplate('standard');
-      }
-    }
-
-    function renderBinBatch() {
-      const prefix = document.getElementById('bin-prefix').value || 'BIN ';
-      const shelf = document.getElementById('bin-shelf').value || 'A';
-      const start = parseInt(document.getElementById('bin-start').value || 1);
-      const end = parseInt(document.getElementById('bin-end').value || 20);
-      const stock = getBinSettings();
-
-      if (!Number.isInteger(start) || !Number.isInteger(end) || start < 1 || end > 500 || end < start) {
-        window.alert('Choose a valid bin range from 1 to 500.');
-        return false;
-      }
-
-      setPrintStock(stock);
-
-      const batchPrintArea = document.getElementById('batch-print-area');
-      batchPrintArea.innerHTML = '';
-
-      for (let i = start; i <= end; i++) {
-        const binText = `${prefix}${i}${shelf}`;
-        const barcodeCode = binText.replace(/\s+/g, '-');
-
-        const labelDiv = document.createElement('div');
-        labelDiv.className = `print-label bin-print-label ${stock.orientation === 'Landscape' ? 'bin-landscape-print-label' : ''} bg-white text-black flex ${stock.orientation === 'Landscape' ? 'flex-col justify-center gap-6' : 'flex-col justify-around'} items-center`;
-        labelDiv.style.width = `${stock.width}in`;
-        labelDiv.style.height = `${stock.height}in`;
-        labelDiv.style.padding = `${stock.padding}in`;
-        labelDiv.style.boxSizing = 'border-box';
-        labelDiv.style.overflow = 'hidden';
-
-        const svgId = `batch-bin-svg-${i}`;
-        const title = document.createElement('div');
-        title.textContent = binText;
-        title.style.fontSize = `${getBinTitleSize(binText, stock)}in`;
-        title.style.fontWeight = '900';
-        title.style.lineHeight = '1';
-        title.style.textAlign = 'center';
-        title.style.color = 'black';
-        title.style.letterSpacing = '0.02in';
-        title.style.whiteSpace = 'nowrap';
-        title.style.width = stock.orientation === 'Landscape' ? '92%' : '100%';
-        title.style.flexShrink = '0';
-        title.style.overflow = 'hidden';
-
-        const barcodeWrap = document.createElement('div');
-        barcodeWrap.style.width = '92%';
-        barcodeWrap.style.height = `${stock.barcodeHeight}in`;
-        barcodeWrap.style.display = 'flex';
-        barcodeWrap.style.alignItems = 'center';
-        barcodeWrap.style.justifyContent = 'center';
-
-        const barcodeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        barcodeSvg.id = svgId;
-        barcodeSvg.style.width = '100%';
-        barcodeSvg.style.height = '100%';
-        barcodeWrap.appendChild(barcodeSvg);
-        labelDiv.append(title, barcodeWrap);
-        batchPrintArea.appendChild(labelDiv);
-
-        setTimeout(() => {
-          try {
-            JsBarcode(`#${svgId}`, barcodeCode, { format: "CODE128", width: stock.barcodeWidth, height: Math.round(stock.barcodeHeight * 72), displayValue: stock.showValue, fontSize: 28, fontOptions: "bold", margin: 0 });
-          } catch(e) {}
-        }, 10);
-      }
-
-      return true;
-    }
-
-    function generateBinBatch() {
-      if (renderBinBatch()) {
-        setTimeout(() => { window.print(); }, 400);
-      }
-    }
-
-    function generateWhatnotBatch() {
-      const prefix = document.getElementById('wn-prefix').value || '#';
-      const start = parseInt(document.getElementById('wn-start').value || 1);
-      const end = parseInt(document.getElementById('wn-end').value || 50);
-      const stock = getWhatnotStock();
-
-      if (!Number.isInteger(start) || !Number.isInteger(end) || end < start) {
-        window.alert('End number must be greater than or equal to the start number.');
-        return;
-      }
-
-      setPrintStock(stock);
-
-      const batchPrintArea = document.getElementById('batch-print-area');
-      batchPrintArea.innerHTML = '';
-
-      for (let i = start; i <= end; i++) {
-        const numText = `${prefix}${i}`;
-
-        const labelDiv = document.createElement('div');
-        labelDiv.className = 'print-label whatnot-print-label bg-white text-black flex flex-col justify-center items-center';
-        labelDiv.style.width = `${stock.width}in`;
-        labelDiv.style.height = `${stock.height}in`;
-        labelDiv.style.padding = `${stock.padding}in`;
-        labelDiv.style.boxSizing = 'border-box';
-        labelDiv.style.overflow = 'hidden';
-
-        const numberElement = document.createElement('div');
-        numberElement.textContent = numText;
-        numberElement.style.fontSize = `${getWhatnotFontSize(numText, stock)}in`;
-        numberElement.style.fontWeight = '900';
-        numberElement.style.lineHeight = '0.88';
-        numberElement.style.textAlign = 'center';
-        numberElement.style.color = 'black';
-        numberElement.style.whiteSpace = 'nowrap';
-        labelDiv.appendChild(numberElement);
-        batchPrintArea.appendChild(labelDiv);
-      }
-
-      setTimeout(() => { window.print(); }, 400);
-    }
-
-    function printSingleFNSKU() {
-      const barcode = document.getElementById('fnsku-val').value || 'X001ABC123';
-      const title = document.getElementById('fnsku-title').value || 'Product Title';
-      const cond = document.getElementById('fnsku-cond').value || 'New';
-
-      const batchPrintArea = document.getElementById('batch-print-area');
-      batchPrintArea.innerHTML = '';
-
-      const labelDiv = document.createElement('div');
-      labelDiv.className = 'print-label bg-white text-black flex flex-col justify-around items-center';
-      labelDiv.innerHTML = `
-        <div style="font-size: 14px; font-weight: 700; text-align: center; color: black; width: 90%; line-height: 1.2;">${title}</div>
-        <div style="width: 90%; display: flex; justify-content: center;"><svg id="single-fnsku-svg" style="width: 100%; max-height: 65px;"></svg></div>
-        <div style="font-size: 12px; font-weight: 800; text-align: center; color: black;">${cond}</div>
-      `;
-      batchPrintArea.appendChild(labelDiv);
-
-      setTimeout(() => {
-        try {
-          JsBarcode("#single-fnsku-svg", barcode, { format: "CODE128", width: 2, height: 50, displayValue: true, fontSize: 13, fontOptions: "bold", margin: 0 });
-        } catch(e) {}
-        window.print();
-      }, 300);
-    }
-
-    // Canvas Editor Code
-    const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
-    const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
-
-    function setImageUploadStatus(message, isError = false) {
-      const status = document.getElementById('image-upload-status');
-      status.textContent = message;
-      status.className = `mt-2 min-h-5 text-xs ${isError ? 'text-red-400' : 'text-slate-400'}`;
-    }
-
-    function readImageFile(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(new Error(`Could not read ${file.name}.`));
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function getImageDimensions(src) {
-      return new Promise((resolve, reject) => {
-        const image = new Image();
-        image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
-        image.onerror = () => reject(new Error('The image could not be decoded.'));
-        image.src = src;
-      });
-    }
-
-    async function handleImageUpload(fileList) {
-      const files = Array.from(fileList || []).slice(0, 10);
-      if (!files.length) return;
-
-      let added = 0;
-      const rejected = [];
-      setImageUploadStatus(`Reading ${files.length} image${files.length === 1 ? '' : 's'}...`);
-
-      for (const file of files) {
-        if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-          rejected.push(`${file.name}: use PNG, JPEG, or WebP`);
-          continue;
-        }
-        if (file.size > MAX_IMAGE_BYTES) {
-          rejected.push(`${file.name}: larger than 8 MB`);
-          continue;
-        }
-
-        try {
-          const src = await readImageFile(file);
-          const dimensions = await getImageDimensions(src);
-          const canvas = document.getElementById('label-canvas');
-          const maxWidth = Math.max(48, canvas.clientWidth * 0.65);
-          const maxHeight = Math.max(32, canvas.clientHeight * 0.65);
-          const scale = Math.min(1, maxWidth / dimensions.width, maxHeight / dimensions.height);
-          const width = Math.max(24, Math.round(dimensions.width * scale));
-          const height = Math.max(16, Math.round(dimensions.height * scale));
-
-          addElement('image', {
-            src,
-            text: file.name,
-            width,
-            aspectRatio: dimensions.width / dimensions.height,
-            x: Math.max(0, Math.round((canvas.clientWidth - width) / 2)),
-            y: Math.max(0, Math.round((canvas.clientHeight - height) / 2))
-          });
-          added += 1;
-        } catch (error) {
-          rejected.push(`${file.name}: ${error.message}`);
-        }
-      }
-
-      const result = `${added} image${added === 1 ? '' : 's'} added to the label.`;
-      setImageUploadStatus(rejected.length ? `${result} ${rejected.join(' · ')}` : result, rejected.length > 0 && added === 0);
-    }
-
-    function changeCanvasSize() {
-      const presetKey = document.getElementById('preset-size').value;
-      const canvas = document.getElementById('label-canvas');
-      const p = PRESETS[presetKey] || PRESETS.standard;
-      canvas.style.width = p.width + 'px';
-      canvas.style.height = p.height + 'px';
-      document.getElementById('inspector-width').max = p.width;
-      elements.forEach((element) => {
-        if (element.type === 'image') element.width = Math.min(element.width, p.width);
-      });
-      renderCanvas();
-    }
-
-    function addElement(type, customProps = {}) {
-      const id = 'el-' + (nextId++);
-      let newEl = {
-        id, type, x: 25, y: 20 + elements.length * 45,
-        text: type === 'barcode' ? 'X001ABC123' : (type === 'badge' ? '$19.99' : (type === 'box' ? 'BORDER BOX' : 'SAMPLE TEXT')),
-        fontSize: type === 'barcode' ? 14 : (type === 'badge' ? 16 : 24),
-        width: 120, aspectRatio: 1, src: '',
-        align: 'center', bold: true, ...customProps
-      };
-      elements.push(newEl);
-      selectElement(id);
-      renderCanvas();
-    }
-
-    function renderCanvas() {
-      const canvas = document.getElementById('label-canvas');
-      canvas.innerHTML = '';
-
-      elements.forEach(el => {
-        const div = document.createElement('div');
-        div.className = `canvas-element absolute cursor-move ${el.type === 'image' ? 'p-0' : 'p-1'} ${el.id === selectedId ? 'selected' : ''}`;
-        div.style.left = el.x + 'px';
-        div.style.top = el.y + 'px';
-        div.style.textAlign = el.align;
-        if (el.type !== 'image') {
-          div.style.fontSize = el.fontSize + 'px';
-          div.style.fontWeight = el.bold ? 'bold' : 'normal';
-        }
-
-        div.onclick = (e) => { e.stopPropagation(); selectElement(el.id); };
-        makeDraggable(div, el);
-
-        if (el.type === 'text') {
-          div.style.whiteSpace = 'pre-wrap';
-          div.textContent = el.text;
-        } else if (el.type === 'badge') {
-          div.className += ' bg-black text-white px-3 py-1 font-mono font-bold rounded';
-          div.innerText = el.text;
-        } else if (el.type === 'box') {
-          div.className += ' border-2 border-black p-2 font-bold';
-          div.innerText = el.text;
-        } else if (el.type === 'barcode') {
-          const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-          svg.id = `barcode-${el.id}`;
-          div.appendChild(svg);
-          setTimeout(() => {
-            try {
-              JsBarcode(`#barcode-${el.id}`, el.text, { format: "CODE128", width: 2, height: 50, displayValue: true, fontSize: 13, fontOptions: "bold", margin: 0 });
-            } catch(e) {}
-          }, 0);
-        } else if (el.type === 'image') {
-          const image = document.createElement('img');
-          image.src = el.src;
-          image.alt = `Uploaded artwork: ${el.text}`;
-          image.draggable = false;
-          image.style.display = 'block';
-          image.style.width = `${el.width}px`;
-          image.style.height = 'auto';
-          image.style.maxWidth = 'none';
-          div.appendChild(image);
-        }
-
-        canvas.appendChild(div);
-      });
-    }
-
-    function makeDraggable(domEl, elObj) {
-      domEl.onpointerdown = (event) => {
-        if (event.button !== 0) return;
-        event.preventDefault();
-        const startX = event.clientX;
-        const startY = event.clientY;
-        const initialX = elObj.x;
-        const initialY = elObj.y;
-        const canvas = document.getElementById('label-canvas');
-        domEl.setPointerCapture(event.pointerId);
-
-        domEl.onpointermove = (moveEvent) => {
-          const maxX = Math.max(0, canvas.clientWidth - domEl.offsetWidth);
-          const maxY = Math.max(0, canvas.clientHeight - domEl.offsetHeight);
-          elObj.x = Math.min(maxX, Math.max(0, initialX + (moveEvent.clientX - startX)));
-          elObj.y = Math.min(maxY, Math.max(0, initialY + (moveEvent.clientY - startY)));
-          domEl.style.left = elObj.x + 'px';
-          domEl.style.top = elObj.y + 'px';
-        };
-
-        const finishDrag = () => {
-          domEl.onpointermove = null;
-          domEl.onpointerup = null;
-          domEl.onpointercancel = null;
-        };
-        domEl.onpointerup = finishDrag;
-        domEl.onpointercancel = finishDrag;
-      };
-    }
-
-    function selectElement(id) {
-      selectedId = id;
-      const hit = elements.find(e => e.id === id);
-      if (hit) {
-        const isImage = hit.type === 'image';
-        const textInput = document.getElementById('inspector-text');
-        textInput.value = hit.text;
-        textInput.disabled = isImage;
-        textInput.title = isImage ? 'Uploaded file name' : 'Edit selected element content';
-        document.getElementById('text-size-controls').classList.toggle('hidden', isImage);
-        document.getElementById('image-size-controls').classList.toggle('hidden', !isImage);
-        document.getElementById('image-size-controls').classList.toggle('flex', isImage);
-        document.getElementById('inspector-size').value = hit.fontSize;
-        document.getElementById('size-val').innerText = hit.fontSize + 'px';
-        document.getElementById('inspector-width').max = document.getElementById('label-canvas').clientWidth;
-        document.getElementById('inspector-width').value = hit.width || 120;
-        document.getElementById('width-val').innerText = (hit.width || 120) + 'px';
-      }
-      renderCanvas();
-    }
-
-    function updateSelectedElement() {
-      if (!selectedId) return;
-      const hit = elements.find(e => e.id === selectedId);
-      if (hit) {
-        if (hit.type === 'image') {
-          hit.width = parseInt(document.getElementById('inspector-width').value);
-          document.getElementById('width-val').innerText = hit.width + 'px';
-        } else {
-          hit.text = document.getElementById('inspector-text').value;
-          hit.fontSize = parseInt(document.getElementById('inspector-size').value);
-          document.getElementById('size-val').innerText = hit.fontSize + 'px';
-        }
-        renderCanvas();
-      }
-    }
-
-    function deleteSelectedElement() {
-      if (!selectedId) return;
-      elements = elements.filter(e => e.id !== selectedId);
-      selectedId = null;
-      renderCanvas();
-    }
-
-    function loadTemplate(type) {
-      elements = [];
-      if (type === 'shipping_4x6') {
-        document.getElementById('preset-size').value = 'shipping';
-        addElement('text', { text: 'DISCOUNT PANTRY LLC\n100 RESELLER WAY\nLAS VEGAS NV 89101', x: 20, y: 20, fontSize: 11 });
-        addElement('text', { text: 'SHIP TO:\nCHRIS LUCAS\n123 MAIN STREET\nAPARTMENT 4B\nLAS VEGAS NV 89102', x: 40, y: 150, fontSize: 16 });
-        addElement('barcode', { text: '4208910294001234567890', x: 30, y: 420 });
-      } else if (type === 'fnsku') {
-        document.getElementById('preset-size').value = 'fnsku';
-        addElement('text', { text: 'Wireless Bluetooth Earbuds', x: 15, y: 10, fontSize: 12 });
-        addElement('barcode', { text: 'X001ABC123', x: 35, y: 40 });
-        addElement('text', { text: 'New', x: 135, y: 135, fontSize: 11 });
-      } else if (type === 'suffocation') {
-        document.getElementById('preset-size').value = 'polybag';
-        addElement('text', { text: 'WARNING: TO AVOID DANGER OF SUFFOCATION, KEEP THIS BAG AWAY FROM BABIES AND CHILDREN.\n\nDO NOT USE IN CRIBS, BEDS, OR PLAYPENS. THIS BAG IS NOT A TOY.', x: 15, y: 40, fontSize: 12 });
-      } else if (type === 'suffocation_large') {
-        document.getElementById('preset-size').value = 'polybag_large';
-        addElement('text', { text: 'WARNING: TO AVOID DANGER OF SUFFOCATION, KEEP THIS PLASTIC BAG AWAY FROM BABIES AND CHILDREN.\n\nDO NOT USE IN CRIBS, BEDS, CARRIAGES OR PLAYPENS. THIS BAG IS NOT A TOY.\n\nKNOT BAG BEFORE THROWING AWAY.', x: 20, y: 60, fontSize: 14 });
-      } else if (type === 'sold_set') {
-        document.getElementById('preset-size').value = 'standard';
-        addElement('box', { text: 'SOLD AS SET - DO NOT SEPARATE\nTHIS IS A SINGLE ITEM', x: 25, y: 50, fontSize: 16 });
-      } else if (type === 'fragile') {
-        document.getElementById('preset-size').value = 'standard';
-        addElement('box', { text: 'FRAGILE - HANDLE WITH CARE\nGLASSWARE / SENSITIVE CONTENTS', x: 20, y: 50, fontSize: 15 });
-      } else if (type === 'single_bin') {
-        document.getElementById('preset-size').value = 'standard';
-        addElement('text', { text: 'BIN 1A', x: 80, y: 15, fontSize: 34 });
-        addElement('barcode', { text: 'BIN-1A', x: 60, y: 75 });
-      }
-      changeCanvasSize();
-    }
-
-    const canvasDropZone = document.getElementById('label-canvas-container');
-    canvasDropZone.onclick = () => { selectedId = null; renderCanvas(); };
-    canvasDropZone.addEventListener('dragover', (event) => {
-      event.preventDefault();
-      canvasDropZone.classList.add('border-blue-500', 'bg-blue-950/30');
-    });
-    canvasDropZone.addEventListener('dragleave', () => {
-      canvasDropZone.classList.remove('border-blue-500', 'bg-blue-950/30');
-    });
-    canvasDropZone.addEventListener('drop', (event) => {
-      event.preventDefault();
-      canvasDropZone.classList.remove('border-blue-500', 'bg-blue-950/30');
-      handleImageUpload(event.dataTransfer.files);
-    });
-
-    window.addEventListener('afterprint', () => {
-      const printArea = document.getElementById('batch-print-area');
-      if (printArea.dataset.transientEditorPrint === 'true') {
-        printArea.innerHTML = '';
-        delete printArea.dataset.transientEditorPrint;
-      }
-    });
-
-    function getInitialModeFromHash() {
-      const hash = window.location.hash;
-      if (hash.includes('best-label-printers') || hash.includes('printer-setup') || hash.includes('seo-keywords') || hash.includes('rollo-setup') || hash.includes('zebra-setup') || hash.includes('dymo-setup')) return 'guides';
-      if (hash.includes('warehouse-rack-bin-label-generator')) return 'bin';
-      if (hash.includes('whatnot-live-show-number-generator')) return 'whatnot';
-      if (hash.includes('amazon-fba-fnsku-generator')) return 'fnsku';
-      return 'editor';
-    }
-
-    window.onload = () => {
-      updateBinPrintHint();
-      updateWhatnotPrintHint();
-      switchMode(getInitialModeFromHash());
-    };
-  </script>
+  <!-- Auth Modal -->
+  <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-label="Account">
+    <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-6 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-bold text-white">Your account</h3>
+        <button id="auth-close" type="button" class="text-slate-400 hover:text-white text-lg leading-none px-1" aria-label="Close">✕</button>
+      </div>
+
+      <p id="auth-msg" class="hidden rounded-lg border border-blue-800 bg-blue-950/40 px-3 py-2 text-xs text-blue-100"></p>
+
+      <div id="auth-tabs" class="flex gap-1 bg-slate-950 border border-slate-800 rounded-lg p-1">
+        <button id="auth-tab-signin" type="button" class="flex-1 px-3 py-2 text-xs font-bold rounded bg-blue-600 text-white">Sign in</button>
+        <button id="auth-tab-register" type="button" class="flex-1 px-3 py-2 text-xs font-semibold rounded text-slate-400 hover:text-white">Create account</button>
+      </div>
+
+      <p id="auth-error" class="hidden rounded-lg border border-red-900 bg-red-950/50 px-3 py-2 text-xs text-red-300" role="alert"></p>
+
+      <form id="auth-form-signin" data-panel="signin" class="space-y-3" novalidate>
+        <div>
+          <label for="auth-signin-email" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Email</label>
+          <input id="auth-signin-email" name="email" type="email" autocomplete="email" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+        </div>
+        <div>
+          <label for="auth-signin-password" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Password</label>
+          <input id="auth-signin-password" name="password" type="password" autocomplete="current-password" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm py-2.5 rounded-lg transition">Sign in</button>
+        <div class="flex justify-between text-[11px]">
+          <a href="#" id="auth-to-reset" class="text-slate-400 hover:text-white">Forgot password?</a>
+          <a href="#" id="auth-to-register" class="text-blue-400 hover:text-blue-300">Create a free account</a>
+        </div>
+      </form>
+
+      <form id="auth-form-register" data-panel="register" class="hidden space-y-3" novalidate>
+        <div>
+          <label for="auth-register-email" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Email</label>
+          <input id="auth-register-email" name="email" type="email" autocomplete="email" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+        </div>
+        <div>
+          <label for="auth-register-password" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Password (10+ characters)</label>
+          <input id="auth-register-password" name="password" type="password" autocomplete="new-password" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+        </div>
+        <div>
+          <label for="auth-register-confirm" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Confirm password</label>
+          <input id="auth-register-confirm" name="confirm" type="password" autocomplete="new-password" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm py-2.5 rounded-lg transition">Create free account</button>
+        <p class="text-[11px] text-slate-500 text-center">10 free PDF exports · no card required · label work stays in your browser</p>
+        <p class="text-[11px] text-center"><a href="#" id="auth-to-signin" class="text-blue-400 hover:text-blue-300">Already have an account? Sign in</a></p>
+      </form>
+
+      <form id="auth-form-reset-request" data-panel="reset-request" class="hidden space-y-3" novalidate>
+        <div>
+          <label for="auth-reset-email" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Account email</label>
+          <input id="auth-reset-email" name="email" type="email" autocomplete="email" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm py-2.5 rounded-lg transition">Send reset link</button>
+        <p id="auth-reset-sent" class="hidden rounded-lg border border-emerald-800 bg-emerald-950/40 px-3 py-2 text-xs text-emerald-200">If an account exists for that email, a reset link is on its way. Check your inbox — the link expires in 1 hour.</p>
+        <a href="#" id="auth-reset-back" class="block text-[11px] text-slate-400 hover:text-white">Back to sign in</a>
+      </form>
+
+      <form id="auth-form-reset-confirm" data-panel="reset-confirm" class="hidden space-y-3" novalidate>
+        <input type="hidden" name="token" id="auth-reset-confirm-token" value="">
+        <div>
+          <label for="auth-reset-new-password" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">New password (10+ characters)</label>
+          <input id="auth-reset-new-password" name="password" type="password" autocomplete="new-password" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm py-2.5 rounded-lg transition">Set new password</button>
+      </form>
+
+      <button id="auth-cancel" type="button" class="w-full text-xs text-slate-500 hover:text-slate-300 transition">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Paywall Modal (402 free_limit_reached) -->
+  <div id="paywall-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-label="Free limit reached">
+    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-6 space-y-4">
+      <div class="flex justify-between items-start">
+        <h3 class="text-lg font-bold text-white">You've used your 10 free exports</h3>
+        <button id="paywall-close" type="button" class="text-slate-400 hover:text-white text-lg leading-none px-1" aria-label="Close">✕</button>
+      </div>
+      <p class="text-sm text-slate-300">Your work is saved exactly as you left it — nothing was lost, and nothing changed. Upgrade to Pro to keep exporting.</p>
+      <ul class="space-y-2 text-sm text-slate-300">
+        <li class="flex gap-2"><span class="text-emerald-400 font-bold">✓</span> Unlimited label PDF exports</li>
+        <li class="flex gap-2"><span class="text-emerald-400 font-bold">✓</span> Saved projects &amp; export history</li>
+        <li class="flex gap-2"><span class="text-emerald-400 font-bold">✓</span> No ads — ever</li>
+      </ul>
+      <div id="paywall-pricing" class="rounded-lg border border-slate-800 bg-slate-950 p-3 space-y-1"></div>
+      <div class="flex gap-2">
+        <button id="paywall-back" type="button" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm py-2.5 rounded-lg transition">Back to my work</button>
+        <a id="paywall-upgrade" href="#pricing" class="flex-1 text-center bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm py-2.5 rounded-lg transition">Upgrade to Pro</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Exports Drawer -->
+  <div id="exports-drawer" class="hidden fixed inset-0 z-40 bg-black/60 no-print" role="dialog" aria-modal="true" aria-label="My exports">
+    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-slate-900 border-l border-slate-800 flex flex-col shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 px-5 py-4">
+        <h3 class="text-base font-bold text-white">My Exports</h3>
+        <button id="exports-close" type="button" class="text-slate-400 hover:text-white text-lg leading-none px-1" aria-label="Close">✕</button>
+      </div>
+      <div id="exports-list" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+      <div class="border-t border-slate-800 px-5 py-3">
+        <p class="text-[11px] text-slate-500">PDF files are kept for 7 days after export. Re-download or delete anytime.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Downloaded-PDF toast -->
+  <div id="open-pdf-toast" class="hidden fixed bottom-4 right-4 z-40 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl px-4 py-3 flex items-center gap-3 no-print">
+    <div class="min-w-0">
+      <p class="text-xs font-bold text-white">PDF downloaded</p>
+      <p id="open-pdf-name" class="text-[11px] text-slate-400 font-mono truncate"></p>
+    </div>
+    <button id="open-pdf-btn" type="button" class="rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3 py-1.5 whitespace-nowrap">Open PDF</button>
+    <button id="open-pdf-close" type="button" class="text-slate-500 hover:text-white text-sm px-1" aria-label="Dismiss">✕</button>
+  </div>
+
+  <script type="module" src="/js/app/app.js"></script>
 </body>
 </html>
