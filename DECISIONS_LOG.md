@@ -1,5 +1,11 @@
 # DECISIONS_LOG.md — Label Ninja Decision Record
 
+## 2026-08-31: Ads off — Adsterra removed from operational pages
+
+- **Decision:** Remove all Adsterra ad units (leaderboard + rectangles) from `index.html` and `privacy.html`, set `ADS.enabled: false` in `js/ads-config.js`, and drop the `ads.js` module import and AdSense `adsbygoogle.js` loader from both pages. The integration (`js/ads.js` + `js/ads-config.js`) stays in the repo behind the flag; `ads.txt` stays.
+- **Reason:** SaaS pivot — ads damage trust in the conversion workflow. Possible future reuse limited to public SEO guide pages.
+- **Release:** commit `ef33427`, Worker version `9a41b050-7bc3-4946-8ba9-87a7aee5b1e2`, deployed to Worker custom domains + Pages mirror, verified ad-free on all three endpoints. Also committed prior 08-29 SEO fixes (`e906248`: robots.txt, sitemap URLs, guide copy).
+
 ## 2026-08-29: Adsterra display ads + privacy page
 
 - **Decision:** Add Adsterra 728x90 and 300x250 display units across Label Ninja, plus a dedicated `/privacy.html` for AdSense qualification.
