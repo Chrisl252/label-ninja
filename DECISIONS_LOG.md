@@ -1,5 +1,15 @@
 # DECISIONS_LOG.md — Label Ninja Decision Record
 
+## 2026-08-31: SaaS pivot brick 1 — Worker API + D1 auth
+
+- **Decision:** Add a plain-ESM Worker API at `/api/*` on the same domain (Worker runs only when no static asset matches; assets block + custom domains unchanged). D1 database `label-ninja-db` (id `852d3ccd-83b6-4ab9-9c39-49a1cf77b88b`) bound as `DB`; migration `0001_init.sql` applied local+remote with all forward tables (export_jobs, usage_ledger, projects, printer_profiles, webhook_events) so future bricks never re-shape v1.
+- **Auth design:** PBKDF2-SHA256 (100k iters, 16-byte salt) passwords; 32-byte-hex session tokens in HttpOnly+Secure+SameSite=Lax cookie `ln_session` (30d), stored as SHA-256(token) in `sessions`; logout deletes; password reset via 48-byte-hex tokens (1h, single-use, revoke all sessions) "sent" through pluggable mailer (Resend when `RESEND_API_KEY` set, else `[RESET-LINK]` console.log read via `wrangler tail`). Login burns dummy PBKDF2 on unknown email to kill timing enumeration.
+- **Rate limits:** fixed-window counter in D1 `rate_limits` — 10/hour per IP across register/login/reset endpoints; 429 + `Retry-After`.
+- **ADMIN_EMAILS bootstrap:** `[vars] ADMIN_EMAILS="chrislucas252@gmail.com"` → matching registrants get role `admin`.
+- **R2:** bucket creation failed (`code 10042` — R2 not enabled on the account). No `OUTPUTS` binding; Brick 2 output storage falls back to D1 blobs or needs R2 enabled in the dashboard first.
+- **Endpoints:** `GET /api/health`, `POST /api/auth/{register,login,logout,reset-request,reset-confirm}`, `GET /api/auth/me` (free-uses math: granted + admin adjustments − export count; `unlimited:true` when pro+active). Verified 24/24 local checks (`scripts/test-auth-local.ps1`) and full curl pass in production.
+- **Release:** commit `5b8611e`, Worker version `0e4d7460-db61-4bac-8be9-2a183d51e2d6`, canary account `ln-canary+20260831175445@bisket.com` registered in prod.
+
 ## 2026-08-31: Ads off — Adsterra removed from operational pages
 
 - **Decision:** Remove all Adsterra ad units (leaderboard + rectangles) from `index.html` and `privacy.html`, set `ADS.enabled: false` in `js/ads-config.js`, and drop the `ads.js` module import and AdSense `adsbygoogle.js` loader from both pages. The integration (`js/ads.js` + `js/ads-config.js`) stays in the repo behind the flag; `ads.txt` stays.

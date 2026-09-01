@@ -12,6 +12,7 @@
 - **Canonical Code Path:** `C:\Code\label-ninja`
 - **Target Stack:** Single-page HTML5/JS + Tailwind CSS + `JsBarcode` + `PapaParse` + `QRCode` (100% zero-dependency client-side execution).
 - **Business Model:** 100% Freemium & Unlimited client-side utility tool (SEO magnet & community utility for Chris's reselling network).
+- **Backend (2026-08-31, brick 1):** Plain-ESM Worker API at `/api/*` (auth: register/login/logout/me/reset + health) backed by D1 `label-ninja-db`; sessions via HttpOnly `ln_session` cookie; 10/hr per-IP rate limit on auth endpoints. Modules live in `src/` (`worker.js` router + `auth/db/http/validate/ratelimit.js`), schema in `migrations/0001_init.sql`. See `ARCHITECTURE.md` for the full module map and `DECISIONS_LOG.md` 2026-08-31 for design decisions.
 
 ---
 
