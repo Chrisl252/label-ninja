@@ -1,0 +1,8 @@
+# Label Ninja local dev secrets — copy to .dev.vars (git-ignored) for `wrangler dev`.
+# Use obvious fakes locally; real test-mode values only where noted.
+# NEVER put these in wrangler.toml (it is committed).
+# Production: npx wrangler secret put <NAME>   (full checklist in SYSTEM_REFERENCE.md)
+STRIPE_SECRET_KEY=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+STRIPE_PRICE_MONTHLY=price_xxx
+STRIPE_PRICE_ANNUAL=price_xxx

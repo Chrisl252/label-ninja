@@ -1,12 +1,20 @@
 // Entitlement math — the single source of truth for the free-use formula.
-// Used by auth (/api/auth/me) and export (reservation + recomputation). Never duplicate.
+// Used by auth (/api/auth/me), export (reservation + recomputation), and billing
+// (webhook state sync). Never duplicate.
+//
+// Spec rule: access remains through the paid-through date after normal cancellation.
+// status active|trialing -> pro; canceled|past_due -> pro only while paid_through is in
+// the future; incomplete/unpaid/anything else never grants. `plan` is a synced display
+// column derived from THIS predicate (billing.js applies it) — the predicate itself is
+// the authority, so it must not read `plan` (that would be circular).
 
 export function isProActive(user) {
-  return (
-    user.plan === 'pro' &&
-    (user.subscription_status === 'active' || user.subscription_status === 'trialing') &&
-    (user.paid_through == null || user.paid_through > Date.now())
-  );
+  const status = user.subscription_status;
+  if (status === 'active' || status === 'trialing') return true;
+  if (status === 'canceled' || status === 'past_due') {
+    return user.paid_through != null && user.paid_through > Date.now();
+  }
+  return false;
 }
 
 export async function ledgerSums(db, userId) {
