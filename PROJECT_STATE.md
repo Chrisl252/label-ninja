@@ -2,14 +2,13 @@
 
 ## 1. Start Here Next Session
 
-- **Status:** LIVE — static site unchanged + **backend API live at `/api/*`** (brick 1 of SaaS pivot, 2026-08-31).
-- **Production:** `https://label-ninja.com` + `www` (Worker, version `0e4d7460-db61-4bac-8be9-2a183d51e2d6`); Pages mirror at `label-ninja.pages.dev` (static only, no backend).
-- **Backend:** plain-ESM Worker (`src/worker.js` router + `src/{auth,db,http,validate,ratelimit}.js`), D1 `label-ninja-db` (`DB`, id `852d3ccd-83b6-4ab9-9c39-49a1cf77b88b`), schema v1 (`migrations/0001_init.sql`) applied local+remote — all 9 tables incl. export_jobs/usage_ledger/projects/printer_profiles/webhook_events.
-- **Auth live:** register/login/logout/me + password-reset plumbing; sessions via `ln_session` HttpOnly cookie; 10/hr per-IP rate limit on auth endpoints; `ADMIN_EMAILS=chrislucas252@gmail.com` → admin role.
-- **Canary:** `ln-canary+20260831175445@bisket.com` registered + verified in prod (register/me/login/logout/404 all green).
-- **R2:** NOT enabled on the account (create failed, code 10042) — no `OUTPUTS` binding. Brick 2 falls back to D1 blobs or Chris enables R2 in dashboard.
-- **Next brick:** export jobs + metering (POST /api/exports, usage_ledger writes, free-uses decrement visible in /me).
-- **Local verify:** `scripts/test-auth-local.ps1` (24 checks) against `npx wrangler dev` — clear local `rate_limits` table between full re-runs.
+- **Status:** LIVE — static site + auth API + **server-authoritative PDF export pipeline** (brick 2, 2026-08-31). Worker version `d73cb865-5ca4-4c78-9a02-a2ed39495df8`.
+- **Export engine:** `POST /api/export` renders real PDFs server-side (pdf-lib) from validated job specs (text/CODE128/rect/line/PNG-JPEG elements, exact pt sizing), stores bytes in D1 `output_chunks` (400KB chunks, `migrations/0002_outputs.sql`), serves authorized downloads (7-day expiry, `private, no-store`), `GET /api/exports` history, `DELETE /api/export/:id`.
+- **Metering:** atomic `INSERT..SELECT..WHERE remaining>0` reservation in `usage_ledger`; `changes=0` → 402 `free_limit_reached` (+`upgrade_url`). Failed renders compensate (delete ledger row) — zero consumption. Idempotency key replays the same job. Pro-active users skip reservation (`src/entitlements.js` = the one formula, used by auth + export). 30 exports/hour/user.
+- **Verified:** 13/13 local cases (`scripts/test-export-local.ps1`, incl. race 200+402, compensation, dimension proofs 288x432 / 70.87x36.85pt) + prod canary (`ln-canary-b2+20260831181300@bisket.com`, 1 use burned, remaining 9, exact-dim download proof). Auth suite still 24/24.
+- **R2:** still unavailable (error 10042) — D1 blobs are the storage design, not a fallback hack.
+- **Frontend:** untouched this brick — still client-side only; wiring the UI to `/api/export` is the next brick (Brick 3 = pdf_convert tool + UI).
+- **Local verify:** start `npx wrangler dev`, then `scripts/test-export-local.ps1`; clear `rate_limits` table between full re-runs (both suites share it). `scripts/verify-pdf.mjs <pdf> [w h pages]` proves dimensions.
 - **Do not touch:** `scratch/` and `src/index.js` are preserved prior-session artifacts; `src/*.js` modules are the live backend.
 
 ## 2. Feature Inventory
