@@ -2,11 +2,15 @@
 
 import { errorResponse, HttpError } from './http.js';
 import { handleApi } from './auth.js';
+import { handleExportApi } from './export.js';
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     try {
+      if (url.pathname.startsWith('/api/export')) {
+        return await handleExportApi(request, env, url.pathname, url.searchParams);
+      }
       if (url.pathname.startsWith('/api/')) {
         return await handleApi(request, env, url.pathname);
       }

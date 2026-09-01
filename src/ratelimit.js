@@ -28,3 +28,24 @@ export async function enforceRateLimit(db, request, bucket = 'auth') {
     });
   }
 }
+
+// Per-user variant (e.g. export metering): key on user id, custom limit.
+export async function enforceUserRateLimit(db, userId, bucket, limit) {
+  const window = Math.floor(Date.now() / WINDOW_MS);
+  const key = `${bucket}:${userId}:${window}`;
+  const row = await db
+    .prepare(
+      `INSERT INTO rate_limits (key, count, window_start) VALUES (?, 1, ?)
+       ON CONFLICT(key) DO UPDATE SET count = count + 1
+       RETURNING count`
+    )
+    .bind(key, window)
+    .first();
+  const count = row ? row.count : 1;
+  if (count > limit) {
+    const retryAfter = Math.max(1, Math.ceil(((window + 1) * WINDOW_MS - Date.now()) / 1000));
+    throw new HttpError(429, 'rate_limited', 'Too many exports this hour. Try again later.', {
+      'Retry-After': String(retryAfter),
+    });
+  }
+}

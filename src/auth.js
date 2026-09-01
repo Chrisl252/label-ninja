@@ -4,6 +4,7 @@ import { ok, json, readJson, HttpError } from './http.js';
 import { now, uid, randomHex, sha256Hex, hashPassword, verifyPassword, dummyVerify } from './db.js';
 import { expectEmail, expectPassword, expectHexToken } from './validate.js';
 import { enforceRateLimit } from './ratelimit.js';
+import { isProActive, ledgerSums, computeFreeUses } from './entitlements.js';
 
 const SESSION_COOKIE = 'ln_session';
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -128,19 +129,8 @@ async function logout(request, env) {
 async function me(request, env) {
   const user = await getSessionUser(env, request);
   if (!user) throw new HttpError(401, 'unauthorized', 'Not signed in.');
-  const ledger = await env.DB.prepare(
-    `SELECT COALESCE(SUM(CASE WHEN kind IN ('admin_grant','admin_revoke') THEN delta ELSE 0 END), 0) AS adjustments,
-            COALESCE(SUM(CASE WHEN kind = 'export' THEN 1 ELSE 0 END), 0) AS consumed
-     FROM usage_ledger WHERE user_id = ?`
-  ).bind(user.id).first();
-  const t = now();
-  const unlimited =
-    user.plan === 'pro' &&
-    (user.subscription_status === 'active' || user.subscription_status === 'trialing') &&
-    (user.paid_through == null || user.paid_through > t);
-  const consumed = ledger ? ledger.consumed : 0;
-  const adjustments = ledger ? ledger.adjustments : 0;
-  const remaining = user.free_uses_granted + adjustments - consumed;
+  const unlimited = isProActive(user);
+  const { consumed, remaining } = computeFreeUses(user, await ledgerSums(env.DB, user.id));
   return ok({
     user: {
       id: user.id,

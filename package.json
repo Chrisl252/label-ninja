@@ -18,12 +18,15 @@
   ],
   "author": "Bisket LLC",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/Chrisl252/label-ninja/issues"
   },
   "homepage": "https://github.com/Chrisl252/label-ninja#readme",
   "devDependencies": {
     "wrangler": "^4.126.0"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
   }
 }
