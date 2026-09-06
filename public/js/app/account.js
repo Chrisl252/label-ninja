@@ -45,7 +45,7 @@ function renderAccount() {
   const user = getUser();
   const wrap = el('account-mount');
   if (!user) {
-    wrap.innerHTML = '<p class="text-sm text-slate-400">Sign in to manage your account.</p>';
+    wrap.innerHTML = '<p class="small muted">Sign in to manage your account.</p>';
     return;
   }
   const fu = user.free_uses || {};
@@ -57,37 +57,39 @@ function renderAccount() {
     const used = Math.max(0, granted - remaining);
     const pct = granted ? Math.min(100, Math.round((used / granted) * 100)) : 100;
     usesBar = `
-      <div class="rounded-xl border border-slate-800 bg-slate-950 p-4">
-        <div class="flex justify-between items-center">
-          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Free exports</p>
-          <p class="text-xs font-mono text-slate-300">${remaining} of ${granted} left</p>
+      <div class="panel panel--tight stack stack--xs">
+        <div class="row spread">
+          <p class="label led${remaining <= 2 ? ' led--attn' : ''}">Free exports</p>
+          <p class="mono small">${remaining} of ${granted} left</p>
         </div>
-        <div class="mt-2 h-2 rounded-full bg-slate-800 overflow-hidden"><div class="h-full rounded-full ${pct >= 90 ? 'bg-amber-500' : 'bg-blue-500'}" style="width:${pct}%"></div></div>
-        <a href="#pricing" class="mt-2 inline-block text-xs font-bold text-emerald-300 hover:text-emerald-200">Upgrade for unlimited →</a>
+        <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="${granted}" aria-valuenow="${used}" aria-label="Free exports used"><div class="meter__fill${pct >= 90 ? ' meter__fill--attn' : ''}" style="width:${pct}%"></div></div>
+        <div><a href="#pricing" class="link small">Upgrade for unlimited →</a></div>
       </div>`;
   } else {
     usesBar = `
-      <div class="rounded-xl border border-emerald-900 bg-emerald-950/30 p-4">
-        <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">Plan</p>
-        <p class="mt-1 text-lg font-black text-white">PRO · unlimited exports</p>
+      <div class="panel panel--tight stack stack--xs">
+        <p class="label led led--ready">Plan</p>
+        <p class="usage__num">Pro · unlimited exports</p>
       </div>`;
   }
   wrap.innerHTML = `
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="rounded-xl border border-slate-800 bg-slate-950 p-4 space-y-2">
-        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Account</p>
-        <p class="text-sm font-mono text-white break-all">${user.email}</p>
-        <p class="text-xs text-slate-400">Plan: <span class="font-bold ${pro ? 'text-emerald-300' : 'text-slate-200'}">${pro ? 'PRO' : 'Free'}</span></p>
-        <p class="text-xs text-slate-400">Subscription: <span class="font-bold text-slate-200">${subscriptionWords(user)}</span></p>
+    <div class="grid grid--2">
+      <div class="panel panel--tight stack stack--xs">
+        <p class="label">Account</p>
+        <div class="kv kv--acct">
+          <span class="kv__k">Email</span><span class="kv__v mono">${user.email}</span>
+          <span class="kv__k">Plan</span><span class="kv__v">${pro ? '<span class="led led--ready">Pro</span>' : 'Free'}</span>
+          <span class="kv__k">Subscription</span><span class="kv__v">${subscriptionWords(user)}</span>
+        </div>
       </div>
       ${usesBar}
     </div>
-    <div class="flex flex-wrap gap-3">
-      <button id="account-billing-btn" class="rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm px-4 py-2.5 transition">Manage billing</button>
-      <button id="account-signout-btn" class="rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm px-4 py-2.5 transition">Sign out</button>
-      <button id="account-delete-btn" disabled title="Available soon" class="rounded-lg bg-slate-900 border border-slate-800 text-slate-600 font-bold text-sm px-4 py-2.5 cursor-not-allowed">Delete account</button>
+    <div class="acct-actions">
+      <button type="button" id="account-billing-btn" class="btn btn--primary">Manage billing</button>
+      <button type="button" id="account-signout-btn" class="btn btn--ghost">Sign out</button>
+      <button type="button" id="account-delete-btn" disabled title="Available soon" class="btn btn--ghost">Delete account</button>
     </div>
-    <p class="text-[11px] text-slate-500">Delete account arrives in a coming update — email chris@bisket.com if you need data removed sooner.</p>`;
+    <p class="tiny muted">Delete account arrives in a coming update — email chris@bisket.com if you need data removed sooner.</p>`;
   el('account-billing-btn').addEventListener('click', manageBilling);
   el('account-signout-btn').addEventListener('click', async () => {
     await authSignOut();

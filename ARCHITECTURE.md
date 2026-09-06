@@ -43,6 +43,7 @@ label-ninja/
 │   ├── auth.js            # auth domain logic + route table + /api/health
 │   ├── export.js          # export domain: reservation, storage, downloads, history
 │   ├── billing.js         # Stripe billing (REST fetch, no SDK): pricing, checkout, portal, webhooks
+│   ├── projects.js        # ownership-scoped saved-project CRUD + size/write-rate guards
 │   ├── entitlements.js    # free-use formula + pro-active check (single source of truth; billing syncs plan FROM it)
 │   ├── spec-validate.js   # job-spec validation (all 400s fire pre-consumption)
 │   ├── limits.js          # export pipeline caps (pages/elements/images/body/TTL)
@@ -60,9 +61,11 @@ label-ninja/
 │   ├── test-export-prod.ps1  # production canary evidence (burns exactly 1 use)
 │   ├── verify-pdf.mjs        # PDF dimension proof (page count + pt/in per page, optional asserts)
 │   ├── test-spec-builders.mjs # 61-check unit proof of the pure spec builders + hash routing (no server)
+│   ├── test-redesign-contract.mjs # DOM/LN handler/design-system release contract
 │   └── test-b3-integration.mjs # 41-check frontend↔backend contract vs a running server (LN_BASE, LN_CANARY=1 for prod canary)
 ├── public/                # static SPA
 │   ├── index.html          # markup + single module tag; inline handlers via window.LN.*
+│   ├── css/                # Print Bench tokens + modular app/editor/tool/guide/account styles
 │   └── js/app/             # 13 ES modules (see §4); js/ads*.js disabled leftovers — never referenced
 └── scratch/, src/index.js # preserved prior-session artifacts (NOT deployed, do not touch)
 ```
@@ -76,6 +79,7 @@ label-ninja/
 | **export** | `POST /api/export`, `GET /api/exports`, `GET /api/export/:id`, `GET /api/export/:id/download`, `DELETE /api/export/:id` | `src/export.js` — atomic reservation-then-generate metering (one use = one completed job; failures compensate the ledger row), D1 chunk storage (400KB), 7-day expiry + lazy sweep, ownership-scoped 404s, `private, no-store` downloads |
 | **entitlements** | — | `src/entitlements.js` — `granted + admin deltas − export count`; pro-active = subscription_status/paid_through (active\|trialing → pro; canceled\|past_due → pro while paid_through in the future; incomplete/unpaid never). Imported by auth + export + billing; never duplicated |
 | **billing** | `GET /api/config/pricing`, `POST /api/billing/checkout`, `POST /api/billing/portal`, `POST /api/webhooks/stripe` | `src/billing.js` — Stripe REST (`fetch`, form-encoded, error code logged never body). Pricing: per-isolate price cache, real Stripe data only, graceful `price_fetch_failed` degrade. Checkout: 401→503→400 guards, ensure-customer (`metadata[user_id]`), success `/billing?checkout=success` / cancel `/pricing`, upstream fail → 502. Portal: 400 `no_customer` without bound customer. Webhooks: HMAC t±300s constant-time verify → 400 `invalid_signature`; idempotent via `webhook_events` (duplicate → `{duplicate:true}` stop; `error:%` result releases the claim so Stripe retries reprocess); handlers bind customer (never relink — anti-hijack), apply subscription state through `applySubscriptionState` (paid_through stored in MS from Stripe seconds; plan derived from `isProActive`); unknown → `ignored`. Secrets: env only (`wrangler secret put` / `.dev.vars`) |
+| **projects** | `GET/POST /api/projects`, `GET/PATCH/DELETE /api/projects/:id` | `src/projects.js` — authenticated, ownership-scoped saved-project CRUD; foreign IDs return 404; payloads above 256 KiB are rejected; writes are limited to 60/hour/user |
 | **spec-validate** | — | `src/spec-validate.js` — job-spec shape/caps (pages ≤200, elements ≤200/page, text ≤2000, images ≤20/page + 8MB total, body ≤10MB, 4MB/image), barcode charset, PNG/JPEG magic checks, webp → 400 `unsupported_image_format`, pdf_convert → 501 `not_implemented_yet`. All pre-consumption |
 | **renderer** | — | `src/render/pdf-label.js` — pdf-lib: exact `setSize(w*72, h*72)` pages, text (Helvetica/Bold, WinAnsi sanitize, top-down y, multi-line 1.2×), CODE128 as vector rects, rect/line, PNG/JPEG embeds. `buildTestPrintSpec()` = built-in diagnostic tool |
 | **code128** | — | `src/code128.js` — Code Set B encoder: 107-pattern table, checksum, bar/space widths (verified against spec vectors) |

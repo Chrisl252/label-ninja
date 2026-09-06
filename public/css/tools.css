@@ -1,0 +1,64 @@
+/* Hallmark · macrostructure: Workbench · tone: utilitarian/technical · anchor hue: electric blue (kept)
+ * Batch tools (bin · whatnot · fnsku): form panel on the left, the label on its liner on the right,
+ * the one blue button directly under the label. Tokens only — see DESIGN.md. */
+
+.tool { display: flex; flex-direction: column; gap: var(--space-md); min-width: 0; }
+.tool__head {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: var(--space-xs) var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: var(--rule);
+}
+.tool__head > .stack { flex: 1 1 22rem; min-width: 0; }
+.tool__title { font-size: var(--text-display); }
+.tool__spec { display: flex; flex-wrap: wrap; gap: var(--space-2xs); }
+
+.tool__bench { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-md); align-items: start; }
+@media (min-width: 900px) {
+  .tool__bench { grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); }
+  .tool__stage { position: sticky; top: calc(var(--masthead-h) + var(--space-sm)); }
+}
+.tool__form { display: flex; flex-direction: column; gap: var(--space-md); }
+.tool__form .grid { gap: var(--space-sm); }
+.tool__stage { display: flex; flex-direction: column; gap: var(--space-sm); min-width: 0; }
+.tool__stage .liner { padding: var(--space-lg) var(--space-md); }
+.tool__caption { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2xs); }
+.tool__save { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2xs) var(--space-xs); font-size: var(--text-xs); color: var(--color-ink-3); }
+.tool__save .led::before { width: 6px; height: 6px; }
+.tool__cta { width: 100%; }
+.tool__fine { text-align: center; font-size: var(--text-xs); color: var(--color-ink-3); }
+.upper { text-transform: uppercase; }
+
+/* the sample label — proportions are the real stock, content is the tool's defaults */
+.sample {
+  display: flex; flex-direction: column; align-items: center; justify-content: space-around;
+  overflow: hidden; flex: 0 0 auto;
+  font-family: var(--font-body); font-weight: 700; color: var(--color-stock-ink);
+  line-height: 1;
+}
+.sample .bars { color: var(--color-stock-ink); }
+.sample__title { font-family: var(--font-body); font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; text-align: center; overflow-wrap: anywhere; }
+.sample__value { font-family: var(--font-mono); letter-spacing: 0.12em; }
+.sample__meta { font-family: var(--font-body); font-weight: 500; color: var(--color-stock-ink-2); }
+
+/* 4 x 6 portrait */
+.sample--bin { width: 176px; height: 264px; padding: 14px 12px; }
+.sample--bin .sample__title { font-size: 2rem; }
+.sample--bin .bars { width: 132px; height: 92px; -webkit-mask-size: 132px 92px; mask-size: 132px 92px; }
+.sample--bin .sample__value { font-size: 0.75rem; }
+/* 1 x 0.5 landscape — the number fills the stock */
+.sample--wn { width: 240px; height: 120px; padding: 6px; justify-content: center; }
+.sample--wn .sample__title { font-size: 5.25rem; font-family: var(--font-display); font-weight: 700; letter-spacing: 0; }
+/* 2 x 1 landscape */
+.sample--fnsku { width: 272px; height: 136px; padding: 10px 14px; }
+.sample--fnsku .sample__title { font-size: 0.72rem; }
+.sample--fnsku .bars { width: 224px; height: 48px; -webkit-mask-size: 112px 48px; mask-size: 112px 48px; }
+.sample--fnsku .sample__value { font-size: 0.72rem; }
+.sample--fnsku .sample__meta { font-size: 0.62rem; }
+
+@media (max-width: 360px) {
+  .sample--wn { width: 200px; height: 100px; }
+  .sample--wn .sample__title { font-size: 4.25rem; }
+  .sample--fnsku { width: 232px; height: 116px; }
+  .sample--fnsku .bars { width: 192px; }
+}

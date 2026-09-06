@@ -36,14 +36,15 @@ function renderHeaderAuth() {
 
   if (user) {
     const fu = user.free_uses || {};
+    // Usage chip: PRO -> accent chip · ≤2 free left -> amber (attention) chip · otherwise plain.
     if (fu.unlimited) {
       chip.textContent = 'PRO';
-      chip.className = 'text-[11px] font-mono font-bold px-2 py-1 rounded border border-emerald-600 bg-emerald-950/50 text-emerald-300';
+      chip.className = 'chip chip--accent';
     } else {
       const granted = fu.granted == null ? 10 : fu.granted;
       const remaining = fu.remaining == null ? granted : fu.remaining;
       chip.textContent = `${remaining} of ${granted} free`;
-      chip.className = 'text-[11px] font-mono px-2 py-1 rounded border border-slate-700 bg-slate-950 text-slate-300';
+      chip.className = remaining <= 2 ? 'chip chip--attn' : 'chip';
     }
     chip.classList.remove('hidden');
     email.textContent = user.email;
@@ -74,9 +75,7 @@ function showPanel(mode) {
     const btn = el(`auth-tab-${t}`);
     if (btn) {
       const active = mode === t;
-      btn.className = active
-        ? 'flex-1 px-3 py-2 text-xs font-bold rounded bg-blue-600 text-white'
-        : 'flex-1 px-3 py-2 text-xs font-semibold rounded text-slate-400 hover:text-white';
+      btn.className = active ? 'tabs__btn is-active' : 'tabs__btn';
     }
   }
   const tabsRow = el('auth-tabs');

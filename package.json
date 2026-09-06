@@ -4,6 +4,9 @@
   "description": "Browser-based thermal label studio for reseller workflows",
   "private": true,
   "scripts": {
+    "test": "node scripts/test-spec-builders.mjs && node scripts/test-redesign-contract.mjs",
+    "test:integration": "node scripts/test-b3-integration.mjs",
+    "test:projects": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\\test-b5-projects-local.ps1",
     "deploy": "wrangler deploy",
     "deploy:pages": "wrangler pages deploy public --project-name label-ninja"
   },

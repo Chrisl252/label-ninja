@@ -12,12 +12,12 @@ function el(id) {
 
 async function renderPricing() {
   const area = el('paywall-pricing');
-  area.innerHTML = '<p class="text-xs text-slate-400">Checking Pro pricing…</p>';
+  area.innerHTML = '<p class="small muted">Checking Pro pricing…</p>';
   try {
     const data = await api('/api/config/pricing');
     if (data && data.configured && Array.isArray(data.plans) && data.plans.length) {
       const rows = data.plans
-        .map((p) => `<div class="flex justify-between text-sm"><span class="text-slate-300">${p.name || 'Pro'}</span><span class="font-mono text-white">${p.price || ''}</span></div>`)
+        .map((p) => `<div class="row spread small"><span>${p.name || 'Pro'}</span><span class="mono">${p.price || ''}</span></div>`)
         .join('');
       area.innerHTML = rows;
       return;
@@ -26,8 +26,8 @@ async function renderPricing() {
     // degrade to the unconfigured message below
   }
   area.innerHTML = `
-    <p class="text-sm font-semibold text-white">Pro pricing coming soon — early access</p>
-    <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20Pro%20early%20access" class="mt-2 inline-flex rounded-lg bg-slate-800 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700">Notify me when Pro launches</a>`;
+    <p class="small"><strong>Pro pricing coming soon — early access</strong></p>
+    <div><a href="mailto:chris@bisket.com?subject=Label%20Ninja%20Pro%20early%20access" class="btn btn--ghost btn--sm">Notify me when Pro launches</a></div>`;
 }
 
 export function openPaywall(upgradeUrl) {

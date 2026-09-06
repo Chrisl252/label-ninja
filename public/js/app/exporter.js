@@ -56,11 +56,11 @@ function setBusy(button, busy, label) {
   if (busy) {
     button.dataset.label = button.innerHTML;
     button.disabled = true;
-    button.classList.add('opacity-60', 'cursor-wait');
+    button.classList.add('is-busy');
     button.innerHTML = label || 'Preparing PDF…';
   } else {
     button.disabled = false;
-    button.classList.remove('opacity-60', 'cursor-wait');
+    button.classList.remove('is-busy');
     if (button.dataset.label) button.innerHTML = button.dataset.label;
   }
 }
@@ -195,26 +195,26 @@ function renderDrawer(exportsList) {
   const container = document.getElementById('exports-list');
   container.innerHTML = '';
   if (!exportsList.length) {
-    container.innerHTML = '<p class="text-sm text-slate-400 p-4">No exports yet. Your PDF batches will appear here for 7 days.</p>';
+    container.innerHTML = '<p class="small muted">No exports yet. Your PDF batches will appear here for 7 days.</p>';
     return;
   }
   for (const job of exportsList) {
     const meta = job.output_meta || {};
     const row = document.createElement('div');
-    row.className = 'border border-slate-800 bg-slate-950 rounded-lg p-3 space-y-2';
+    row.className = 'xrow';
     const metaBits = [meta.pages ? `${meta.pages} pg` : null, fmtBytes(meta.bytes), meta.width_in ? `${meta.width_in}x${meta.height_in} in` : null].filter(Boolean).join(' · ');
     row.innerHTML = `
-      <div class="flex justify-between items-start gap-2">
-        <div class="min-w-0">
-          <p class="text-xs font-bold text-white uppercase font-mono">${job.tool.replace('_', ' ')}</p>
-          <p class="text-[11px] text-slate-400">${fmtDate(job.created_at)}${metaBits ? ' · ' + metaBits : ''}</p>
-          <p class="text-[10px] text-slate-500">Expires ${fmtDate(job.expires_at)} · files kept 7 days</p>
+      <div class="xrow__head">
+        <div class="grow">
+          <p class="xrow__tool">${job.tool.replace('_', ' ')}</p>
+          <p class="xrow__meta">${fmtDate(job.created_at)}${metaBits ? ' · ' + metaBits : ''}</p>
+          <p class="xrow__exp">Expires ${fmtDate(job.expires_at)} · files kept 7 days</p>
         </div>
-        <span class="text-[10px] font-mono px-1.5 py-0.5 rounded border ${job.status === 'completed' ? 'border-emerald-800 text-emerald-300' : 'border-slate-700 text-slate-400'}">${job.status}</span>
+        <span class="chip${job.status === 'completed' ? ' chip--ready' : ''}">${job.status}</span>
       </div>
-      <div class="flex gap-2">
-        <button data-act="dl" class="flex-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-2 py-1.5">Re-download</button>
-        <button data-act="del" class="rounded bg-slate-800 hover:bg-slate-700 text-red-300 text-xs font-bold px-2 py-1.5">Delete</button>
+      <div class="xrow__acts">
+        <button type="button" data-act="dl" class="btn btn--stock btn--sm grow">Re-download</button>
+        <button type="button" data-act="del" class="btn btn--ghost btn--sm">Delete</button>
       </div>`;
     row.querySelector('[data-act="dl"]').addEventListener('click', () => redownload(job.id));
     row.querySelector('[data-act="del"]').addEventListener('click', () => removeExport(job.id, row));
@@ -228,12 +228,12 @@ export async function openExportsDrawer() {
   drawer.classList.remove('hidden');
   document.body.classList.add('overflow-hidden');
   const container = document.getElementById('exports-list');
-  container.innerHTML = '<p class="text-sm text-slate-400 p-4">Loading…</p>';
+  container.innerHTML = '<p class="small muted">Loading…</p>';
   try {
     const data = await api('/api/exports?limit=50');
     renderDrawer(data.exports || []);
   } catch (err) {
-    container.innerHTML = `<p class="text-sm text-red-400 p-4">${err.message || 'Could not load exports.'}</p>`;
+    container.innerHTML = `<p class="note note--danger">${err.message || 'Could not load exports.'}</p>`;
   }
 }
 

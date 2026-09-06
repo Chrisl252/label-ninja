@@ -96,8 +96,7 @@ export function applyProject(project) {
 function setBusy(button, busy) {
   if (!button) return;
   button.disabled = busy;
-  button.classList.toggle('opacity-60', busy);
-  button.classList.toggle('cursor-wait', busy);
+  button.classList.toggle('is-busy', busy);
 }
 
 async function postProject(tool, name, isTemplate, button) {
@@ -214,8 +213,7 @@ function renderToolStatus(tool) {
   const nameEl = el(`project-name-${tool}`);
   if (nameEl) {
     nameEl.textContent = proj ? `${proj.name}${proj.is_template ? ' · template' : ''}` : 'Unsaved';
-    nameEl.classList.toggle('text-slate-500', !proj);
-    nameEl.classList.toggle('text-slate-300', !!proj);
+    nameEl.classList.toggle('muted', !proj); // .muted lives in app.css — unsaved reads dimmer
   }
   const dot = el(`project-dirty-${tool}`);
   if (dot) dot.classList.toggle('hidden', !dirty[tool]);

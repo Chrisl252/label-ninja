@@ -1,5 +1,13 @@
 # DECISIONS_LOG.md — Label Ninja Decision Record
 
+## 2026-09-06: Print Bench redesign stabilized as a release candidate
+
+- **Decision:** Treat the co-worker redesign as a real product surface, assemble it into `public/index.html`, and keep its CSS split by domain (`tokens`, app shell, editor, tools, guides, account) instead of returning to utility classes or a monolithic stylesheet.
+- **Mobile print contract:** the label canvas keeps its original CSS dimensions for element math and PDF accuracy. A CSS `zoom` presentation scale fits the preview into narrow phones, and pointer movement is divided by that scale. Verified without document, navigation, or canvas-bed overflow at 320, 390, 414, and 768 px.
+- **Release reproducibility:** `scripts/test-redesign-contract.mjs` is now permanent and part of `npm test`; it proves queried DOM IDs, `window.LN` handlers, unique IDs, no Tailwind residue, and token-only colors. The saved-project suite was repaired to test real 256 KiB rejection and quoted/array JSON paths.
+- **Privacy truth:** the retention statement now reflects the implemented lazy expiry sweep instead of promising a scheduler that does not exist.
+- **Proof:** 61/61 spec-builder checks, UI contract pass, 41/41 local frontend/backend integration checks, saved-project auth/CRUD/isolation/size/rate-limit suite pass, zero browser console errors, and exact 4×6 PDF dimensions. Production was not changed; Chrome Ready Check remains the deployment gate.
+
 ## 2026-09-02: HOTFIX — every deep link in production was a 500 (missing `[assets] binding`)
 
 - **The defect (live, revenue-path):** `wrangler.toml`'s `[assets]` block declared `directory`, `html_handling` and `not_found_handling` but **never declared `binding`**, so `env.ASSETS` was `undefined` at runtime. Cloudflare serves an exact asset match before invoking the Worker, so `/`, `/privacy`, `/css/*` and `/js/*` were fine — but **every non-asset path fell through to the Worker**, hit `env.ASSETS.fetch(request)` in `serveStatic()`, threw `TypeError: Cannot read properties of undefined (reading 'fetch')`, and returned the generic `{"error":{"code":"internal_error"}}` **500**. Confirmed in production on the brick-3 release (`b639a3d9`): `/pricing`, `/reset`, `/reset?token=`, `/billing`, `/account`, `/foo` — all 500. The SPA fallback branch inside `serveStatic` was dead code: it can never run, because the first line throws.

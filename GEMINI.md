@@ -1,6 +1,8 @@
 # GEMINI.md — Label Ninja Bootloader
 
-> **Parent Contract:** `Y:\GEMINI.md` / Universal Operating Contract applies in full.
+> **Parent Contract:** `C:\Code\twilight\claude-brain\CLAUDE.md` — the Universal Operating
+> Contract, applies in full. (The old `Y:\GEMINI.md` path is dead: the NAS that hosted `Y:\`
+> was decommissioned 2026-07-30.)
 
 ---
 

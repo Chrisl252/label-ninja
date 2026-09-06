@@ -31,17 +31,25 @@ export function switchMode(mode) {
   }
   document.getElementById('mode-editor').classList.remove('flex');
 
-  const inactiveTabClass = 'px-3 py-1.5 rounded text-xs font-semibold text-slate-400 hover:text-white transition shrink-0 whitespace-nowrap';
-  const activeTabClass = 'px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white transition shrink-0 whitespace-nowrap';
+  // Roll tabs: the active tool is the white printed label (.is-active); the rest stay blank stock.
   for (const m of MODES) {
     const tab = document.getElementById(`tab-${m}`);
-    if (tab) tab.className = inactiveTabClass;
+    if (tab) {
+      tab.classList.remove('is-active');
+      tab.removeAttribute('aria-current');
+    }
   }
 
   if (!MODES.includes(mode) || (AUTH_ONLY_MODES.has(mode) && !isSignedIn())) mode = 'editor';
   document.getElementById(`mode-${mode}`).classList.remove('hidden');
   const activeTab = document.getElementById(`tab-${mode}`);
-  if (activeTab && !activeTab.classList.contains('hidden')) activeTab.className = activeTabClass;
+  if (activeTab && !activeTab.classList.contains('hidden')) {
+    activeTab.classList.add('is-active');
+    activeTab.setAttribute('aria-current', 'page');
+    if (typeof activeTab.scrollIntoView === 'function') {
+      activeTab.scrollIntoView({ block: 'nearest', inline: 'center' });
+    }
+  }
   if (mode === 'editor') {
     document.getElementById('mode-editor').classList.add('flex');
     changeCanvasSize();

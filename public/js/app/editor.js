@@ -13,6 +13,7 @@ const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 export let elements = [];
 export let selectedId = null;
 let nextId = 1;
+let previewResizeObserver = null;
 
 export function getElements() {
   return elements;
@@ -23,10 +24,33 @@ export function getCurrentPreset() {
   return PRESETS[presetKey] || PRESETS.standard;
 }
 
+// Keep the editor's coordinate system at its full preset size while fitting the
+// visual preview inside narrow screens. CSS zoom affects the rendered footprint
+// without changing canvas.clientWidth/clientHeight, so PDF geometry stays exact.
+function fitCanvasPreview() {
+  const bed = document.getElementById('label-canvas-container');
+  const plate = bed?.querySelector('.bed__plate');
+  if (!bed || !plate) return;
+  plate.style.removeProperty('zoom');
+  const styles = window.getComputedStyle(bed);
+  const plateStyles = window.getComputedStyle(plate);
+  const canvas = document.getElementById('label-canvas');
+  const available = Math.max(
+    1,
+    bed.clientWidth - Number.parseFloat(styles.paddingLeft) - Number.parseFloat(styles.paddingRight)
+  );
+  const unscaledWidth = canvas.clientWidth
+    + Number.parseFloat(plateStyles.paddingLeft)
+    + Number.parseFloat(plateStyles.paddingRight);
+  const scale = Math.min(1, available / Math.max(1, unscaledWidth));
+  plate.style.zoom = String(scale);
+  plate.dataset.previewScale = String(scale);
+}
+
 function setImageUploadStatus(message, isError = false) {
   const status = document.getElementById('image-upload-status');
   status.textContent = message;
-  status.className = `mt-2 min-h-5 text-xs ${isError ? 'text-red-400' : 'text-slate-400'}`;
+  status.classList.toggle('is-error', isError);
 }
 
 function readImageFile(file) {
@@ -133,12 +157,24 @@ export function changeCanvasSize() {
   const p = PRESETS[presetKey] || PRESETS.standard;
   canvas.style.width = p.width + 'px';
   canvas.style.height = p.height + 'px';
+  // Rulers: px-per-inch per axis (presets are not always square-scaled) → CSS vars read by editor.css.
+  const bed = document.getElementById('label-canvas-container');
+  const ppiX = p.width / p.printWidth;
+  const ppiY = p.height / p.printHeight;
+  if (bed) {
+    bed.style.setProperty('--ppi-x', `${ppiX}px`);
+    bed.style.setProperty('--ppi-y', `${ppiY}px`);
+  }
+  const readout = document.getElementById('canvas-size-readout');
+  if (readout) readout.textContent = `${p.printWidth} × ${p.printHeight} in · preview ${Math.round(ppiX)} px/in`;
   document.getElementById('inspector-width').max = p.width;
   elements.forEach((element) => {
     if (element.type === 'image') element.width = Math.min(element.width, p.width);
   });
   markDirty('editor');
   renderCanvas();
+  fitCanvasPreview();
+  window.requestAnimationFrame(fitCanvasPreview);
 }
 
 export function addElement(type, customProps = {}) {
@@ -169,7 +205,7 @@ export function renderCanvas() {
 
   elements.forEach((el) => {
     const div = document.createElement('div');
-    div.className = `canvas-element absolute cursor-move ${el.type === 'image' ? 'p-0' : 'p-1'} ${el.id === selectedId ? 'selected' : ''}`;
+    div.className = `canvas-element canvas-element--${el.type}${el.id === selectedId ? ' selected' : ''}`;
     div.style.left = el.x + 'px';
     div.style.top = el.y + 'px';
     div.style.textAlign = el.align;
@@ -188,10 +224,8 @@ export function renderCanvas() {
       div.style.whiteSpace = 'pre-wrap';
       div.textContent = el.text;
     } else if (el.type === 'badge') {
-      div.className += ' bg-black text-white px-3 py-1 font-mono font-bold rounded';
       div.innerText = el.text;
     } else if (el.type === 'box') {
-      div.className += ' border-2 border-black p-2 font-bold';
       div.innerText = el.text;
     } else if (el.type === 'barcode') {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -229,13 +263,14 @@ function makeDraggable(domEl, elObj) {
     const initialX = elObj.x;
     const initialY = elObj.y;
     const canvas = document.getElementById('label-canvas');
+    const previewScale = Number.parseFloat(canvas.closest('.bed__plate')?.dataset.previewScale || '1') || 1;
     domEl.setPointerCapture(event.pointerId);
 
     domEl.onpointermove = (moveEvent) => {
       const maxX = Math.max(0, canvas.clientWidth - domEl.offsetWidth);
       const maxY = Math.max(0, canvas.clientHeight - domEl.offsetHeight);
-      elObj.x = Math.min(maxX, Math.max(0, initialX + (moveEvent.clientX - startX)));
-      elObj.y = Math.min(maxY, Math.max(0, initialY + (moveEvent.clientY - startY)));
+      elObj.x = Math.min(maxX, Math.max(0, initialX + (moveEvent.clientX - startX) / previewScale));
+      elObj.y = Math.min(maxY, Math.max(0, initialY + (moveEvent.clientY - startY) / previewScale));
       domEl.style.left = elObj.x + 'px';
       domEl.style.top = elObj.y + 'px';
     };
@@ -362,14 +397,18 @@ export function initEditor() {
   };
   canvasDropZone.addEventListener('dragover', (event) => {
     event.preventDefault();
-    canvasDropZone.classList.add('border-blue-500', 'bg-blue-950/30');
+    canvasDropZone.classList.add('is-dragover');
   });
   canvasDropZone.addEventListener('dragleave', () => {
-    canvasDropZone.classList.remove('border-blue-500', 'bg-blue-950/30');
+    canvasDropZone.classList.remove('is-dragover');
   });
   canvasDropZone.addEventListener('drop', (event) => {
     event.preventDefault();
-    canvasDropZone.classList.remove('border-blue-500', 'bg-blue-950/30');
+    canvasDropZone.classList.remove('is-dragover');
     handleImageUpload(event.dataTransfer.files);
   });
+  window.addEventListener('resize', fitCanvasPreview);
+  previewResizeObserver?.disconnect();
+  previewResizeObserver = new ResizeObserver(fitCanvasPreview);
+  previewResizeObserver.observe(canvasDropZone);
 }

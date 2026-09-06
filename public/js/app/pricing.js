@@ -36,63 +36,72 @@ const PRO_BENEFITS = [
 const FREE_FACTS = ['10 free exports', 'Every tool included', 'No watermark', 'No card required'];
 
 function benefitsHtml() {
-  return PRO_BENEFITS.map((b) => `<li class="flex gap-2"><span class="text-emerald-400 font-bold">✓</span><span>${b}</span></li>`).join('');
+  return PRO_BENEFITS.map((b) => `<li><span class="tick">✓</span><span>${b}</span></li>`).join('');
+}
+
+function freeFactsHtml() {
+  return FREE_FACTS.map((f) => `<li><span class="dot">·</span><span>${f}</span></li>`).join('');
 }
 
 function renderUnconfigured(mount, errorMsg) {
   mount.innerHTML = `
-    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
-      <p class="text-xs font-bold uppercase tracking-[.22em] text-emerald-300">Label Ninja Pro</p>
-      <h1 class="text-3xl font-black text-white">Early access — pricing launching soon</h1>
-      <p class="max-w-3xl text-sm leading-6 text-slate-300">Pro is for the packing table that prints every day. The free plan stays generous while Pro pricing is being finalized.</p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="rounded-xl border border-slate-700 bg-slate-950 p-5 space-y-3">
-          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Free</p>
-          <p class="text-2xl font-black text-white">$0</p>
-          <ul class="space-y-1.5 text-sm text-slate-300">${FREE_FACTS.map((f) => `<li class="flex gap-2"><span class="text-slate-500">·</span><span>${f}</span></li>`).join('')}</ul>
+    <section class="panel stack stack--lg">
+      <div class="stack stack--xs">
+        <p class="label led led--ready">Label Ninja Pro</p>
+        <h1>Early access — pricing launching soon</h1>
+        <p class="lede">Pro is for the packing table that prints every day. The free plan stays generous while Pro pricing is being finalized.</p>
+      </div>
+      <div class="plans plans--2">
+        <div class="plan">
+          <p class="label">Free</p>
+          <p class="plan__price">$0</p>
+          <ul class="dot-list">${freeFactsHtml()}</ul>
         </div>
-        <div class="rounded-xl border border-emerald-900 bg-slate-950 p-5 space-y-3">
-          <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">Pro — coming at launch</p>
-          <p class="text-2xl font-black text-white">Early access</p>
-          <ul class="space-y-1.5 text-sm text-slate-300">${benefitsHtml()}</ul>
+        <div class="plan plan--pro">
+          <div class="plan__head"><p class="label">Pro — coming at launch</p><span class="chip chip--ready">Pro</span></div>
+          <p class="plan__price">Early access</p>
+          <ul class="tick-list">${benefitsHtml()}</ul>
         </div>
       </div>
-      <div class="rounded-xl border border-slate-800 bg-slate-950 p-4">
-        <p class="text-sm font-bold text-white">Want in at launch?</p>
-        <p class="mt-1 text-xs text-slate-400">${errorMsg ? 'Pricing is temporarily unavailable — ' + errorMsg + '.' : 'Pricing goes live soon.'} <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20Pro%20early%20access" class="text-blue-400 hover:text-blue-300 underline">Email us to get notified when Pro goes live</a>.</p>
+      <div class="note pricing-notify">
+        <strong>Want in at launch?</strong>
+        <span>${errorMsg ? 'Pricing is temporarily unavailable — ' + errorMsg + '.' : 'Pricing goes live soon.'} <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20Pro%20early%20access">Email us to get notified when Pro goes live</a>.</span>
       </div>
     </section>`;
 }
 
 function planCard(title, plan, planKey, highlight) {
   const price = fmtPrice(plan);
-  const border = highlight ? 'border-emerald-700' : 'border-slate-700';
-  const badge = highlight ? '<span class="text-[10px] font-mono px-1.5 py-0.5 rounded border border-emerald-800 text-emerald-300">BEST VALUE</span>' : '';
+  const badge = highlight ? '<span class="chip chip--ready">Best value</span>' : '';
   const name = plan && plan.product_name ? plan.product_name : 'Label Ninja Pro';
+  // The highlighted plan carries the one blue; the other upgrade is white stock.
+  const btnClass = highlight ? 'btn btn--primary btn--block' : 'btn btn--stock btn--block';
   return `
-    <div class="rounded-xl border ${border} bg-slate-950 p-5 space-y-3 flex flex-col">
-      <div class="flex items-center justify-between">
-        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">${title}</p>
+    <div class="plan${highlight ? ' plan--pro' : ''}">
+      <div class="plan__head">
+        <p class="label">${title}</p>
         ${badge}
       </div>
-      <p class="text-3xl font-black text-white">${price}</p>
-      <p class="text-xs text-slate-400">${name}</p>
-      <ul class="space-y-1.5 text-sm text-slate-300">${benefitsHtml()}</ul>
-      <button data-plan="${planKey}" class="upgrade-btn mt-auto w-full rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm py-2.5 transition">Upgrade to Pro</button>
+      <p class="plan__price">${price}</p>
+      <p class="plan__name">${name}</p>
+      <ul class="tick-list">${benefitsHtml()}</ul>
+      <button type="button" data-plan="${planKey}" class="upgrade-btn ${btnClass}">Upgrade to Pro</button>
     </div>`;
 }
 
 function renderConfigured(mount, data) {
   mount.innerHTML = `
-    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
-      <p class="text-xs font-bold uppercase tracking-[.22em] text-emerald-300">Label Ninja Pro</p>
-      <h1 class="text-3xl font-black text-white">Unlimited label exports for power sellers</h1>
-      <p class="max-w-3xl text-sm leading-6 text-slate-300">The free plan includes 10 PDF exports to try every tool. Pro is for the packing table that prints every day.</p>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="rounded-xl border border-slate-700 bg-slate-950 p-5 space-y-3 flex flex-col">
-          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Free</p>
-          <p class="text-3xl font-black text-white">$0</p>
-          <ul class="space-y-1.5 text-sm text-slate-300">${FREE_FACTS.map((f) => `<li class="flex gap-2"><span class="text-slate-500">·</span><span>${f}</span></li>`).join('')}</ul>
+    <section class="panel stack stack--lg">
+      <div class="stack stack--xs">
+        <p class="label led led--ready">Label Ninja Pro</p>
+        <h1>Unlimited label exports for power sellers</h1>
+        <p class="lede">The free plan includes 10 PDF exports to try every tool. Pro is for the packing table that prints every day.</p>
+      </div>
+      <div class="plans plans--3">
+        <div class="plan">
+          <p class="label">Free</p>
+          <p class="plan__price">$0</p>
+          <ul class="dot-list">${freeFactsHtml()}</ul>
         </div>
         ${planCard('Monthly', data.monthly, 'monthly', false)}
         ${planCard('Annual', data.annual, 'annual', true)}
