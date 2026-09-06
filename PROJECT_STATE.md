@@ -9,6 +9,7 @@
 - Verification: 60 launch regressions + 61 builder checks + DOM contract pass; workerd crypto test pass; real local D1 export and project suites pass. HTTP page/header gate passes locally. See LAUNCH_READINESS.md for exact boundaries.
 - Current local preview is http://127.0.0.1:8787. Pricing states Checkout unavailable because provider configuration is absent/fake.
 - Production read-only evidence: Worker secret list []; public pricing configured:false. Real Stripe, portal, email delivery, capacity and physical print acceptance remain unverified.
+- Chrome is already signed into the live Bisket Stripe dashboard. Account status shows Payments active but Payouts paused since Sep 6: Provide a valid ID document. Chris must complete that identity task directly in Stripe; no documents/keys were revealed or submitted.
 - Next: secure provider configuration, test-mode purchase/cancel/recovery, production capacity check, owner-approved live configuration, exact Chrome Ready Check, then migrate/deploy/verify.
 - Existing old 100,000-iteration passwords remain valid and upgrade on login. New hashes use 600,000 with nodejs_compat; establish sufficient production CPU budget.
 - Terms/contact/refund language is a draft requiring owner review. No automatic paid plan, DNS, or external publishing changes were made.

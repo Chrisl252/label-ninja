@@ -2,7 +2,7 @@
 
 The local SaaS-hardening candidate is implemented and tested. Production remains unchanged. Start with PROJECT_STATE.md and LAUNCH_READINESS.md; module and provider details are in ARCHITECTURE.md and SYSTEM_REFERENCE.md.
 
-Next required input is secure access to Stripe and recovery-email configuration. Test keys alone cannot accept real subscriptions. Do not copy the exposed chat key into docs or source. The asynchronous question to Chris asks for a protected file location or Worker secret setup, not values in chat.
+Chris answered the credential-location question: he only has the test keys already pasted in chat. Do not ask him to find a nonexistent file or paste those keys again. Chrome is already signed into the live Bisket Stripe dashboard. Read-only account status shows Payments active but Payouts paused since Sep 6, with the task Provide a valid ID document. Chris must complete that task directly in Stripe; the account-status page is open. No identity documents or secrets were revealed or submitted. Secure billing and recovery-email configuration still need completion; the production Worker has no secrets.
 
 Keep the preview at http://127.0.0.1:8787 available for review. Configure the correct canonical origin per environment before sending a real reset link. Full launch also needs capacity, operational and physical checks; do not call HTTP 200 or a mock checkout a paid launch.
 

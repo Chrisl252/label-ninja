@@ -40,6 +40,7 @@ Chris confirmed 10 PDF batches total. A PDF containing 1 or 200 labels consumes 
 
 | Gate | Evidence / next action | Owner |
 | --- | --- | --- |
+| Stripe payout verification | Read-only live dashboard inspection shows Payments active but Payouts paused on Sep 6, 2026. Outstanding task: Provide a valid ID document. Account-status page is open in Chrome; no identity documents or secrets were revealed/submitted. | Chris completes the task directly in Stripe |
 | Stripe provisioning | Production secret list returned []; public /api/config/pricing returned configured:false. Need matching test and live API key, monthly price, signing secret, terms URL, and enabled billing portal. Screenshot of a product is not checkout proof. | Chris provides secure access; agent wires and verifies |
 | Real billing lifecycle | Mock-provider checks passed; no actual purchase, webhook delivery, portal cancellation, renewal failure, or live payment has been tested. Test-mode acceptance first; live payment only with explicit approval. | Agent + Chris |
 | Recovery email | No production RESEND_API_KEY or verified EMAIL_FROM. Need a delivered recovery message and completed single-use reset from an owner-controlled inbox. | Chris + agent |
