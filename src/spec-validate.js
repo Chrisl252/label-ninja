@@ -3,6 +3,7 @@
 import { HttpError } from './http.js';
 import { LIMITS } from './limits.js';
 import { CODE128_CHARSET } from './code128.js';
+import { imageSize } from './image-size.js';
 
 const TOOLS = ['bin', 'whatnot', 'fnsku', 'editor', 'test_print', 'pdf_convert'];
 const COLOR_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
@@ -79,6 +80,11 @@ function validateImage(el, img) {
   const isJpeg = bin.charCodeAt(0) === 0xff && bin.charCodeAt(1) === 0xd8 && bin.charCodeAt(2) === 0xff;
   if ((el.mime === 'image/png' && !isPng) || (el.mime === 'image/jpeg' && !isJpeg)) {
     throw new HttpError(400, 'invalid_image', 'Image data does not match its declared mime type.');
+  }
+  const size = imageSize(bin, el.mime);
+  img.pixels += size.width * size.height;
+  if (!size.width || !size.height || size.width > LIMITS.MAX_IMAGE_EDGE || size.height > LIMITS.MAX_IMAGE_EDGE || img.pixels > LIMITS.MAX_IMAGE_PIXELS_TOTAL) {
+    throw new HttpError(400, 'limit_exceeded', 'Resize artwork: images must be at most 4096 pixels per edge and 4 million pixels total per batch.');
   }
   img.total += el.data_base64.length;
   if (img.total > LIMITS.MAX_IMAGE_BASE64_TOTAL) {
@@ -181,6 +187,7 @@ function validatePage(page, pi, img) {
   if (page.elements.length > LIMITS.MAX_ELEMENTS_PER_PAGE) {
     throw new HttpError(400, 'limit_exceeded', `Max ${LIMITS.MAX_ELEMENTS_PER_PAGE} elements per page.`);
   }
+  img.count = 0;
   page.elements.forEach((el, i) => validateElement(el, i, img));
 }
 
@@ -223,7 +230,7 @@ export function validateJobSpec(body) {
   if (body.pages.length > LIMITS.MAX_PAGES) {
     throw new HttpError(400, 'limit_exceeded', `Too many pages (max ${LIMITS.MAX_PAGES}).`);
   }
-  const img = { count: 0, total: 0 };
+  const img = { count: 0, total: 0, pixels: 0 };
   body.pages.forEach((p, i) => validatePage(p, i, img));
   return { idempotency_key: body.idempotency_key, tool: body.tool, settings, pages: body.pages };
 }

@@ -8,13 +8,15 @@ export const LIMITS = {
   MAX_IMAGES_PER_PAGE: 20,
   MAX_IMAGE_BASE64_TOTAL: 8 * 1024 * 1024, // sum across the whole spec
   MAX_IMAGE_BYTES: 4 * 1024 * 1024, // per image, decoded
+  MAX_IMAGE_EDGE: 4096,
+  MAX_IMAGE_PIXELS_TOTAL: 4000000, // bound decoded memory across the entire batch
   MAX_DIM_IN: 100,
   MAX_FONT_SIZE_PT: 400,
   MAX_LINE_WIDTH_PT: 100,
   MAX_BARCODE_CHARS: 200,
   EXPORTS_PER_HOUR: 30, // per user
   CHUNK_BYTES: 400 * 1024, // D1 blob chunk size
-  MAX_CHUNKS: 96, // 38.4MB hard ceiling on a single output
+  MAX_CHUNKS: 32, // 12.5 MiB ceiling; keep export below the 50-query D1 free-plan limit
   OUTPUT_TTL_MS: 7 * 24 * 60 * 60 * 1000, // 7-day expiry
   HISTORY_DEFAULT_LIMIT: 50,
   HISTORY_MAX_LIMIT: 100,

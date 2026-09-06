@@ -23,8 +23,11 @@ import { initAccount, showAccount } from './account.js';
 
 const MODES = ['dashboard', 'editor', 'bin', 'whatnot', 'fnsku', 'guides', 'pricing', 'account'];
 const AUTH_ONLY_MODES = new Set(['dashboard', 'account']);
+let pendingAccountRoute = false;
+let accountPrompted = false;
 
 export function switchMode(mode) {
+  if (mode !== 'account') pendingAccountRoute = false;
   for (const m of MODES) {
     const container = document.getElementById(`mode-${m}`);
     if (container) container.classList.add('hidden');
@@ -83,6 +86,7 @@ function routeFromLocation() {
   }
   if (path === '/billing' || path === '/account') {
     navigatedExplicitly = true;
+    pendingAccountRoute = true;
     switchMode('account'); // /billing carries ?checkout=success — banner shown by showAccount
     return true;
   }
@@ -191,6 +195,18 @@ function renderAuthNav(user) {
 function wireSessionDefaults() {
   onSessionChange((user) => {
     renderAuthNav(user);
+    // Session bootstrap is asynchronous. Preserve checkout/account deep links
+    // until identity is known, including when a returning customer must sign in.
+    if (pendingAccountRoute) {
+      if (user) {
+        pendingAccountRoute = false;
+        switchMode('account');
+      } else if (!accountPrompted) {
+        accountPrompted = true;
+        openAuthModal({ mode: 'signin' });
+      }
+      return;
+    }
     const visible = MODES.find((m) => !document.getElementById(`mode-${m}`).classList.contains('hidden')) || 'editor';
     if (!user && (visible === 'dashboard' || visible === 'account')) {
       switchMode('editor'); // signed out of an authed view — fall back to the tools
@@ -221,6 +237,7 @@ function init() {
   routeFromLocation();
 
   window.addEventListener('hashchange', () => {
+    navigatedExplicitly = true;
     const mode = modeFromHash(window.location.hash);
     switchMode(mode);
     if (mode === 'guides') scrollToHashSection();

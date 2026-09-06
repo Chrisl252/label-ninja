@@ -3,15 +3,14 @@
 // (webhook state sync). Never duplicate.
 //
 // Spec rule: access remains through the paid-through date after normal cancellation.
-// status active|trialing -> pro; canceled|past_due -> pro only while paid_through is in
-// the future; incomplete/unpaid/anything else never grants. `plan` is a synced display
-// column derived from THIS predicate (billing.js applies it) — the predicate itself is
+// active|canceled|past_due -> pro only while paid_through is in the future;
+// trialing/incomplete/unpaid/anything else never grants. `plan` is a synced display
+// column derived from THIS predicate (subscriptions.js applies it) — the predicate itself is
 // the authority, so it must not read `plan` (that would be circular).
 
 export function isProActive(user) {
   const status = user.subscription_status;
-  if (status === 'active' || status === 'trialing') return true;
-  if (status === 'canceled' || status === 'past_due') {
+  if (['active', 'canceled', 'past_due'].includes(status)) {
     return user.paid_through != null && user.paid_through > Date.now();
   }
   return false;
@@ -35,7 +34,7 @@ export function computeFreeUses(user, ledger) {
   return {
     consumed,
     adjustments,
-    remaining: user.free_uses_granted + adjustments - consumed,
+    remaining: Math.max(0, user.free_uses_granted + adjustments - consumed),
   };
 }
 

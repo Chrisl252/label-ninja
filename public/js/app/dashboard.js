@@ -9,6 +9,7 @@ import { getUser } from './session.js';
 import { fmtDate, fmtBytes } from './exporter.js';
 import { handleImageUpload } from './editor.js';
 import { openProject, duplicateProject, deleteProject } from './projects.js';
+import { escapeHtml } from './plan.js';
 import { toast } from './toast.js';
 
 const TOOL_LABELS = {
@@ -51,8 +52,8 @@ function renderUsage() {
   const pct = granted ? Math.min(100, Math.round((used / granted) * 100)) : 100;
   box.innerHTML = `
     <p class="label led${remaining <= 2 ? ' led--attn' : ''}">Free plan</p>
-    <p class="usage__num"><span class="mono">${remaining}</span> <span class="usage__of">of ${granted} free exports left</span></p>
-    <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="${granted}" aria-valuenow="${used}" aria-label="Free exports used"><div class="meter__fill${pct >= 90 ? ' meter__fill--attn' : ''}" style="width:${pct}%"></div></div>
+    <p class="usage__num"><span class="mono">${remaining}</span> <span class="usage__of">of ${granted} free PDF batches left</span></p>
+    <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="${granted}" aria-valuenow="${used}" aria-label="Free PDF batches used"><div class="meter__fill${pct >= 90 ? ' meter__fill--attn' : ''}" style="width:${pct}%"></div></div>
     <div><a href="#pricing" class="link small">Upgrade to Pro →</a></div>`;
 }
 
@@ -62,7 +63,7 @@ function projectCard(p) {
   card.className = 'card stock';
   card.innerHTML = `
     <div class="card__head">
-      <p class="card__name truncate" title="${p.name}">${p.name}</p>
+      <p class="card__name truncate" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</p>
       <span class="chip">${TOOL_LABELS[p.tool] || p.tool}</span>
     </div>
     <div class="card__foot">
@@ -129,7 +130,7 @@ function exportCard(job) {
       document.body.appendChild(a);
       a.click();
       a.remove();
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (err) {
       toast(err.message || 'Download failed.', { kind: 'error' });
     }
@@ -162,7 +163,7 @@ function renderQuickTools() {
   const tools = [
     { mode: 'bin', label: 'Warehouse bins', hint: '4×6 bin + barcode batches' },
     { mode: 'whatnot', label: 'Whatnot numbers', hint: 'Live show sequences' },
-    { mode: 'fnsku', label: 'FNSKU & CSV', hint: 'Amazon barcode labels' },
+    { mode: 'fnsku', label: 'FNSKU', hint: 'Amazon barcode labels' },
     { mode: 'guides', label: 'Test print + guides', hint: 'Printer setup, 4×6 / 2×1 test PDFs' },
   ];
   for (const t of tools) {
@@ -190,7 +191,7 @@ function renderCommonSizes() {
 
 // ---- drag-drop uploader ----
 
-const ACCEPTED_EXTENSIONS = new Set(['pdf', 'png', 'jpg', 'jpeg', 'webp', 'csv']);
+const ACCEPTED_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'webp']);
 
 function routeDroppedFiles(fileList) {
   const files = Array.from(fileList || []);
@@ -198,16 +199,7 @@ function routeDroppedFiles(fileList) {
   const file = files[0];
   const ext = (file.name.split('.').pop() || '').toLowerCase();
   if (!ACCEPTED_EXTENSIONS.has(ext) && !file.type.startsWith('image/')) {
-    toast('Drop a PDF, PNG, JPG, WebP, or CSV file.');
-    return;
-  }
-  if (ext === 'pdf') {
-    toast('PDF converter coming in the next update.');
-    return;
-  }
-  if (ext === 'csv') {
-    window.LN.switchMode('fnsku');
-    toast('CSV batch runs in the FNSKU & CSV tool.');
+    toast('Drop PNG, JPG, or WebP artwork. PDF conversion and CSV import are not available.');
     return;
   }
   window.LN.switchMode('editor');
@@ -230,6 +222,9 @@ function wireUploader() {
     routeDroppedFiles(event.dataTransfer.files);
   });
   zone.addEventListener('click', () => input.click());
+  zone.addEventListener('keydown', event => {
+    if (event.target === zone && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); input.click(); }
+  });
   input.addEventListener('change', () => {
     routeDroppedFiles(input.files);
     input.value = '';

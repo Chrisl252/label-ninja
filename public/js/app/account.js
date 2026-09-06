@@ -1,12 +1,12 @@
 // Account mode — signed-in profile: email, plan + subscription status in
 // human words, free-uses bar, Stripe billing portal launch, checkout success
-// banner, sign out. Account deletion is NOT implemented server-side yet —
-// rendered disabled with an honest tooltip (server work lands in B8).
+// banner, sign out, and a private support path for account deletion.
 
 import { api } from './api.js';
 import { getUser, refreshSession } from './session.js';
 import { authSignOut } from './auth-ui.js';
 import { toast } from './toast.js';
+import { escapeHtml } from './plan.js';
 
 let initialized = false;
 
@@ -27,7 +27,7 @@ function subscriptionWords(user) {
   const sub = user.subscription || {};
   const status = sub.status;
   if (isProStatus(user)) {
-    if (status === 'active') return 'Active';
+    if (status === 'active') return sub.cancel_at_period_end ? `Cancels ${fmtDate(sub.paid_through)}` : 'Active';
     if (status === 'trialing') return 'Trial';
     if (status === 'canceled') return `Canceled (access until ${fmtDate(sub.paid_through)})`;
     if (status === 'past_due') return 'Past due';
@@ -59,10 +59,10 @@ function renderAccount() {
     usesBar = `
       <div class="panel panel--tight stack stack--xs">
         <div class="row spread">
-          <p class="label led${remaining <= 2 ? ' led--attn' : ''}">Free exports</p>
+          <p class="label led${remaining <= 2 ? ' led--attn' : ''}">Free PDF batches</p>
           <p class="mono small">${remaining} of ${granted} left</p>
         </div>
-        <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="${granted}" aria-valuenow="${used}" aria-label="Free exports used"><div class="meter__fill${pct >= 90 ? ' meter__fill--attn' : ''}" style="width:${pct}%"></div></div>
+        <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="${granted}" aria-valuenow="${used}" aria-label="Free PDF batches used"><div class="meter__fill${pct >= 90 ? ' meter__fill--attn' : ''}" style="width:${pct}%"></div></div>
         <div><a href="#pricing" class="link small">Upgrade for unlimited →</a></div>
       </div>`;
   } else {
@@ -77,7 +77,7 @@ function renderAccount() {
       <div class="panel panel--tight stack stack--xs">
         <p class="label">Account</p>
         <div class="kv kv--acct">
-          <span class="kv__k">Email</span><span class="kv__v mono">${user.email}</span>
+          <span class="kv__k">Email</span><span class="kv__v mono">${escapeHtml(user.email)}</span>
           <span class="kv__k">Plan</span><span class="kv__v">${pro ? '<span class="led led--ready">Pro</span>' : 'Free'}</span>
           <span class="kv__k">Subscription</span><span class="kv__v">${subscriptionWords(user)}</span>
         </div>
@@ -87,13 +87,12 @@ function renderAccount() {
     <div class="acct-actions">
       <button type="button" id="account-billing-btn" class="btn btn--primary">Manage billing</button>
       <button type="button" id="account-signout-btn" class="btn btn--ghost">Sign out</button>
-      <button type="button" id="account-delete-btn" disabled title="Available soon" class="btn btn--ghost">Delete account</button>
+      <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20account%20deletion" class="btn btn--ghost">Request account deletion</a>
     </div>
-    <p class="tiny muted">Delete account arrives in a coming update — email chris@bisket.com if you need data removed sooner.</p>`;
+    <p class="tiny muted">Need help or account deletion? Contact chris@bisket.com. Cancel a paid subscription in Manage billing before requesting deletion.</p>`;
   el('account-billing-btn').addEventListener('click', manageBilling);
   el('account-signout-btn').addEventListener('click', async () => {
-    await authSignOut();
-    window.LN.switchMode('editor');
+    if (await authSignOut()) window.LN.switchMode('editor');
   });
 }
 
@@ -103,7 +102,9 @@ async function manageBilling() {
   try {
     const data = await api('/api/billing/portal', { method: 'POST' });
     if (data && data.url) {
-      window.location.href = data.url;
+      const url = new URL(data.url);
+      if (url.protocol !== 'https:' || url.hostname !== 'billing.stripe.com') throw new Error('Invalid billing destination.');
+      window.location.href = url.href;
       return;
     }
     toast('Could not open the billing portal. Try again.', { kind: 'error' });
@@ -111,7 +112,7 @@ async function manageBilling() {
     if (err.code === 'no_customer') {
       toast('No subscription yet — upgrade from Pricing.');
     } else if (err.status === 503) {
-      toast('Billing is not configured yet — pricing launches soon.');
+      toast('Billing is not configured yet — please try again later.');
     } else {
       toast(err.message || 'Could not open the billing portal.', { kind: 'error' });
     }
@@ -123,9 +124,17 @@ async function manageBilling() {
 export async function showAccount() {
   const banner = el('account-checkout-banner');
   banner.classList.add('hidden');
-  if (new URLSearchParams(window.location.search).get('checkout') === 'success') {
+  const query = new URLSearchParams(window.location.search);
+  if (query.get('checkout') === 'success') {
     banner.classList.remove('hidden');
-    await refreshSession(); // webhook may have landed the new plan already
+    banner.textContent = 'Checking your subscription…';
+    try {
+      if (query.get('session_id')) await api('/api/billing/confirm', { method: 'POST', body: { session_id: query.get('session_id') } });
+      const user = await refreshSession();
+      banner.textContent = user?.free_uses?.unlimited ? 'Pro is active. Your PDF batches are unlimited.' : 'Payment is still being confirmed. Refresh your account shortly, or contact support.';
+    } catch {
+      banner.textContent = 'We could not confirm payment yet. Refresh your account shortly, or contact support.';
+    }
     window.history.replaceState({}, '', window.location.pathname);
   }
   renderAccount();

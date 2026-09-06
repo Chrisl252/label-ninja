@@ -1,171 +1,79 @@
-// Pricing mode — public (no auth) plan page. Price display is REAL data from
-// /api/config/pricing only: unconfigured -> honest "early access" state with a
-// mailto; configured -> Monthly/Annual cards from actual Stripe strings. No
-// invented amounts anywhere. Upgrade: auth check -> POST /api/billing/checkout
-// -> redirect to the returned Stripe URL (503 -> friendly toast).
-
+// The agreed offer stays visible; only verified Stripe configuration enables Checkout.
 import { api } from './api.js';
-import { isSignedIn } from './session.js';
+import { isSignedIn, isPro } from './session.js';
 import { openAuthModal, addAfterAuth } from './auth-ui.js';
 import { toast } from './toast.js';
-
-const CURRENCY_SYMBOLS = { usd: '$', eur: '€', gbp: '£' };
-
-let initialized = false;
-
-function el(id) {
-  return document.getElementById(id);
-}
-
-function fmtPrice(plan) {
-  if (!plan || plan.amount == null) return '';
-  const symbol = CURRENCY_SYMBOLS[String(plan.currency || '').toLowerCase()] || `${(plan.currency || '').toUpperCase()} `;
-  const whole = plan.amount / 100;
-  const price = Number.isInteger(whole) ? String(whole) : whole.toFixed(2);
-  const per = plan.interval === 'year' ? '/yr' : plan.interval === 'month' ? '/mo' : '';
-  return `${symbol}${price}${per}`;
-}
-
-const PRO_BENEFITS = [
-  'Unlimited label PDF exports',
-  'Saved projects & templates',
-  'Full export history (7-day re-downloads)',
-  'No ads — ever',
-];
-
-const FREE_FACTS = ['10 free exports', 'Every tool included', 'No watermark', 'No card required'];
-
-function benefitsHtml() {
-  return PRO_BENEFITS.map((b) => `<li><span class="tick">✓</span><span>${b}</span></li>`).join('');
-}
-
-function freeFactsHtml() {
-  return FREE_FACTS.map((f) => `<li><span class="dot">·</span><span>${f}</span></li>`).join('');
-}
-
-function renderUnconfigured(mount, errorMsg) {
+import { FREE_FACTS } from './plan.js';
+let starting = false;
+export async function renderPricing() {
+  const mount = document.getElementById('pricing-mount');
+  if (!mount) return;
+  let data;
+  try { data = await api('/api/config/pricing'); } catch { data = { configured: false }; }
   mount.innerHTML = `
     <section class="panel stack stack--lg">
       <div class="stack stack--xs">
-        <p class="label led led--ready">Label Ninja Pro</p>
-        <h1>Early access — pricing launching soon</h1>
-        <p class="lede">Pro is for the packing table that prints every day. The free plan stays generous while Pro pricing is being finalized.</p>
+        <p class="label">Label Ninja</p>
+        <h1>Your first 10 batches are free.</h1>
+        <p class="lede">Print bin labels, Whatnot numbers, FNSKUs, and custom designs. Keep going with Pro for $9.99 a month.</p>
       </div>
       <div class="plans plans--2">
         <div class="plan">
-          <p class="label">Free</p>
-          <p class="plan__price">$0</p>
-          <ul class="dot-list">${freeFactsHtml()}</ul>
+          <p class="label">Free</p><p class="plan__price">$0</p>
+          <ul class="dot-list">${FREE_FACTS.map(f => `<li><span class="dot">·</span><span>${f}</span></li>`).join('')}</ul>
+          <a href="#editor" class="btn btn--stock btn--block">Start creating labels</a>
         </div>
         <div class="plan plan--pro">
-          <div class="plan__head"><p class="label">Pro — coming at launch</p><span class="chip chip--ready">Pro</span></div>
-          <p class="plan__price">Early access</p>
-          <ul class="tick-list">${benefitsHtml()}</ul>
+          <div class="plan__head"><p class="label">Pro</p><span class="chip">Monthly</span></div>
+          <p class="plan__price">$9.99<span class="small"> / month</span></p>
+          <p class="small muted">USD · renews monthly · cancel in your account</p>
+          <ul class="tick-list">
+            <li><span class="tick">✓</span><span>Unlimited PDF batches while subscribed</span></li>
+            <li><span class="tick">✓</span><span>Everything in Free</span></li>
+            <li><span class="tick">✓</span><span>Invoices and billing controls in your account</span></li>
+          </ul>
+          <button type="button" id="pricing-upgrade-btn" class="btn btn--primary btn--block" ${!data.configured ? 'disabled' : ''}>${isPro() ? 'Manage subscription' : data.configured ? 'Upgrade to Pro' : 'Checkout unavailable'}</button>
         </div>
       </div>
-      <div class="note pricing-notify">
-        <strong>Want in at launch?</strong>
-        <span>${errorMsg ? 'Pricing is temporarily unavailable — ' + errorMsg + '.' : 'Pricing goes live soon.'} <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20Pro%20early%20access">Email us to get notified when Pro goes live</a>.</span>
-      </div>
-    </section>`;
-}
-
-function planCard(title, plan, planKey, highlight) {
-  const price = fmtPrice(plan);
-  const badge = highlight ? '<span class="chip chip--ready">Best value</span>' : '';
-  const name = plan && plan.product_name ? plan.product_name : 'Label Ninja Pro';
-  // The highlighted plan carries the one blue; the other upgrade is white stock.
-  const btnClass = highlight ? 'btn btn--primary btn--block' : 'btn btn--stock btn--block';
-  return `
-    <div class="plan${highlight ? ' plan--pro' : ''}">
-      <div class="plan__head">
-        <p class="label">${title}</p>
-        ${badge}
-      </div>
-      <p class="plan__price">${price}</p>
-      <p class="plan__name">${name}</p>
-      <ul class="tick-list">${benefitsHtml()}</ul>
-      <button type="button" data-plan="${planKey}" class="upgrade-btn ${btnClass}">Upgrade to Pro</button>
-    </div>`;
-}
-
-function renderConfigured(mount, data) {
-  mount.innerHTML = `
-    <section class="panel stack stack--lg">
+      ${!data.configured ? '<p class="note">Pro checkout is not available yet. You can use your 10 free batches now.</p>' : data.mode === 'test' ? '<p class="note">Test checkout is enabled. Real subscriptions are not available yet.</p>' : ''}
       <div class="stack stack--xs">
-        <p class="label led led--ready">Label Ninja Pro</p>
-        <h1>Unlimited label exports for power sellers</h1>
-        <p class="lede">The free plan includes 10 PDF exports to try every tool. Pro is for the packing table that prints every day.</p>
-      </div>
-      <div class="plans plans--3">
-        <div class="plan">
-          <p class="label">Free</p>
-          <p class="plan__price">$0</p>
-          <ul class="dot-list">${freeFactsHtml()}</ul>
-        </div>
-        ${planCard('Monthly', data.monthly, 'monthly', false)}
-        ${planCard('Annual', data.annual, 'annual', true)}
+        <h2>What counts as a batch?</h2>
+        <p>One successfully generated PDF uses one free batch, whether it contains one label or 200. Re-downloading that PDF is free. Failed exports do not use a batch.</p>
+        <p>The 10 free batches are a one-time allowance per account. Pro has no monthly batch quota. Both plans allow up to 200 labels per batch and 30 export requests per hour to keep the service responsive.</p>
+        <p>Saved projects, seven-day downloads, and an ad-free workspace are included on both plans. Cancel Pro through Manage billing; access continues through the period already paid for.</p>
       </div>
     </section>`;
-  for (const btn of mount.querySelectorAll('.upgrade-btn')) {
-    btn.addEventListener('click', () => startCheckout(btn.dataset.plan, btn));
-  }
+  mount.querySelector('#pricing-upgrade-btn').addEventListener('click', event => {
+    if (isPro()) { window.location.href = '/billing'; return; }
+    startCheckout('monthly', event.currentTarget);
+  });
 }
-
-export async function renderPricing() {
-  const mount = el('pricing-mount');
-  if (!mount) return;
+async function attempt(button) {
+  if (starting) return;
+  starting = true;
+  if (button) { button.disabled = true; button.textContent = 'Opening checkout…'; }
   try {
-    const data = await api('/api/config/pricing');
-    if (data && data.configured) {
-      renderConfigured(mount, data);
-      return;
-    }
-    renderUnconfigured(mount, data && data.error === 'price_fetch_failed' ? 'prices could not be loaded' : null);
-  } catch {
-    renderUnconfigured(mount, null);
-  }
-}
-
-async function startCheckoutAttempt(plan, button) {
-  if (button) {
-    button.disabled = true;
-    button.textContent = 'Opening checkout…';
-  }
-  try {
-    const data = await api('/api/billing/checkout', { method: 'POST', body: { plan } });
-    if (data && data.url) {
-      window.location.href = data.url;
-      return;
-    }
-    toast('Checkout could not start. Try again shortly.', { kind: 'error' });
+    const data = await api('/api/billing/checkout', { method: 'POST', body: { plan: 'monthly' } });
+    const url = new URL(data.url);
+    if (url.protocol !== 'https:' || url.hostname !== 'checkout.stripe.com') throw new Error('Invalid checkout destination.');
+    window.location.href = url.href;
   } catch (err) {
-    if (err.status === 503) {
-      toast('Billing is not configured yet — pricing launches soon.');
-    } else if (err.status === 401) {
-      addAfterAuth(() => startCheckout(plan, null));
+    if (err.status === 401) {
+      addAfterAuth(() => startCheckout('monthly', null));
       openAuthModal({ mode: 'signin', intent: 'upgrade' });
-    } else {
-      toast(err.message || 'Checkout failed. Try again.', { kind: 'error' });
-    }
+    } else if (err.code === 'subscription_exists') {
+      toast(err.message); window.location.href = '/billing';
+    } else toast(err.message || 'Checkout is unavailable. Please try again.', { kind: 'error' });
   } finally {
-    if (button) {
-      button.disabled = false;
-      button.textContent = 'Upgrade to Pro';
-    }
+    starting = false;
+    if (button) { button.disabled = false; button.textContent = 'Upgrade to Pro'; }
   }
 }
-
-export function startCheckout(plan, button) {
+export function startCheckout(_plan, button) {
   if (!isSignedIn()) {
-    addAfterAuth(() => startCheckout(plan, null));
-    openAuthModal({ mode: 'signin', intent: 'upgrade' });
-    return;
+    addAfterAuth(() => startCheckout('monthly', null));
+    openAuthModal({ mode: 'signin', intent: 'upgrade' }); return;
   }
-  startCheckoutAttempt(plan, button);
+  return attempt(button);
 }
-
-export function initPricing() {
-  if (initialized) return;
-  initialized = true;
-}
+export function initPricing() {}

@@ -1,115 +1,63 @@
-# ARCHITECTURE.md — Label Ninja Module Map
+# Label Ninja architecture
 
-## 1. Overview & Request Flow
+Label Ninja is a browser label editor with a same-origin Cloudflare Worker API and D1 database. The production app is the Worker on label-ninja.com; the old static Pages mirror cannot provide accounts or billing.
 
-Label Ninja is a static SPA plus a first-party Worker API on the same domain. Static assets are served by Cloudflare Workers Static Assets; **the Worker only runs when no asset matches**, so `/api/*` hits the Worker and every other path stays static (unchanged from the pure-static era, including SPA fallback).
+## Product contract
 
-```
-Browser ──> Cloudflare edge
-              ├─ asset match (/, /app.js, ...) ──> public/ static asset (Worker not invoked)
-              ├─ /api/export* ──────────────────> src/export.js (PDF pipeline)
-              │     ├─ POST /api/export        ─> rate limit(30/h user) -> validate spec -> idempotency
-              │     │                             -> ATOMIC ledger reservation -> render (pdf-lib)
-              │     │                             -> D1 output_chunks -> completed (+7d expiry)
-              │     ├─ GET /api/exports         ─> history (lazy expiry sweep)
-              │     └─ GET/DELETE /api/export/:id[/download] ─> ownership-gated job + bytes
-              ├─ /api/config/pricing, /api/billing/*, /api/webhooks/stripe
-              │                                  ─> src/billing.js (Stripe REST: pricing cache,
-              │                                     Checkout, Portal, verified idempotent webhooks
-              │                                     -> entitlement state sync via entitlements.js)
-              └─ /api/* ────────────────────────> src/worker.js (router)
-                                                  ├─ /api/health          ─> src/auth.js (D1 probe)
-                                                  ├─ /api/auth/*          ─> src/auth.js (sessions, PBKDF2, reset)
-                                                  │     └─ guards: src/ratelimit.js, src/validate.js, src/http.js
-                                                  └─ anything else        ─> 404 {"error":{"code":"not_found"}}
-D1 database label-ninja-db (binding DB) backs users/sessions/ledger/rate limits.
-Output storage: D1 blobs (output_chunks, 400KB chunks) — R2 unavailable on the account (error 10042).
-```
+Free accounts get 10 PDF batches total, not 10 pages and not a monthly reset. One completed PDF costs one batch. Re-downloads and failed exports cost nothing. Pro costs $9.99 USD/month and has no monthly batch quota while paid access is active. Both plans have 200 pages/batch, 30 export requests/hour, saved projects, and seven-day PDF downloads.
 
-Export pipeline order (POST /api/export): **rate limit -> validate (nothing consumed on 400) -> idempotency replay (completed = same body, no new use) -> atomic reservation (`INSERT..SELECT..WHERE remaining > 0`, changes=0 -> 402) -> job row -> render -> chunk store -> complete**. Any failure after reservation deletes the ledger row (failed exports consume zero).
+## Backend map
 
-## 2. Directory Layout
+| File | Responsibility |
+| --- | --- |
+| src/worker.js | Thin route dispatch, private API headers, scheduled cleanup |
+| src/security.js | Same-origin write guard, JSON request content type, canonical app origin |
+| src/http.js | Sanitized errors, streaming byte-limited body reads |
+| src/auth.js | Register/login/logout, HttpOnly sessions, reset lifecycle, session-safe hash upgrade |
+| src/db.js | Native PBKDF2-SHA256 600,000 iterations; legacy 100,000 verification; tokens/IDs |
+| src/validate.js, src/ratelimit.js | Input shape, per-IP auth and per-user write limits |
+| src/entitlements.js | Shared quota math and paid-through access predicate |
+| src/export.js | Idempotent claim + atomic credit reservation, render, chunk commit, history/download/delete |
+| src/spec-validate.js, src/image-size.js, src/limits.js | Export limits, pre-decode image dimensions, bounded resource use |
+| src/render/pdf-label.js, src/code128.js | Exact-inch PDF geometry and vector CODE128 |
+| src/projects.js | Owner-scoped project CRUD; 256 KiB UTF-8 limit, 60 writes/hour |
+| src/billing.js | Billing route registration only |
+| src/billing-config.js | Validate real Stripe price against the approved monthly offer |
+| src/stripe-client.js | 10-second Stripe REST calls; provider idempotency keys, sanitized logging |
+| src/billing-checkout.js | Customer/session creation, duplicate purchase guard, portal, owned checkout confirmation |
+| src/subscriptions.js | Reconcile current Stripe state, stale-event and optimistic-concurrency guards |
+| src/stripe-webhook.js | Raw-body signature/mode verification, bounded event lease, retry-safe processing |
+| src/mailer.js | Configured Resend delivery with a canonical one-use recovery URL |
+| src/maintenance.js | Every-15-minute expiry/recovery; bounded work, no credit refunds on normal expiry |
 
-```
-label-ninja/
-├── wrangler.toml          # main=src/worker.js + [assets] + D1 binding + ADMIN_EMAILS var
-├── migrations/
-│   ├── 0001_init.sql      # schema v1 — all tables (users, sessions, reset tokens,
-│   │                      #   export_jobs, usage_ledger, webhook_events, projects,
-│   │                      #   printer_profiles, rate_limits)
-│   └── 0002_outputs.sql   # schema v2 — output_chunks (D1-blob PDF storage, PK job_id+seq)
-├── src/                   # backend (plain ESM, no build step)
-│   ├── worker.js          # thin router: /api/export* -> export.js, billing paths -> billing.js, /api/* -> auth.js, else ASSETS
-│   ├── auth.js            # auth domain logic + route table + /api/health
-│   ├── export.js          # export domain: reservation, storage, downloads, history
-│   ├── billing.js         # Stripe billing (REST fetch, no SDK): pricing, checkout, portal, webhooks
-│   ├── projects.js        # ownership-scoped saved-project CRUD + size/write-rate guards
-│   ├── entitlements.js    # free-use formula + pro-active check (single source of truth; billing syncs plan FROM it)
-│   ├── spec-validate.js   # job-spec validation (all 400s fire pre-consumption)
-│   ├── limits.js          # export pipeline caps (pages/elements/images/body/TTL)
-│   ├── code128.js         # pure-JS CODE128 encoder (Code Set B, patterns + checksum)
-│   ├── render/
-│   │   └── pdf-label.js   # pdf-lib renderer + test_print diagnostic generator
-│   ├── db.js              # PBKDF2 hash/verify, sha256 token hashing, ids, timing-safe compare
-│   ├── http.js            # JSON response helpers, HttpError, guarded body reader (param cap)
-│   ├── validate.js        # email/password/token-shape validation (400s)
-│   └── ratelimit.js       # fixed-window counters in D1: per-IP auth (10/h), per-user export (30/h)
-├── scripts/
-│   ├── test-auth-local.ps1   # 24-check local auth suite against wrangler dev
-│   ├── test-export-local.ps1 # 13-case + bonus export suite (metering/idempotency/race/limits)
-│   ├── test-billing-local.ps1 # 34-check billing suite (Phase A -NoKey / Phase B signed webhooks)
-│   ├── test-export-prod.ps1  # production canary evidence (burns exactly 1 use)
-│   ├── verify-pdf.mjs        # PDF dimension proof (page count + pt/in per page, optional asserts)
-│   ├── test-spec-builders.mjs # 61-check unit proof of the pure spec builders + hash routing (no server)
-│   ├── test-redesign-contract.mjs # DOM/LN handler/design-system release contract
-│   └── test-b3-integration.mjs # 41-check frontend↔backend contract vs a running server (LN_BASE, LN_CANARY=1 for prod canary)
-├── public/                # static SPA
-│   ├── index.html          # markup + single module tag; inline handlers via window.LN.*
-│   ├── css/                # Print Bench tokens + modular app/editor/tool/guide/account styles
-│   └── js/app/             # 13 ES modules (see §4); js/ads*.js disabled leftovers — never referenced
-└── scratch/, src/index.js # preserved prior-session artifacts (NOT deployed, do not touch)
-```
+## Data and state transitions
 
-## 3. Backend Module Inventory
+Migrations 0001 and 0002 create account/project/ledger tables and PDF chunks. 0003 adds export input hashes, billing event/cancellation fields, checkout attempts, and cleanup indexes. Applied migrations are immutable.
 
-| Module | Route(s) | Responsibility |
-|---|---|---|
-| **router** | all | `src/worker.js` — dispatch `/api/*` vs static; SPA fallback via ASSETS binding |
-| **auth** | `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`, `POST /api/auth/reset-request`, `POST /api/auth/reset-confirm` | `src/auth.js` — user creation (admin bootstrap via `ADMIN_EMAILS`), sessions; free-uses math delegated to `src/entitlements.js` |
-| **export** | `POST /api/export`, `GET /api/exports`, `GET /api/export/:id`, `GET /api/export/:id/download`, `DELETE /api/export/:id` | `src/export.js` — atomic reservation-then-generate metering (one use = one completed job; failures compensate the ledger row), D1 chunk storage (400KB), 7-day expiry + lazy sweep, ownership-scoped 404s, `private, no-store` downloads |
-| **entitlements** | — | `src/entitlements.js` — `granted + admin deltas − export count`; pro-active = subscription_status/paid_through (active\|trialing → pro; canceled\|past_due → pro while paid_through in the future; incomplete/unpaid never). Imported by auth + export + billing; never duplicated |
-| **billing** | `GET /api/config/pricing`, `POST /api/billing/checkout`, `POST /api/billing/portal`, `POST /api/webhooks/stripe` | `src/billing.js` — Stripe REST (`fetch`, form-encoded, error code logged never body). Pricing: per-isolate price cache, real Stripe data only, graceful `price_fetch_failed` degrade. Checkout: 401→503→400 guards, ensure-customer (`metadata[user_id]`), success `/billing?checkout=success` / cancel `/pricing`, upstream fail → 502. Portal: 400 `no_customer` without bound customer. Webhooks: HMAC t±300s constant-time verify → 400 `invalid_signature`; idempotent via `webhook_events` (duplicate → `{duplicate:true}` stop; `error:%` result releases the claim so Stripe retries reprocess); handlers bind customer (never relink — anti-hijack), apply subscription state through `applySubscriptionState` (paid_through stored in MS from Stripe seconds; plan derived from `isProActive`); unknown → `ignored`. Secrets: env only (`wrangler secret put` / `.dev.vars`) |
-| **projects** | `GET/POST /api/projects`, `GET/PATCH/DELETE /api/projects/:id` | `src/projects.js` — authenticated, ownership-scoped saved-project CRUD; foreign IDs return 404; payloads above 256 KiB are rejected; writes are limited to 60/hour/user |
-| **spec-validate** | — | `src/spec-validate.js` — job-spec shape/caps (pages ≤200, elements ≤200/page, text ≤2000, images ≤20/page + 8MB total, body ≤10MB, 4MB/image), barcode charset, PNG/JPEG magic checks, webp → 400 `unsupported_image_format`, pdf_convert → 501 `not_implemented_yet`. All pre-consumption |
-| **renderer** | — | `src/render/pdf-label.js` — pdf-lib: exact `setSize(w*72, h*72)` pages, text (Helvetica/Bold, WinAnsi sanitize, top-down y, multi-line 1.2×), CODE128 as vector rects, rect/line, PNG/JPEG embeds. `buildTestPrintSpec()` = built-in diagnostic tool |
-| **code128** | — | `src/code128.js` — Code Set B encoder: 107-pattern table, checksum, bar/space widths (verified against spec vectors) |
-| **limits** | — | `src/limits.js` — every pipeline cap in one place |
-| **health** | `GET /api/health` | `src/auth.js` — `SELECT 1` probe; `db:false` + 500 on failure |
-| **crypto** | — | `src/db.js` — `pbkdf2$100000$salt$hash` passwords, SHA-256(token) storage, constant-time compare |
-| **guards** | — | `src/http.js` (JSON errors `{"error":{code,message,...extra}}`, body cap → 413), `src/validate.js`, `src/ratelimit.js` (10/h per IP auth, 30/h per user export) |
+Export requests validate before spending. One D1 transaction inserts the unique user/key job and reserves a free credit only if that exact new job exists. A hash binds the key to the submitted content. Rendering follows the claim; the chunk transaction may only complete a processing job. Completed/expired jobs cannot be refunded through replay. Failed or abandoned processing jobs return their reservation. A lost response after a successful database commit returns the completed job.
 
-## 4. Frontend (static SPA — brick 3: metered export wiring)
+PDF bytes live in output_chunks, at most 32 chunks of 400 KiB (12.5 MiB). Expired downloads are denied at request time even before deletion runs. Cleanup expires at most 10 completed jobs and recovers at most 5 processing jobs per scheduled run. Lazy cleanup also runs during export/history requests. Output and old metadata retention are distinct: job/ledger audit records remain after bytes expire.
 
-Entry: `public/index.html` (markup + one `<script type="module" src="/js/app/app.js">`). Inline handlers call the `window.LN` namespace (listener migration is a later polish brick). No build step — plain ESM served as static assets.
+Pro requires status active, canceled, or past_due AND a future paid_through timestamp. Trialing/unpaid/incomplete never grant access. Only a paid latest invoice advances the stored paid-through date; a failed renewal does not. Webhooks fetch current Stripe state, verify customer and price ownership, reject older event timestamps, and fail retryably on a concurrent state change. A missed webhook cannot leave an expired subscription active forever.
 
-| Module | Location | Description |
-|---|---|---|
-| **entry/router** | `public/js/app/app.js` | `switchMode`, hash + `/pricing` + `/reset` path routing, `window.LN` namespace, per-mode dirty-flag listeners, init order (editor → authUi → paywall → exporter → session watch) |
-| **presets** | `public/js/app/presets.js` | PRESETS (11 editor stocks, px + inches), WHATNOT_STOCKS, BIN_LAYOUTS, `clampNumber` — pure data |
-| **spec builders** | `public/js/app/spec-builders.js` | **The correctness core** — pure DOM-free builders mirroring the legacy print layout math: `buildBinSpec` (justify-around/center spacing, landscape title fit), `buildWhatnotSpec` (fitted font), `buildFnskuSpec` (2x1 at old 320px-canvas scale), `buildEditorSpec` (px→in/pt via preset scale; badge→rect+text, box→rect+text, image dataURL strip; throws on webp), `buildTestPrintJob`, `parseDataUrl`, `modeFromHash` helpers live in guides.js. Covered by `scripts/test-spec-builders.mjs` |
-| **api client** | `public/js/app/api.js` | fetch wrapper: `credentials:'same-origin'`, JSON in/out, `ApiError` with backend `{error:{code,message,...extra}}` shape, `apiFetchBlob` for PDFs |
-| **session** | `public/js/app/session.js` | `/api/auth/me` bootstrap, focus + 5-min poll, `onSessionChange` events, `isPro` |
-| **auth ui** | `public/js/app/auth-ui.js` | header usage chip (`9 of 10 free`/`PRO`) + sign-in area, auth modal (sign in / create account / reset-request / reset-confirm), `setAfterAuth` continuation hook |
-| **paywall** | `public/js/app/paywall.js` | 402 `free_limit_reached` modal; price area from `/api/config/pricing` (`configured:false` → coming-soon + notify); never touches tool state |
-| **exporter** | `public/js/app/exporter.js` | idempotency-key lifecycle (regenerate when tool state dirty), `runExport` flow (auth gate → POST → download → save + Open-PDF toast), pending-export-after-auth resume, My Exports drawer (list/re-download/delete, 7-day expiry) |
-| **editor** | `public/js/app/editor.js` | Element state machine: addElement/renderCanvas/makeDraggable/select/update/delete, `loadTemplate`, `changeCanvasSize`, image uploads incl. WebP→PNG canvas conversion |
-| **tools** | `public/js/app/bin-tool.js`, `whatnot-tool.js`, `fnsku-tool.js` | DOM settings collection + range validation (200-page cap messaging) → builder → `runExport` |
-| **guides** | `public/js/app/guides.js` | Pure hash routing: `modeFromHash` (7 guide hashes + 3 tool hashes), `sectionIdFromHash` scroll targets |
+Reset tokens are stored only as hashes, expire in one hour, and are single-use in a transaction that revokes sessions. No console-token fallback exists. Sessions last 30 days and use Secure/HttpOnly/SameSite=Lax cookies. Registration does not promote an unverified administrator email.
 
-**Export seam contract:** every "Download PDF" button → `runExport(tool, buildBody, button)` → `{idempotency_key, format:'pdf', ...buildBody()}` → `POST /api/export` → blob save. The browser-print bypass was removed deliberately (server metering authoritative; printing happens from the downloaded PDF).
+## Frontend map
 
-## 5. Conventions
+Entry is public/js/app/app.js. It owns mode routing and the window.LN handler bridge. Billing/account deep links wait for the asynchronous session lookup. Existing physical canvas coordinates stay unchanged when the preview is scaled for phones.
 
-- All API responses JSON; success `{"ok":true,...}`, error `{"error":{"code","message"}}`. Same-origin — no CORS headers. No secrets in responses or logs.
-- Schema changes = new numbered file in `migrations/`, applied with `wrangler d1 migrations apply label-ninja-db --local` then `--remote`. Never edit an applied migration.
-- New API domain = new module in `src/` + one route line in `src/auth.js`'s `handleApi` (or a sibling handler wired in `worker.js`). No monoliths.
+| Modules | Purpose |
+| --- | --- |
+| editor, presets, spec-builders | Design state, stocks, pure PDF request builders |
+| bin-tool, whatnot-tool, fnsku-tool | Tool-specific settings and export intents |
+| api, session, auth-ui | API transport, session updates, sign-in/reset UI |
+| exporter, paywall | Retry keys, PDF downloads/history, exhausted allowance |
+| projects, dashboard | Save/open/duplicate/delete and recent work; escape project names |
+| pricing, account, plan | Shared offer copy, checkout availability, real subscription confirmation |
+| guides, toast | Guide hashes and user feedback |
+
+public/css contains tokens and mode-specific styles. public/_headers contains CSP and security headers. Inline event handlers still require unsafe-inline; replacing them is a follow-up. public/.assetsignore excludes local preview pages. PDF conversion and CSV import are not implemented and are not advertised as working features.
+
+## Verification
+
+npm test runs pure builders, the DOM contract, and actual API handlers against SQLite with fake Stripe/Resend transports. npm run test:runtime verifies stronger hashing in workerd. Integration/project suites hit a local Wrangler/D1 instance. scripts/check-launch.mjs checks real HTTP pages and headers without mutations; --require-live-billing additionally requires a verified live price. None of these substitutes for a real payment, email-delivery, load, or physical-printer test.

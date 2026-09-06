@@ -49,7 +49,7 @@ function serializeData(value) {
     throw new HttpError(400, 'validation_error', 'Project data must be a JSON object.');
   }
   const text = JSON.stringify(value);
-  if (text.length > MAX_DATA_BYTES) {
+  if (new TextEncoder().encode(text).byteLength > MAX_DATA_BYTES) {
     throw new HttpError(400, 'data_too_large', `Project data is too large (max ${Math.floor(MAX_DATA_BYTES / 1024)}KB).`);
   }
   return text;

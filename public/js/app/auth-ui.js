@@ -4,6 +4,7 @@
 
 import { api } from './api.js';
 import { getUser, isSignedIn, onSessionChange, applyUser, refreshSession } from './session.js';
+import { toast } from './toast.js';
 
 let afterAuthBaseline = null; // persistent: exporter's pending-export resume (setAfterAuth)
 const afterAuthOnce = []; // one-shot continuations: pending save, pending upgrade…
@@ -47,7 +48,7 @@ function renderHeaderAuth() {
       chip.className = remaining <= 2 ? 'chip chip--attn' : 'chip';
     }
     chip.classList.remove('hidden');
-    email.textContent = user.email;
+    email.textContent = 'Account';
     email.title = user.email;
     email.classList.remove('hidden');
     signout.classList.remove('hidden');
@@ -91,7 +92,7 @@ export function openAuthModal({ mode = 'signin', intent = null, token = null } =
   el('auth-error').textContent = '';
   const msg = el('auth-msg');
   if (intent === 'export') {
-    msg.textContent = 'Create a free account to export — you get 10 free exports.';
+    msg.textContent = 'Create a free account to export — you get 10 free PDF batches.';
     msg.classList.remove('hidden');
   } else if (intent === 'save') {
     msg.textContent = 'Create a free account to save your project right here.';
@@ -166,10 +167,14 @@ function wireForm(formId, submitFn) {
 export async function authSignOut() {
   try {
     await api('/api/auth/logout', { method: 'POST' });
-  } catch {
-    // cookie already dead — clear client state regardless
+  } catch (err) {
+    if (err.status !== 401) {
+      toast('Sign out did not finish. Check your connection and try again.', { kind: 'error' });
+      return false;
+    }
   }
   applyUser(null);
+  return true;
 }
 
 export function initAuthUi() {

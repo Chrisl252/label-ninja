@@ -1,6 +1,7 @@
 // Crypto + id helpers: PBKDF2 password hashing, SHA-256 token hashing, ids, time.
 
-const PBKDF2_ITERATIONS = 100000;
+import { pbkdf2Sync } from 'node:crypto';
+const PBKDF2_ITERATIONS = 600000;
 
 export function now() {
   return Date.now();
@@ -38,16 +39,9 @@ function fromB64(text) {
 }
 
 async function deriveBits(password, salt, iterations) {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(password),
-    'PBKDF2',
-    false,
-    ['deriveBits']
-  );
-  return new Uint8Array(
-    await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations }, key, 256)
-  );
+  // Native node:crypto avoids WebCrypto's lower iteration ceiling in workerd.
+  // Runtime proof: scripts/test-password-runtime.mjs. Production needs CPU headroom.
+  return new Uint8Array(pbkdf2Sync(password, salt, iterations, 32, 'sha256'));
 }
 
 export async function hashPassword(password) {
@@ -62,11 +56,17 @@ export async function verifyPassword(password, stored) {
     if (parts.length !== 4 || parts[0] !== 'pbkdf2') return false;
     const salt = fromB64(parts[2]);
     const expected = fromB64(parts[3]);
-    const actual = await deriveBits(password, salt, Number(parts[1]));
+    const iterations = Number(parts[1]);
+    if (!Number.isSafeInteger(iterations) || iterations < 100000 || iterations > PBKDF2_ITERATIONS || salt.length !== 16 || expected.length !== 32) return false;
+    const actual = await deriveBits(password, salt, iterations);
     return timingSafeEqual(actual, expected);
   } catch {
     return false;
   }
+}
+
+export function passwordNeedsUpgrade(stored) {
+  return String(stored).startsWith('pbkdf2$100000$');
 }
 
 let dummyHashPromise = null;

@@ -1,10 +1,12 @@
 // Auth domain: sessions, register/login/logout/me, password reset plumbing.
 
 import { ok, json, readJson, HttpError } from './http.js';
-import { now, uid, randomHex, sha256Hex, hashPassword, verifyPassword, dummyVerify } from './db.js';
+import { now, uid, randomHex, sha256Hex, hashPassword, verifyPassword, dummyVerify, passwordNeedsUpgrade } from './db.js';
 import { expectEmail, expectPassword, expectHexToken } from './validate.js';
 import { enforceRateLimit } from './ratelimit.js';
 import { isProActive, ledgerSums, computeFreeUses } from './entitlements.js';
+import { appOrigin } from './security.js';
+import { mailConfigured, sendResetEmail } from './mailer.js';
 
 const SESSION_COOKIE = 'ln_session';
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -29,32 +31,26 @@ function getCookie(request, name) {
   return null;
 }
 
-function isAdminEmail(env, email) {
-  const list = String(env.ADMIN_EMAILS || '')
-    .split(',')
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-  return list.includes(email);
-}
-
-async function createSession(db, userId) {
+async function createSession(db, userId, passwordHash) {
   const token = randomHex(32);
   const tokenHash = await sha256Hex(token);
   const t = now();
-  await db
-    .prepare('INSERT INTO sessions (token_hash, user_id, created_at, expires_at) VALUES (?,?,?,?)')
-    .bind(tokenHash, userId, t, t + SESSION_TTL_MS)
+  const inserted = await db
+    .prepare(`INSERT INTO sessions (token_hash, user_id, created_at, expires_at)
+      SELECT ?, ?, ?, ? WHERE EXISTS (SELECT 1 FROM users WHERE id = ? AND password_hash = ? AND disabled = 0)`)
+    .bind(tokenHash, userId, t, t + SESSION_TTL_MS, userId, passwordHash)
     .run();
+  if (!inserted.meta?.changes) throw new HttpError(401, 'invalid_credentials', 'Account changed. Please sign in again.');
   return token;
 }
 
 export async function getSessionUser(env, request) {
   const token = getCookie(request, SESSION_COOKIE);
-  if (!token) return null;
+  if (!token || !/^[0-9a-f]{64}$/.test(token)) return null;
   const tokenHash = await sha256Hex(token);
   const row = await env.DB.prepare(
     `SELECT u.id, u.email, u.role, u.plan, u.subscription_status, u.paid_through,
-            u.free_uses_granted, u.disabled, s.expires_at
+            u.free_uses_granted, u.disabled, u.cancel_at_period_end, s.expires_at
      FROM sessions s JOIN users u ON u.id = s.user_id
      WHERE s.token_hash = ?`
   ).bind(tokenHash).first();
@@ -87,15 +83,17 @@ async function register(request, env) {
   const user = {
     id: uid(),
     email,
-    role: isAdminEmail(env, email) ? 'admin' : 'user',
+    // Registration alone does not prove ownership of an administrator email.
+    role: 'user',
     created_at: t,
   };
+  const passwordHash = await hashPassword(password);
   await env.DB.prepare(
     'INSERT INTO users (id, email, password_hash, role, created_at, updated_at) VALUES (?,?,?,?,?,?)'
   )
-    .bind(user.id, email, await hashPassword(password), user.role, t, t)
+    .bind(user.id, email, passwordHash, user.role, t, t)
     .run();
-  const token = await createSession(env.DB, user.id);
+  const token = await createSession(env.DB, user.id, passwordHash);
   return ok({ user: pickPublic(user) }, { 'Set-Cookie': sessionCookie(token) });
 }
 
@@ -113,7 +111,14 @@ async function login(request, env) {
   if (!valid || user.disabled) {
     throw new HttpError(401, 'invalid_credentials', 'Invalid email or password.');
   }
-  const token = await createSession(env.DB, user.id);
+  if (passwordNeedsUpgrade(user.password_hash)) {
+    const upgraded = await hashPassword(password);
+    const changed = await env.DB.prepare('UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ? AND password_hash = ?')
+      .bind(upgraded, now(), user.id, user.password_hash).run();
+    if (!changed.meta?.changes) throw new HttpError(401, 'invalid_credentials', 'Account changed. Please sign in again.');
+    user.password_hash = upgraded;
+  }
+  const token = await createSession(env.DB, user.id, user.password_hash);
   return ok({ user: pickPublic(user) }, { 'Set-Cookie': sessionCookie(token) });
 }
 
@@ -137,7 +142,7 @@ async function me(request, env) {
       email: user.email,
       role: user.role,
       plan: user.plan,
-      subscription: { status: user.subscription_status, paid_through: user.paid_through },
+      subscription: { status: user.subscription_status, paid_through: user.paid_through, cancel_at_period_end: !!user.cancel_at_period_end },
       free_uses: {
         granted: user.free_uses_granted,
         consumed,
@@ -148,33 +153,9 @@ async function me(request, env) {
   });
 }
 
-async function sendResetEmail(env, email, url) {
-  if (env.RESEND_API_KEY) {
-    try {
-      const res = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${env.RESEND_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: env.EMAIL_FROM || 'Label Ninja <onboarding@resend.dev>',
-          to: email,
-          subject: 'Reset your Label Ninja password',
-          text: `Reset your password (link expires in 1 hour):\n\n${url}\n\nIf you did not request this, ignore this email.`,
-        }),
-      });
-      if (!res.ok) console.error(`reset email delivery failed with status ${res.status}`);
-    } catch {
-      console.error('reset email delivery error');
-    }
-  } else {
-    console.log(`[RESET-LINK] ${url}`);
-  }
-}
-
 async function resetRequest(request, env) {
   await enforceRateLimit(env.DB, request);
+  if (!mailConfigured(env)) throw new HttpError(503, 'email_unavailable', 'Password recovery is temporarily unavailable. Contact support.');
   const body = await readJson(request);
   const raw = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
   if (raw && raw.length <= 254) {
@@ -187,11 +168,15 @@ async function resetRequest(request, env) {
       )
         .bind(tokenHash, user.id, now() + RESET_TTL_MS)
         .run();
-      const origin = new URL(request.url).origin;
-      await sendResetEmail(env, raw, `${origin}/reset?token=${token}`);
+      try {
+        await sendResetEmail(env, raw, `${appOrigin(env)}/reset?token=${token}`);
+      } catch {
+        await env.DB.prepare('DELETE FROM password_reset_tokens WHERE token_hash = ?').bind(tokenHash).run();
+        // Same public response for unknown users and provider delivery failures.
+      }
     }
   }
-  return ok({ message: 'If an account exists, a reset link has been sent.' });
+  return ok({ message: 'If this email has an account and delivery succeeds, you will receive a reset link. Contact support if it does not arrive.' });
 }
 
 async function resetConfirm(request, env) {
@@ -208,11 +193,16 @@ async function resetConfirm(request, env) {
     .first();
   if (!row) throw new HttpError(400, 'invalid_token', 'Invalid or expired reset token.');
   const hash = await hashPassword(password);
-  await env.DB.batch([
-    env.DB.prepare('UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?').bind(hash, t, row.user_id),
-    env.DB.prepare('UPDATE password_reset_tokens SET used = 1 WHERE token_hash = ?').bind(tokenHash),
-    env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(row.user_id),
+  const result = await env.DB.batch([
+    env.DB.prepare(`UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?
+      AND EXISTS (SELECT 1 FROM password_reset_tokens WHERE token_hash = ? AND used = 0 AND expires_at > ?)`)
+      .bind(hash, t, row.user_id, tokenHash, t),
+    env.DB.prepare(`DELETE FROM sessions WHERE user_id = ? AND EXISTS
+      (SELECT 1 FROM password_reset_tokens WHERE token_hash = ? AND used = 0 AND expires_at > ?)`)
+      .bind(row.user_id, tokenHash, t),
+    env.DB.prepare('UPDATE password_reset_tokens SET used = 1 WHERE user_id = ? AND used = 0').bind(row.user_id),
   ]);
+  if (!result[0].meta?.changes) throw new HttpError(400, 'invalid_token', 'Invalid or expired reset token.');
   return ok({ message: 'Password updated. Please log in again.' });
 }
 

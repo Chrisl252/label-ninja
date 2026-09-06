@@ -15,23 +15,20 @@ async function renderPricing() {
   area.innerHTML = '<p class="small muted">Checking Pro pricing…</p>';
   try {
     const data = await api('/api/config/pricing');
-    if (data && data.configured && Array.isArray(data.plans) && data.plans.length) {
-      const rows = data.plans
-        .map((p) => `<div class="row spread small"><span>${p.name || 'Pro'}</span><span class="mono">${p.price || ''}</span></div>`)
-        .join('');
-      area.innerHTML = rows;
+    if (data && data.configured && data.monthly) {
+      area.textContent = '$9.99 USD/month · unlimited PDF batches · cancel anytime.';
       return;
     }
   } catch {
     // degrade to the unconfigured message below
   }
   area.innerHTML = `
-    <p class="small"><strong>Pro pricing coming soon — early access</strong></p>
-    <div><a href="mailto:chris@bisket.com?subject=Label%20Ninja%20Pro%20early%20access" class="btn btn--ghost btn--sm">Notify me when Pro launches</a></div>`;
+    <p class="small"><strong>Pro: $9.99 USD/month</strong></p>
+    <p class="small muted">Checkout is currently unavailable. Your design remains open in this tab.</p>`;
 }
 
 export function openPaywall(upgradeUrl) {
-  if (upgradeUrl) upgradeTarget = upgradeUrl;
+  if (upgradeUrl === '/pricing') upgradeTarget = upgradeUrl;
   const modal = el('paywall-modal');
   if (!modal) return;
   modal.classList.remove('hidden');

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Privacy Policy — Label Ninja</title>
   <meta name="description" content="What Label Ninja stores when you create an account, export a PDF, or save a project — and what never leaves your browser.">
-  <link rel="canonical" href="https://label-ninja.com/privacy.html">
+  <link rel="canonical" href="https://label-ninja.com/privacy">
   <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#14161c">
   <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
@@ -31,33 +31,33 @@
     <nav class="static-nav" aria-label="Site">
       <a href="/">Tools</a>
       <a href="/#printer-setup-checklist">Guides</a>
-      <a href="/privacy.html" aria-current="page">Privacy</a>
+      <a href="/privacy" aria-current="page">Privacy</a>
     </nav>
   </header>
 
   <main class="mode">
     <article class="doc">
       <header class="doc__head">
-        <span class="doc__stamp">Christopher Lucas · sole proprietor</span>
+        <span class="doc__stamp">Label Ninja · Christopher Lucas</span>
         <h1>Privacy policy</h1>
-        <p class="lede">Label Ninja is a browser-based thermal label studio for warehouse bins, Whatnot show numbers, Amazon FNSKU labels, and custom barcode labels. It is operated by Christopher Lucas (sole proprietor). This page says what we store, what stays on your computer, and who else touches the data.</p>
-        <span class="doc__stamp">Last updated 1 September 2026</span>
+        <p class="lede">Label Ninja is a browser-based thermal label studio for warehouse bins, Whatnot show numbers, Amazon FNSKU labels, and custom barcode labels. This page says what we store, what stays on your computer, and who else touches the data.</p>
+        <span class="doc__stamp">Last updated 6 September 2026</span>
       </header>
 
       <section class="doc__section prose">
         <h2>What stays in your browser</h2>
-        <p>Designing a label happens in this browser. Uploaded artwork (PNG, JPEG, or WebP up to 8 MB each), dragged elements, barcode previews, and every setting stay on your machine until you click Download PDF. Closing the tab or clearing site data removes unsaved local work.</p>
+        <p>Designing a label happens in this browser. Uploaded artwork (PNG, JPEG, or WebP up to 8 MB each), dragged elements, barcode previews, and every setting stay on your machine until you choose Download PDF or Save project. Closing the tab or clearing site data removes unsaved local work.</p>
       </section>
 
       <section class="doc__section prose">
         <h2>Accounts</h2>
         <p>Exporting a PDF requires a free account. We store your email address and a salted PBKDF2 hash of your password — never the password itself. Signing in sets one cookie, <code>ln_session</code>, which is HttpOnly, Secure, and expires after 30 days or when you sign out. Password reset sends a single-use link to your email that expires after one hour; using it signs out every other session.</p>
-        <p>We keep a count of how many PDF exports your account has used. The free plan includes 10.</p>
+        <p>We keep a count of how many PDF exports your account has used. The free plan includes 10 PDF batches total. Each successfully generated PDF uses one batch, regardless of its label count.</p>
       </section>
 
       <section class="doc__section prose">
         <h2>PDF exports</h2>
-        <p>When you click Download PDF, the label specification — text, barcode values, sizes, and any images you placed — is sent to our server, rendered into a PDF, and returned to you. The specification itself is not kept after rendering. The finished PDF remains available from My Exports for up to 7 days; expired files are removed during later export activity. You can delete an export sooner from the same drawer.</p>
+        <p>When you click Download PDF, the label specification — text, barcode values, sizes, and any images you placed — is sent to our server, rendered into a PDF, and returned to you. The specification itself is not kept after rendering. The finished PDF remains available from My Exports for up to 7 days; expired files are removed by scheduled cleanup, which normally runs every 15 minutes, and during later export activity. Cleanup may be delayed by service outages or a backlog. You can delete an export sooner from the same drawer.</p>
       </section>
 
       <section class="doc__section prose">
@@ -87,6 +87,7 @@
           <li><strong>Google Fonts</strong> serves the typefaces on this page.</li>
           <li><strong>jsDelivr</strong> serves the barcode-preview and CSV-parsing libraries the tools load.</li>
           <li><strong>Stripe</strong> handles payment, as described above.</li>
+          <li><strong>Resend</strong> delivers password-reset emails when email recovery is configured. It receives your email address and the recovery link.</li>
         </ul>
         <p>Your browser's cookie and tracking settings control what those services can store.</p>
       </section>
@@ -103,7 +104,7 @@
 
       <section class="doc__section prose">
         <h2>Contact</h2>
-        <p>Label Ninja is operated by Christopher Lucas. Privacy questions can be opened as an issue on <a href="https://github.com/Chrisl252/label-ninja/issues" rel="noopener" target="_blank">the Label Ninja GitHub repository</a>.</p>
+        <p>Label Ninja is operated by Christopher Lucas. For privacy questions or account deletion, email <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20privacy">chris@bisket.com</a>. Please do not post personal account information in public issues.</p>
       </section>
     </article>
   </main>
@@ -117,7 +118,8 @@
       </div>
       <nav class="foot__links" aria-label="Footer">
         <a href="/">Tools</a>
-        <a href="/privacy.html">Privacy</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
         <a href="/sitemap.xml">Sitemap</a>
       </nav>
     </div>

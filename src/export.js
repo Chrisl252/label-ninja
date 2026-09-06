@@ -2,7 +2,7 @@
 // authorized downloads, expiry, history. One use = one completed export; failures consume nothing.
 
 import { ok, HttpError, readJson } from './http.js';
-import { now, uid } from './db.js';
+import { now, uid, sha256Hex } from './db.js';
 import { getSessionUser } from './auth.js';
 import { enforceUserRateLimit } from './ratelimit.js';
 import { LIMITS } from './limits.js';
@@ -17,7 +17,7 @@ WHERE (
   (SELECT free_uses_granted FROM users WHERE id = ?)
   + IFNULL((SELECT SUM(delta) FROM usage_ledger WHERE user_id = ? AND kind IN ('admin_grant','admin_revoke')), 0)
   - (SELECT COUNT(*) FROM usage_ledger WHERE user_id = ? AND kind = 'export')
-) > 0`;
+) > 0 AND EXISTS (SELECT 1 FROM export_jobs WHERE id = ? AND status = 'processing')`;
 
 function splitChunks(bytes, size) {
   const chunks = [];
@@ -72,40 +72,48 @@ async function createExport(request, env, user) {
   const body = await readJson(request, LIMITS.MAX_BODY_BYTES);
   const spec = validateJobSpec(body); // 400/501 — thrown before anything is consumed
 
-  // Idempotency replay: a completed job returns the same body with no new use.
+  const inputHash = await sha256Hex(JSON.stringify(spec));
+  // An old key never deletes/refunds a completed job or steals an in-flight job.
   const existing = await env.DB.prepare(
     'SELECT * FROM export_jobs WHERE user_id = ? AND idempotency_key = ?'
   ).bind(user.id, spec.idempotency_key).first();
   if (existing) {
+    if (existing.input_hash && existing.input_hash !== inputHash) {
+      throw new HttpError(409, 'idempotency_conflict', 'This request key was used for different content. Start a new export.');
+    }
+    if (existing.status === 'processing') {
+      throw new HttpError(409, 'export_in_progress', 'This PDF is still processing. Try again shortly.');
+    }
+    if (existing.status === 'expired' || (existing.expires_at && existing.expires_at <= now())) {
+      throw new HttpError(410, 'export_expired', 'This PDF has expired. Start a new export; it will use a new batch credit.');
+    }
     if (existing.status === 'completed') {
       await cleanupExpired(env);
       return ok({ job: publicJob(existing), remaining_free_uses: await remainingFreeUses(env.DB, user) });
     }
-    // failed / processing / expired row: drop it (and any orphan ledger row) and retry fresh
-    await env.DB.batch([
-      env.DB.prepare('DELETE FROM usage_ledger WHERE job_id = ?').bind(existing.id),
-      env.DB.prepare('DELETE FROM export_jobs WHERE id = ?').bind(existing.id),
-    ]);
+    throw new HttpError(409, 'export_retry_required', 'This export did not finish. Start a new export.');
   }
 
   const jobId = uid();
   const t = now();
   const pro = isProActive(user);
-  let reserved = false;
-  if (!pro) {
-    const res = await env.DB.prepare(RESERVATION_SQL).bind(user.id, jobId, t, user.id, user.id, user.id).run();
-    if (!res.meta || res.meta.changes === 0) {
-      throw new HttpError(402, 'free_limit_reached', 'Free plan limit reached (10 exports). Upgrade to Pro for unlimited label exports.', {}, { upgrade_url: '/pricing' });
-    }
-    reserved = true;
+  const claim = env.DB.prepare(
+    `INSERT OR IGNORE INTO export_jobs (id, user_id, idempotency_key, tool, status, input_meta_json, input_hash, created_at, started_at)
+     VALUES (?, ?, ?, ?, 'processing', ?, ?, ?, ?)`
+  ).bind(jobId, user.id, spec.idempotency_key, spec.tool, JSON.stringify({ pages: spec.pages ? spec.pages.length : 1 }), inputHash, t, t);
+  const statements = [claim];
+  if (!pro) statements.push(env.DB.prepare(RESERVATION_SQL).bind(user.id, jobId, t, user.id, user.id, user.id, jobId));
+  const claimed = await env.DB.batch(statements);
+  if (!claimed[0].meta?.changes) {
+    throw new HttpError(409, 'export_in_progress', 'This PDF is already processing. Try again shortly.');
+  }
+  const reserved = !pro && !!claimed[1].meta?.changes;
+  if (!pro && !reserved) {
+    await env.DB.prepare("UPDATE export_jobs SET status = 'failed', failure_reason = 'free_limit_reached' WHERE id = ?").bind(jobId).run();
+    throw new HttpError(402, 'free_limit_reached', 'Your 10 free PDF batches are used. Upgrade to Pro for unlimited batches.', {}, { upgrade_url: '/pricing' });
   }
 
   try {
-    await env.DB.prepare(
-      `INSERT INTO export_jobs (id, user_id, idempotency_key, tool, status, input_meta_json, created_at, started_at)
-       VALUES (?, ?, ?, ?, 'processing', ?, ?, ?)`
-    ).bind(jobId, user.id, spec.idempotency_key, spec.tool, JSON.stringify({ pages: spec.pages ? spec.pages.length : 1 }), t, t).run();
-
     const renderSpec = spec.tool === 'test_print' ? buildTestPrintSpec(spec.settings) : spec;
     const bytes = await renderSpecPdf(renderSpec);
     if (!(bytes instanceof Uint8Array) || bytes.length === 0) throw new Error('empty_output');
@@ -127,25 +135,31 @@ async function createExport(request, env, user) {
     const t2 = now();
     const stmts = chunks.map((c, i) =>
       env.DB.prepare(
-        'INSERT INTO output_chunks (job_id, seq, content_type, bytes, created_at) VALUES (?, ?, ?, ?, ?)'
-      ).bind(jobId, i, 'application/pdf', c, t2)
+        `INSERT INTO output_chunks (job_id, seq, content_type, bytes, created_at)
+         SELECT ?, ?, ?, ?, ? WHERE EXISTS (SELECT 1 FROM export_jobs WHERE id = ? AND status = 'processing')`
+      ).bind(jobId, i, 'application/pdf', c, t2, jobId)
     );
     stmts.push(
       env.DB.prepare(
         `UPDATE export_jobs SET status = 'completed', completed_at = ?, expires_at = ?,
-           output_storage = 'd1', output_key = ?, output_meta_json = ?, uses_consumed = ? WHERE id = ?`
+           output_storage = 'd1', output_key = ?, output_meta_json = ?, uses_consumed = ? WHERE id = ? AND status = 'processing'`
       ).bind(t2, expiresAt, jobId, JSON.stringify(outputMeta), pro ? 0 : 1, jobId)
     );
-    await env.DB.batch(stmts);
+    const saved = await env.DB.batch(stmts);
+    if (!saved.at(-1).meta?.changes) throw new Error('export_interrupted');
   } catch (err) {
+    // A lost response after a successful commit must not refund an available PDF.
+    const saved = await env.DB.prepare('SELECT * FROM export_jobs WHERE id = ?').bind(jobId).first().catch(() => null);
+    if (saved?.status === 'completed') return ok({ job: publicJob(saved), remaining_free_uses: await remainingFreeUses(env.DB, user) });
     // Compensation: a failed export consumes zero uses.
     const reason = `${err && err.name ? err.name : 'Error'}`.slice(0, 60);
     const undo = [];
-    if (reserved) undo.push(env.DB.prepare('DELETE FROM usage_ledger WHERE job_id = ?').bind(jobId));
-    undo.push(env.DB.prepare("UPDATE export_jobs SET status = 'failed', failure_reason = ? WHERE id = ?").bind(reason, jobId));
+    undo.push(env.DB.prepare("DELETE FROM output_chunks WHERE job_id = ? AND EXISTS (SELECT 1 FROM export_jobs WHERE id = ? AND status = 'processing')").bind(jobId, jobId));
+    if (reserved) undo.push(env.DB.prepare("DELETE FROM usage_ledger WHERE job_id = ? AND EXISTS (SELECT 1 FROM export_jobs WHERE id = ? AND status = 'processing')").bind(jobId, jobId));
+    undo.push(env.DB.prepare("UPDATE export_jobs SET status = 'failed', failure_reason = ? WHERE id = ? AND status = 'processing'").bind(reason, jobId));
     await env.DB.batch(undo).catch(() => {});
     console.error(`export job ${jobId} failed (${reason})`);
-    throw new HttpError(500, 'export_failed', 'PDF generation failed. No uses were consumed.');
+    throw new HttpError(500, 'export_failed', 'PDF generation did not finish. Check My Exports before retrying; failed batch credits are restored automatically.');
   }
 
   await cleanupExpired(env);
@@ -192,6 +206,7 @@ async function downloadJob(env, user, id) {
 
 async function deleteJob(env, user, id) {
   const row = await getJob(env, user, id);
+  if (row.status === 'processing') throw new HttpError(409, 'export_in_progress', 'Wait for this PDF to finish before deleting it.');
   await env.DB.batch([
     env.DB.prepare('DELETE FROM output_chunks WHERE job_id = ?').bind(row.id),
     env.DB.prepare("UPDATE export_jobs SET status = 'expired' WHERE id = ?").bind(row.id),

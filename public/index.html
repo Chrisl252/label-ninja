@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Label Ninja — Thermal Label Generator, Printer Setup Guides & Custom Label Editor</title>
-  <meta name="description" content="Free thermal label generator with warehouse bin labels, Whatnot numbers, Amazon FNSKUs, custom barcode labels, thermal printer setup guides, and best label printer picks for Rollo, DYMO, Zebra, and small businesses.">
+  <title>Thermal Label Maker — 10 Free PDF Batches | Label Ninja</title>
+  <meta name="description" content="Create exact-size bin, Whatnot, FNSKU, and custom labels. Get 10 PDF batches free, then unlimited batches with Label Ninja Pro for $9.99 USD/month.">
   <meta name="theme-color" content="#14161c">
   <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
 
@@ -60,7 +60,7 @@
     <div class="grid grid--2">
       <section class="panel dash-start">
         <h1>What are we printing today?</h1>
-        <p class="lede">Design a custom label, run a bin batch, or convert a file.</p>
+        <p class="lede">Design a custom label or run a numbered batch.</p>
         <div class="row">
           <button type="button" class="btn btn--primary btn--lg" onclick="LN.switchMode('editor')">New label</button>
         </div>
@@ -68,11 +68,11 @@
       <section id="dash-usage" class="panel dash-usage" aria-live="polite"></section>
     </div>
 
-    <div id="dash-uploader" class="dropzone" role="button" tabindex="0" aria-label="Upload a file to start a conversion">
+    <div id="dash-uploader" class="dropzone" role="button" tabindex="0" aria-label="Upload artwork to the label editor">
       <span class="bars dropzone__bars" aria-hidden="true"></span>
-      <p class="dropzone__title">Drop a file here to start</p>
-      <p class="dropzone__hint">PDF, PNG, JPG, WebP, or CSV · processed in your browser</p>
-      <input id="dash-uploader-input" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,image/png,image/jpeg,image/webp" class="sr-only">
+      <p class="dropzone__title">Add artwork to a label</p>
+      <p class="dropzone__hint">PNG, JPG, or WebP · uploaded when you export or save</p>
+      <input id="dash-uploader-input" type="file" accept="image/png,image/jpeg,image/webp" class="sr-only">
     </div>
 
     <section class="stack">
@@ -135,7 +135,7 @@
         <label for="image-upload" class="dropzone">
           <span class="bars bars--sm dropzone__bars" aria-hidden="true"></span>
           <span class="dropzone__cta">Upload images</span>
-          <span class="dropzone__hint">PNG, JPEG, or WebP · up to 8 MB each · processed only in this browser</span>
+          <span class="dropzone__hint">PNG, JPEG, or WebP · up to 8 MB each · uploaded when you export or save</span>
           <input id="image-upload" type="file" accept="image/png,image/jpeg,image/webp" multiple class="sr-only" onchange="LN.handleImageUpload(this.files); this.value = ''">
         </label>
         <p id="image-upload-status" class="rail__status" role="status" aria-live="polite">Choose files or drop them onto the label.</p>
@@ -478,11 +478,11 @@
       <header class="doc__head">
         <span class="doc__stamp">Thermal label printer guides</span>
         <h1>Set up a label printer for 4x6 shipping, bin, barcode, and FNSKU labels</h1>
-        <p class="lede">Most label-printer searches are not looking for theory. They are trying to fix a bad print right now: blank labels, sideways labels, skipped labels, wrong 4x6 sizing, margins, scale, calibration, or which thermal printer to buy for eBay, Amazon, Shopify, Etsy, Whatnot, or warehouse bins. This guide targets those jobs directly and links each setup path back to the matching Label Ninja tool.</p>
+        <p class="lede">Start with your label stock, match the PDF and driver sizes, then print one test page at 100% scale. Use these guides to fix small, sideways, blank, or skipped labels before running a batch.</p>
         <nav class="doc__toc" aria-label="On this page">
           <a href="#printer-setup-checklist">Setup checklist</a>
           <a href="#best-label-printers">Best label printers</a>
-          <a href="#seo-keywords">What people search</a>
+          <a href="#seo-keywords">Choose a tool</a>
         </nav>
       </header>
 
@@ -626,38 +626,36 @@
 
       <section id="pricing" class="doc__section">
         <h2>Label Ninja Pro</h2>
-        <p class="lede">The free plan includes 10 PDF exports to try every tool. Pro is for the packing table that prints every day — bin resets, Whatnot shows, FNSKU batches, and custom labels without counting.</p>
+        <p class="lede">The free plan includes 10 PDF batches to try every tool. Pro is for the packing table that prints every day — bin resets, Whatnot shows, FNSKU batches, and custom labels without counting.</p>
         <ul class="plan">
-          <li><strong>Unlimited exports</strong><span>Every tool, every batch size, no counters.</span></li>
+          <li><strong>Unlimited exports</strong><span>All label tools, up to 200 labels per batch.</span></li>
           <li><strong>Saved projects</strong><span>Keep label designs and export history at your fingertips.</span></li>
           <li><strong>No ads</strong><span>A clean workspace, forever.</span></li>
         </ul>
         <div class="note note--accent">
-          <h3>Pro pricing coming soon — early access</h3>
-          <p>Want in at launch? <a href="#pricing" onclick="LN.switchMode('pricing')">See the full pricing page</a> or <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20Pro%20early%20access">get notified when Pro goes live</a>.</p>
+          <h3>Pro is $9.99 USD/month</h3>
+          <p>10 PDF batches are free. Pro has no monthly batch quota. <a href="/pricing">See plan details and checkout availability</a>. Both plans include saved projects, seven-day downloads, and an ad-free workspace.</p>
         </div>
       </section>
 
       <section id="seo-keywords" class="doc__section">
-        <h2>Search intent map: how Label Ninja gets the clicks</h2>
+        <h2>Choose the tool for your labels</h2>
         <div class="table-wrap">
           <table class="table">
             <thead>
-              <tr><th scope="col">Keyword theme</th><th scope="col">Searcher problem</th><th scope="col">Page angle</th><th scope="col">Click hook</th></tr>
+              <tr><th scope="col">Your job</th><th scope="col">Tool</th><th scope="col">Before exporting</th></tr>
             </thead>
             <tbody>
-              <tr><td>how to print 4x6 shipping labels</td><td>Needs labels to fit a thermal printer.</td><td>Universal setup checklist.</td><td>Exact paper size, margins none, 100% scale.</td></tr>
-              <tr><td>Rollo printer setup</td><td>Driver install and 4x6 setup.</td><td>Rollo guide plus bin-label generator.</td><td>Fix sideways/blank/skipping labels.</td></tr>
-              <tr><td>Zebra ZD421 setup</td><td>Calibration and label-size settings.</td><td>Zebra guide with SmartCal language.</td><td>Warehouse-grade setup without ZebraDesigner.</td></tr>
-              <tr><td>DYMO LabelWriter 450 setup</td><td>Older DYMO users need driver and roll help.</td><td>DYMO guide plus stock-size warnings.</td><td>Know when you need 4XL for 4x6 labels.</td></tr>
-              <tr><td>best thermal label printer for small business</td><td>Buyer wants the right model.</td><td>Best printer comparison.</td><td>Pick by use case: reselling, warehouse, budget, small labels.</td></tr>
-              <tr><td>free barcode label generator</td><td>Needs a printable barcode now.</td><td>Custom editor and FNSKU tool.</td><td>Browser-based, thermal-ready output, 10 free exports.</td></tr>
+              <tr><td>Number warehouse shelves or bins</td><td><a href="#tools/warehouse-rack-bin-label-generator">Bin Labels</a></td><td>Check the range and choose portrait or landscape.</td></tr>
+              <tr><td>Prepare numbered Whatnot lots</td><td><a href="#tools/whatnot-live-show-number-generator">Whatnot</a></td><td>Match the stock size and check your first and last number.</td></tr>
+              <tr><td>Print an existing Amazon FNSKU</td><td><a href="#tools/amazon-fba-fnsku-generator">FNSKU</a></td><td>Copy the identifier from Seller Central; this tool does not issue FNSKUs.</td></tr>
+              <tr><td>Make a custom barcode or warning label</td><td><a href="#editor">Editor</a></td><td>Select the media preset, then add text, barcodes, or artwork.</td></tr>
             </tbody>
           </table>
         </div>
         <div class="note">
-          <h3>Content expansion backlog</h3>
-          <p>Next SEO bricks should become dedicated URLs or routed sections: Rollo setup guide, Zebra ZD421 setup guide, DYMO 4XL setup guide, best thermal label printer for eBay sellers, best label printer for Amazon FBA, how to fix thermal label printer printing sideways, how to calibrate a thermal label printer, and how to print warehouse bin labels.</p>
+          <h3>Test before a full run</h3>
+          <p>Inspect the PDF, print one page, and scan any barcode before printing the rest. A downloaded PDF can be printed again without using another batch credit. Label Ninja creates label artwork; it does not purchase shipping postage.</p>
         </div>
       </section>
 
@@ -695,7 +693,7 @@
       <p class="lede small">Your profile, plan, and billing controls.</p>
     </header>
     <div id="account-checkout-banner" class="note note--ready hidden" role="status">
-      Welcome back — your subscription is active. If your plan looks wrong, give Stripe a minute and refresh.
+      Checking your subscription status…
     </div>
     <div id="account-mount" class="stack"><p class="small muted">Loading…</p></div>
   </main>
@@ -707,7 +705,9 @@
         <span class="foot__owner">© 2026 Christopher Lucas</span>
       </div>
       <nav class="foot__links" aria-label="Footer">
-        <a href="/privacy.html">Privacy</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20support">Support</a>
         <a href="#pricing">Pricing</a>
         <a href="/sitemap.xml">Sitemap</a>
         <a href="#tools/amazon-fba-fnsku-generator">FNSKU tool</a>
@@ -764,7 +764,8 @@
           <input id="auth-register-confirm" name="confirm" type="password" autocomplete="new-password" required class="input">
         </div>
         <button type="submit" class="btn btn--primary btn--block">Create free account</button>
-        <p class="tiny muted center">10 free PDF exports · no card required · label work stays in your browser</p>
+        <p class="tiny muted center">10 free PDF batches · no card required · designs upload when you export or save</p>
+        <p class="tiny center">By creating an account, you agree to the <a href="/terms" target="_blank" rel="noopener" class="link">Service terms</a>. Read our <a href="/privacy" target="_blank" rel="noopener" class="link">Privacy policy</a>.</p>
         <p class="tiny center"><a href="#" id="auth-to-signin" class="link">Already have an account? Sign in</a></p>
       </form>
 
@@ -795,13 +796,13 @@
   <div id="paywall-modal" class="scrim hidden no-print" role="dialog" aria-modal="true" aria-label="Free limit reached">
     <div class="modal modal--wide">
       <div class="modal__head">
-        <h3 class="modal__title">You've used your 10 free exports</h3>
+        <h3 class="modal__title">You've used your 10 free PDF batches</h3>
         <button id="paywall-close" type="button" class="btn btn--quiet btn--sm btn--icon modal__close x" aria-label="Close">✕</button>
       </div>
-      <p class="small">Your work is saved exactly as you left it — nothing was lost, and nothing changed. Upgrade to Pro to keep exporting.</p>
+      <p class="small">Your design is still open in this tab. Upgrade to Pro to keep exporting, or return to your work.</p>
       <ul class="tick-list">
         <li><span class="tick">✓</span><span>Unlimited label PDF exports</span></li>
-        <li><span class="tick">✓</span><span>Saved projects &amp; export history</span></li>
+        <li><span class="tick">✓</span><span>Everything in Free, including saved projects</span></li>
         <li><span class="tick">✓</span><span>No ads — ever</span></li>
       </ul>
       <div id="paywall-pricing" class="panel panel--tight panel--flat stack stack--xs"></div>

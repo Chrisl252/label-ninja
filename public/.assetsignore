@@ -1,0 +1,4 @@
+# Never deploy local preview/test surfaces.
+_preview*.html
+*.bak*
+*.map

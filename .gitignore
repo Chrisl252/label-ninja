@@ -4,3 +4,12 @@ backups/
 node_modules/
 .wrangler/
 .dev.vars
+.dev.vars.*
+!.dev.vars.example
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+dev-*.log.err

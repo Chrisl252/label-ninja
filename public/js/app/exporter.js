@@ -79,6 +79,7 @@ function saveBlob(blob, filename) {
   document.body.appendChild(a);
   a.click();
   a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 
 function offerOpenPdf(blob, filename) {
@@ -147,6 +148,7 @@ export async function runExport(tool, buildBody, button) {
       setPending(tool, buildBody, button);
       openAuthModal({ mode: 'signin', intent: 'export' });
     } else {
+      if (['export_expired', 'export_retry_required', 'idempotency_conflict', 'export_failed'].includes(err.code)) markDirty(tool);
       window.alert(err.message || 'Export failed. Try again.');
     }
   } finally {
