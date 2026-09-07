@@ -2,12 +2,13 @@
 
 ## Required before paid launch
 
+- [ ] RELEASE BLOCKER: replace native 600,000-iteration PBKDF2 with a secure Worker-compatible implementation; real remote runtime rejects it despite local success. Add remote proof before fresh approval. Previous Worker restored; migration 0003 remains remote.
 - [ ] Operator/agent: secure test Stripe price, API secret, destination secret, terms URL and portal configuration; real checkout/cancel/renewal test.
 - [ ] Operator/agent: verified recovery-email sender and successful inbox/reset test.
-- [ ] Chris: approve hosting budget if needed; agent: measure deployed CPU/memory and 200-page output capacity.
+- [ ] Agent: measure deployed CPU/memory and 200-page output capacity. Workers Paid is already enabled; no upgrade needed for the confirmed crypto API incompatibility.
 - [ ] Chris: confirm billing operator, refund/contact language and tax requirements.
 - [ ] Chris/agent: rotate exposed test key; provision distinct live credentials securely.
-- [ ] Chris: exact Chrome Ready Check and deployment approval; agent: additive production migration, clean Worker release, endpoint/content verification.
+- [ ] Chris: fresh exact-candidate approval after hashing fix; agent: clean Worker release and registration/export verification. Production migration 0003 already applied.
 - [ ] Chris/agent: approved real payment canary and operational alert/backup/restore checks.
 - [ ] Chris: physical Rollo 4x6 and tiny-stock print/scan acceptance.
 

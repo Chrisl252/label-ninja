@@ -32,6 +32,6 @@ Stripe destination: /api/webhooks/stripe. Subscribe to checkout.session.complete
 
 ## Capacity
 
-The workerd password test runs 600,000 PBKDF2-SHA256 iterations in about 209 ms on this PC. Production CPU usage is not measured; the Workers Free 10 ms CPU budget is not a safe assumption. Confirm a sufficient paid/runtime budget and test 200-page batches before collecting money. No hosting plan or spending change has been made.
+Workers Paid was confirmed as the current plan in Chrome on 2026-09-06; no hosting plan or spending change was made. The local workerd password test accepts 600,000 PBKDF2-SHA256 iterations, but the real remote runtime rejects anything above 100,000. This caused the attempted release to be rolled back. Replace the incompatible secure-hashing implementation and test it remotely before release. Production CPU usage and 200-page/image-heavy capacity still need measurement.
 
 D1 output cap is 12.5 MiB per PDF; images are limited to 4096 px/edge and 4 million decoded pixels across the batch, plus encoded-byte caps. Cleanup deletes at most 10 expired PDFs per scheduled invocation plus lazy sweeps. Watch storage/backlog and provision larger throughput as actual volume grows.
