@@ -13,7 +13,7 @@ import {
   changeCanvasSize, loadTemplate, handleImageUpload, getElements, exportEditorLabel,
 } from './editor.js';
 import { updateBinPrintHint, exportBinBatch } from './bin-tool.js';
-import { updateWhatnotPrintHint, exportWhatnotBatch } from './whatnot-tool.js';
+import { initWhatnotTool, updateWhatnotPrintHint, exportWhatnotBatch } from './whatnot-tool.js';
 import { exportFnskuLabel } from './fnsku-tool.js';
 import { initToast } from './toast.js';
 import { initProjects, saveProject } from './projects.js';
@@ -233,7 +233,7 @@ function init() {
   wireSessionDefaults();
   wireDirtyFlags();
   updateBinPrintHint();
-  updateWhatnotPrintHint();
+  initWhatnotTool();
   routeFromLocation();
 
   window.addEventListener('hashchange', () => {

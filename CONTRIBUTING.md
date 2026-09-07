@@ -28,4 +28,6 @@ Applied migrations are immutable; add a numbered migration. New tests must demon
 
 ## Release
 
+For Whatnot feature/content changes, npm test includes scripts/test-whatnot-feature.mjs (settings, URL round-trip, all-stock PDF geometry and HTML SEO contract). Run node scripts/test-whatnot-http.mjs --local-export against local Wrangler to prove three stocks, one-batch accounting and replay. Without that flag, the script is read-only and can check a deployed LN_BASE. Keep label settings validation in public/js/whatnot-settings.js, reuse the existing export flow, and use real static HTML URLs for new guides. Cite official sources and distinguish item numbers, sorting automation and shipping postage.
+
 No automatic production release. Follow RUNBOOKS.md: exact candidate in Chrome, explicit owner approval, approved commit, isolated clean release directory, additive migration, Worker deploy, HTTP plus real lifecycle verification. Never bundle unrelated scratch files or ship the static Pages mirror as a SaaS app.

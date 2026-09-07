@@ -346,8 +346,9 @@
     <div class="tool">
       <div class="tool__head">
         <div class="stack stack--xs">
-          <h1 class="tool__title">Whatnot show numbers</h1>
-          <p class="lede">Giant, high-contrast consecutive numbers (#1, #2, C1, C2) for live auction streams — one number per label, sized to fill the stock you pick.</p>
+          <h1 class="tool__title">The Whatnot Labels</h1>
+          <p class="lede">Numbered item labels for your next show. Choose a range and stock, then download one PDF. No Whatnot account connection or shipping postage.</p>
+          <p class="small"><a href="/whatnot-labels">Whatnot labels setup and sizes</a> · <a href="/guides/whatnot-labels-printing-too-small">Fix tiny or cropped prints</a></p>
         </div>
         <div class="tool__spec">
           <span class="chip chip--stock">1 number = 1 label</span>
@@ -361,7 +362,7 @@
           <div class="grid grid--4">
             <div class="field">
               <label class="field__label" for="wn-prefix">Number prefix</label>
-              <input type="text" id="wn-prefix" value="#" class="input input--mono">
+              <input type="text" id="wn-prefix" value="#" maxlength="12" class="input input--mono">
             </div>
             <div class="field">
               <label class="field__label" for="wn-start">Start #</label>
@@ -391,19 +392,19 @@
 
         <aside class="tool__stage" aria-label="Show number preview and download">
           <div class="liner">
-            <div class="stock sample sample--wn" aria-hidden="true">
-              <span class="sample__title">#1</span>
+            <div id="wn-preview" class="stock sample sample--wn" aria-hidden="true">
+              <span id="wn-preview-number" class="sample__title">#1</span>
             </div>
           </div>
           <div class="tool__caption">
-            <span class="tiny muted">Sample · 1 x 0.5 in</span>
-            <span class="tiny mono muted">fills the stock</span>
+            <span id="wn-preview-caption" class="tiny muted">1 x 0.5 in · 50 labels · 1 PDF batch</span>
+            <span class="tiny mono muted">not to scale</span>
           </div>
 
           <div id="wn-print-hint" class="note note--attn" role="status"></div>
 
-          <button type="button" onclick="LN.generateWhatnotBatch(this)" class="btn btn--primary btn--lg tool__cta">Download show numbers (PDF)</button>
-          <p class="tool__fine">One label per number on your chosen stock · exact physical size · free account includes 10 exports.</p>
+          <button type="button" onclick="LN.generateWhatnotBatch(this)" class="btn btn--primary btn--lg tool__cta">Download Whatnot labels (PDF)</button>
+          <p class="tool__fine">Free account: 10 PDF batches total, shared across tools. Up to 200 labels in each batch. Downloading uses one batch; preparing this preview uses none.</p>
         </aside>
       </div>
     </div>
@@ -647,7 +648,7 @@
             </thead>
             <tbody>
               <tr><td>Number warehouse shelves or bins</td><td><a href="#tools/warehouse-rack-bin-label-generator">Bin Labels</a></td><td>Check the range and choose portrait or landscape.</td></tr>
-              <tr><td>Prepare numbered Whatnot lots</td><td><a href="#tools/whatnot-live-show-number-generator">Whatnot</a></td><td>Match the stock size and check your first and last number.</td></tr>
+              <tr><td>Prepare numbered Whatnot lots</td><td><a href="/whatnot-labels">Whatnot Labels</a></td><td><a href="/guides/whatnot-labels-printing-too-small">Check sizes and fix tiny prints</a> before running your batch.</td></tr>
               <tr><td>Print an existing Amazon FNSKU</td><td><a href="#tools/amazon-fba-fnsku-generator">FNSKU</a></td><td>Copy the identifier from Seller Central; this tool does not issue FNSKUs.</td></tr>
               <tr><td>Make a custom barcode or warning label</td><td><a href="#editor">Editor</a></td><td>Select the media preset, then add text, barcodes, or artwork.</td></tr>
             </tbody>
@@ -711,7 +712,7 @@
         <a href="#pricing">Pricing</a>
         <a href="/sitemap.xml">Sitemap</a>
         <a href="#tools/amazon-fba-fnsku-generator">FNSKU tool</a>
-        <a href="#tools/whatnot-live-show-number-generator">Whatnot tool</a>
+        <a href="/whatnot-labels">Whatnot Labels</a>
         <a href="#best-label-printers" onclick="LN.switchMode('guides')">Best printers</a>
       </nav>
     </div>

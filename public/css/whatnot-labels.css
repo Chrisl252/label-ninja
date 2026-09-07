@@ -1,0 +1,83 @@
+/* Hallmark · macrostructure: Long Document with a working batch setup · theme: Print Bench.
+ * N9 edge navigation / Ft2 inline footer / F3 spec table / stacked section headings.
+ * No decorative motion or stock art. Tokens remain in tokens.css. */
+/* Pre-emit critique: P5 H4 E4 S5 R4 V4. Existing Print Bench stock/font tokens retained.
+ * Contrast: action text 5.50:1 in default/hover. Responsive checked at 320/375/414/768.
+ * Honest copy / no fake chrome / token reuse: pass. */
+.seller-page { font-size: 1rem; }
+.seller-page .btn--primary { background: var(--color-accent-3); border-color: var(--color-accent-3); color: var(--color-accent-ink); }
+.seller-page .btn--primary:hover { background: var(--color-accent-3); border-color: var(--color-accent-2); }
+.seller-skip { position: absolute; left: var(--space-sm); top: -6rem; z-index: 20; }
+.seller-skip:focus { top: var(--space-sm); }
+.seller-header, .seller-footer {
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding: var(--space-md); display: flex; flex-wrap: wrap;
+  align-items: center; justify-content: space-between; gap: var(--space-sm);
+}
+.seller-header { border-bottom: var(--rule); }
+.seller-nav { display: flex; flex-wrap: wrap; gap: var(--space-sm); font-size: var(--text-base); }
+.seller-nav a { padding-block: var(--space-xs); white-space: nowrap; }
+.seller-nav [aria-current="page"] { text-decoration-color: var(--color-ink); }
+.seller-main { width: 100%; max-width: var(--wrap); margin: auto; padding: var(--space-md) var(--space-md) var(--space-xl); }
+.seller-intro { display: grid; gap: var(--space-sm); margin-bottom: var(--space-lg); }
+.seller-intro h1 { font-size: clamp(2.75rem, 6vw, 4rem); }
+.seller-intro .lede { font-size: var(--text-lg); }
+.seller-kicker, .seller-meta { color: var(--color-ink-2); font-size: var(--text-sm); }
+.seller-kicker { font-family: var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; }
+.seller-setup { border-block: var(--rule-2); padding-block: var(--space-md); display: grid; gap: var(--space-lg); }
+.seller-form { display: grid; align-content: start; gap: var(--space-xs); }
+.seller-form .field__label { font-size: var(--text-base); }
+.seller-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-sm); }
+.seller-fields .field { min-width: 0; }
+.seller-fields .field--wide { grid-column: 1 / -1; }
+.seller-form .input, .seller-form .select { min-height: 48px; font-size: 1rem; }
+.seller-form .input:focus-visible, .seller-form .select:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; box-shadow: none; }
+.seller-form .btn { min-height: 48px; }
+.seller-batch-count { font-family: var(--font-mono); font-size: var(--text-base); }
+.seller-error { color: var(--color-attn); font-size: var(--text-base); min-height: 1lh; }
+.seller-preview { margin: 0; padding: var(--space-lg); background: var(--color-chassis-2); border: var(--rule); align-self: start; }
+.seller-preview-label {
+  width: 100%; max-width: 360px; margin: var(--space-md) auto; aspect-ratio: 2;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+  background: var(--color-stock); color: var(--color-stock-ink); border-radius: var(--radius-label);
+  box-shadow: var(--shadow-stock); font-family: var(--font-body); font-weight: 600; line-height: 1;
+  font-size: 6rem; white-space: nowrap;
+}
+.seller-preview figcaption { color: var(--color-ink-2); font-size: var(--text-sm); }
+.seller-preview figcaption + p { margin-top: var(--space-md); }
+.seller-jump { display: flex; flex-wrap: wrap; gap: var(--space-sm) var(--space-md); margin-block: var(--space-lg); font-size: var(--text-base); }
+.seller-section { border-top: var(--rule); padding-block: var(--space-lg); scroll-margin-top: var(--space-md); }
+.seller-section > h2 { margin-bottom: var(--space-md); }
+.seller-section > h2 span { display: block; margin-bottom: var(--space-xs); color: var(--color-ink-2); font: var(--text-xs) var(--font-mono); }
+.seller-section .prose { max-width: 70ch; }
+.seller-section .prose h3 { margin-top: var(--space-md); }
+.seller-table { width: 100%; border-collapse: collapse; margin-top: var(--space-md); font-size: var(--text-base); }
+.seller-table th, .seller-table td { text-align: left; padding: var(--space-sm) var(--space-xs); border-bottom: var(--rule); vertical-align: top; }
+.seller-table th { color: var(--color-ink-2); font-weight: 500; }
+.seller-table th:first-child, .seller-table td:first-child { padding-left: 0; }
+.seller-table caption { text-align: left; color: var(--color-ink-2); padding-bottom: var(--space-xs); }
+.seller-table td:first-child { font-family: var(--font-mono); }
+.seller-callout { border-left: 3px solid var(--color-rule-2); padding-left: var(--space-md); }
+.seller-faq details { border-bottom: var(--rule); padding-block: var(--space-sm); }
+.seller-faq summary { cursor: pointer; font-weight: 600; min-height: 32px; }
+.seller-faq details p { color: var(--color-ink-2); max-width: 70ch; margin-top: var(--space-xs); }
+.seller-next { border-block: var(--rule-2); padding-block: var(--space-lg); display: grid; gap: var(--space-sm); }
+.seller-next .btn { justify-self: start; white-space: nowrap; }
+.seller-footer { border-top: var(--rule); color: var(--color-ink-2); font-size: var(--text-sm); }
+.seller-footer nav { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm); }
+.seller-footer nav a, .seller-jump a { white-space: nowrap; }
+.seller-article { max-width: 50rem; }
+@media (min-width: 768px) {
+  .seller-setup { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); }
+  .seller-fields .field--wide { grid-column: auto; }
+}
+@media (max-width: 414px) {
+  .seller-header, .seller-footer, .seller-main { padding-inline: var(--space-sm); }
+  .seller-preview { padding: var(--space-sm); }
+  .seller-table { font-size: var(--text-sm); }
+  .seller-table th, .seller-table td { padding-inline: var(--space-3xs); }
+}
+@media print {
+  .seller-header, .seller-nav, .seller-jump, .seller-form, .seller-next, .seller-footer { display: none; }
+  .seller-main { max-width: none; padding: 0; }
+}

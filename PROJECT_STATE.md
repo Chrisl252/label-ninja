@@ -2,6 +2,8 @@
 
 ## Start here (2026-09-06)
 
+- New requested brick: The Whatnot Labels feature and print-size guide are built LOCALLY, awaiting exact-candidate Ready Check approval. Audience/action/tone confirmed by Chris; no new production release yet. Preview: http://127.0.0.1:8787/whatnot-labels.
+- New feature proof: 87 Whatnot tests plus the existing 61 builder/60 launch/DOM checks pass; all three stocks pass local authenticated PDF/quota/replay tests. Two static HTML URLs and supporting assets match served source bytes. Chrome verified range errors, settings transfer with an existing session, phone/tablet layouts and long-prefix containment. Deployment dry run: 48 public files, DB/ASSETS bindings. See SEO_STRATEGY.md.
 - Compatibility repair and SaaS hardening are LIVE on both domains: Worker dffca000-41ea-47a0-af74-6b82fda69820, source 72c5eb1. Chris explicitly approved the repair and deployment. Paid launch is NOT cleared.
 - Offer confirmed by Chris: 10 PDF batches TOTAL, then $9.99 USD/month unlimited batches. One PDF, not one label, consumes a free batch.
 - Deployed code includes atomic quota/idempotency, retry-safe billing, paid-through enforcement, single-use recovery plumbing, portable stronger password hashing, project-name escaping, security headers, bounded cleanup, and mobile account fixes.

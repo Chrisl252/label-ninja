@@ -51,11 +51,14 @@ Entry is public/js/app/app.js. It owns mode routing and the window.LN handler br
 | --- | --- |
 | editor, presets, spec-builders | Design state, stocks, pure PDF request builders |
 | bin-tool, whatnot-tool, fnsku-tool | Tool-specific settings and export intents |
+| whatnot-text-fit | Pure Helvetica Bold advance metrics and stock-aware text fit, independently checked against pdf-lib |
 | api, session, auth-ui | API transport, session updates, sign-in/reset UI |
 | exporter, paywall | Retry keys, PDF downloads/history, exhausted allowance |
 | projects, dashboard | Save/open/duplicate/delete and recent work; escape project names |
 | pricing, account, plan | Shared offer copy, checkout availability, real subscription confirmation |
 | guides, toast | Guide hashes and user feedback |
+
+The crawlable Whatnot feature lives in public/whatnot-labels.html and public/guides/whatnot-labels-printing-too-small.html. Worker Static Assets serves their extensionless URLs directly. public/js/whatnot-labels.js owns only the public setup form; public/js/whatnot-settings.js is the shared DOM-free validation and URL contract. The existing whatnot-tool imports this contract and initializes settings once from an allowlisted complete deep link. Export still uses exporter.js and the authenticated /api/export ledger; no quota, account or payment state lives on the landing page. public/css/whatnot-labels.css consumes the existing Print Bench tokens. SEO_STRATEGY.md records intent, sources and measurement limits.
 
 public/css contains tokens and mode-specific styles. public/_headers contains CSP and security headers. Inline event handlers still require unsafe-inline; replacing them is a follow-up. public/.assetsignore excludes local preview pages. PDF conversion and CSV import are not implemented and are not advertised as working features.
 

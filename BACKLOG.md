@@ -1,5 +1,12 @@
 # Label Ninja backlog
 
+## Whatnot Labels feature and search launch
+
+- [x] Build a public numbered-label setup page and a separate print-size troubleshooting guide, preserving the existing Print Bench design and metered export flow.
+- [x] Verify all-stock PDF dimensions, long-prefix fitting, quota/replay and settings transfer; add canonical metadata, structured data, internal links and sitemap entries.
+- [ ] Chris: approve or deny the exact local candidate shown in Chrome. Agent then deploys the unchanged approved source and verifies both public domains.
+- [ ] Chris/agent: authorized Search Console access, sitemap submission and indexing checks. Establish actual queries/impressions/clicks before expanding the content cluster. No ranking guarantee.
+
 ## Required before paid launch
 
 - [x] Compatibility release: portable 600,000-round PBKDF2, real remote oracle/legacy proof, explicit repair/deploy approval, and 18/18 live account/PDF/project checks. Source 72c5eb1 is deployed.

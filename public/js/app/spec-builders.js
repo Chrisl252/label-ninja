@@ -3,6 +3,8 @@
 // These mirror the legacy client print layout math and are covered by
 // scripts/test-spec-builders.mjs. Element contracts: src/spec-validate.js.
 
+import { fitWhatnotTextIn } from './whatnot-text-fit.js';
+
 const ASCII_RE = /^[\x20-\x7e]+$/;
 
 function round4(n) {
@@ -23,11 +25,9 @@ export function binTitleSizeIn(binText, settings) {
   return Math.min(settings.titleSize, fitted);
 }
 
-// Whatnot number size in inches — fits 72% of stock height / 90% of width.
+// Whatnot number size in inches — fits the actual PDF font within stock padding.
 export function whatnotFontSizeIn(text, stock) {
-  const heightLimit = stock.height * 0.72;
-  const widthLimit = (stock.width * 0.9) / Math.max(1, text.length * 0.58);
-  return Math.max(0.12, Math.min(heightLimit, widthLimit));
+  return fitWhatnotTextIn(text, stock);
 }
 
 function binBarcodeCode(binText) {

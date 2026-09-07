@@ -1,0 +1,13 @@
+{
+  "date": "2026-09-06",
+  "brief": "The Whatnot Labels: manual item-number batches and sizing help for sellers",
+  "audience_confirmed": "Whatnot sellers needing numbered item labels",
+  "action_confirmed": "Create labels",
+  "tone_confirmed": "Practical setup and troubleshooting",
+  "system": "Existing Print Bench, DESIGN.md and public/css/tokens.css",
+  "macrostructure": "Long Document with embedded functional batch setup",
+  "navigation": "N9 edge-aligned minimal",
+  "footer": "Ft2 inline rule",
+  "enrichment": "Actual label preview; no decorative artwork or motion",
+  "scope": "Two static routes, shared setup validation, existing metered export flow; no billing or backend changes"
+}

@@ -3,8 +3,29 @@
 import { WHATNOT_STOCKS } from './presets.js';
 import { buildWhatnotSpec } from './spec-builders.js';
 import { runExport } from './exporter.js';
+import { validateWhatnotSettings, whatnotSettingsFromSearch, WHATNOT_TOOL_HASH } from '../whatnot-settings.js';
 
-const MAX_EXPORT_PAGES = 200; // server cap: one page per number
+function readSettings() {
+  return {
+    stock: document.getElementById('wn-stock').value,
+    prefix: document.getElementById('wn-prefix').value,
+    start: document.getElementById('wn-start').value,
+    end: document.getElementById('wn-end').value,
+  };
+}
+
+export function initWhatnotTool() {
+  if (window.location.hash === WHATNOT_TOOL_HASH) {
+    const settings = whatnotSettingsFromSearch(window.location.search);
+    if (settings) {
+      for (const [field, value] of Object.entries(settings)) {
+        document.getElementById(`wn-${field}`).value = String(value);
+      }
+    }
+  }
+  document.getElementById('mode-whatnot').addEventListener('input', updateWhatnotPrintHint);
+  updateWhatnotPrintHint();
+}
 
 export function getWhatnotStock() {
   return WHATNOT_STOCKS[document.getElementById('wn-stock').value] || WHATNOT_STOCKS.tiny;
@@ -13,27 +34,32 @@ export function getWhatnotStock() {
 export function updateWhatnotPrintHint() {
   const stock = getWhatnotStock();
   document.getElementById('wn-print-hint').textContent =
-    `${stock.name} setup: your PDF is exactly ${stock.name} — print at 100% scale with margins none (${stock.driverSize} paper, Landscape). Do not use the 10% scale shown in your previous print preview.`;
+    `${stock.name} PDF: select matching paper in your printer settings, print at 100% / Actual size, with no margins. Check that your printer supports this stock, then print one page before the full batch.`;
+  const preview = document.getElementById('wn-preview');
+  const text = document.getElementById('wn-preview-number');
+  preview.style.aspectRatio = `${stock.width} / ${stock.height}`;
+  try {
+    const settings = validateWhatnotSettings(readSettings());
+    text.textContent = `${settings.prefix}${settings.start}`;
+    text.style.fontSize = `${Math.min(4.25, 12 / Math.max(text.textContent.length, 1))}rem`;
+    document.getElementById('wn-preview-caption').textContent = `${stock.name} · ${settings.end - settings.start + 1} labels · 1 PDF batch`;
+  } catch {
+    text.textContent = '—';
+    document.getElementById('wn-preview-caption').textContent = 'Check your number range and prefix';
+  }
 }
 
 export function exportWhatnotBatch(button) {
-  const prefix = document.getElementById('wn-prefix').value || '#';
-  const start = parseInt(document.getElementById('wn-start').value || 1, 10);
-  const end = parseInt(document.getElementById('wn-end').value || 50, 10);
-
-  if (!Number.isInteger(start) || !Number.isInteger(end) || end < start || start < 1 || end > 999) {
-    window.alert('End number must be greater than or equal to the start number (1-999).');
+  let settings;
+  try {
+    settings = validateWhatnotSettings(readSettings());
+  } catch (error) {
+    window.alert(error.message);
     return;
   }
-  if (end - start + 1 > MAX_EXPORT_PAGES) {
-    window.alert(`Server PDF exports max out at ${MAX_EXPORT_PAGES} pages per batch. Split your sequence (up to ${MAX_EXPORT_PAGES} numbers at a time) and export again.`);
-    return;
-  }
-
-  const stock = getWhatnotStock();
   runExport(
     'whatnot',
-    () => buildWhatnotSpec({ prefix, start, end, ...stock }),
+    () => buildWhatnotSpec({ ...settings, ...WHATNOT_STOCKS[settings.stock] }),
     button,
   );
 }
