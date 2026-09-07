@@ -1,11 +1,28 @@
 # Label Ninja launch readiness
 
-Status: compatibility repair and SaaS hardening deployed and live account/PDF/project checks passed. Updated 2026-09-06 (evidence is Sep 7 UTC). Paid production launch remains blocked by provider provisioning/acceptance. Billing credentials and the hosting plan were not changed.
+Status: approved upgrade-flow repair and Whatnot Labels are deployed on both domains; live account/PDF/project checks passed. Updated 2026-09-06 (evidence is Sep 7 UTC). Paid production launch remains blocked by provider provisioning/acceptance. Billing credentials and the hosting plan were not changed.
 
-## Current repaired release
+## Current upgrade release
+
+- Explicit deploy approval for unchanged source ceb6a67; clean isolated backups/release-upgrade-20260907. Live Worker eacac403-fbac-4484-bd6f-24398f2232cf. Prior Whatnot Worker 99bd8c27-c9e0-479d-b418-08727ff37aa3 is the rollback target.
+- Both domains match all 41 public source hashes and pass route/header/DB/offer gates. Production canary passes 17/17, including exact 3/200-page PDFs, one batch per PDF, no replay charge and saved-project lifecycle. Live browser preserves custom Whatnot settings through pricing/return; no browser warnings/errors. Sanitized health/pricing tail: two ok outcomes, zero exceptions.
+- No pending migrations or schema/provider/plan changes. Paid gate still fails for configured:false, mode:test. Recovery point, canary footprint and exact evidence: DEPLOYMENT_UPGRADE_CEB6A67.md.
+
+## Previous Whatnot release (historical evidence)
+
+- Explicit Ready Check approval: source 79842db84aba8b1c296c892b071a3f19acc85132, clean detached backups/release-whatnot-79842db. Newer local upgrade-flow changes were preserved and excluded. No GitHub push.
+- Live Worker 99bd8c27-c9e0-479d-b418-08727ff37aa3 on apex/www with existing cleanup schedule. No migration, provider or plan changes. Prior dffca000-41ea-47a0-af74-6b82fda69820 is the current rollback target.
+- Both domains: Whatnot HTTP exact-source checks and route/header/DB/offer gates pass. Production synthetic account/PDF/project canary passes 17/17, including exact 3/200-page PDFs and no replay charge. Billing remains configured:false, mode:test; indexing/rankings and physical output are unverified.
+- Full receipt and fresh D1 recovery point: DEPLOYMENT_WHATNOT_79842db.md. The upgrade candidate below is still local and needs its own review.
+
+## Upgrade candidate before approval (historical evidence)
+
+Local-only candidate added 2026-09-06: the paywall/pricing journey preserves in-tab drafts, returns to the last label tool, and displays actual remaining allowance. npm test adds 25 upgrade regressions; local workerd password check, real D1/PDF/quota integration, read-only HTTP gate, and dry-run (49 public assets; DB/ASSETS/APP_ORIGIN) passed. Browser fixture verified an edited label and custom Whatnot prefix/range/stock through the exhausted-account round trip; mobile view has no horizontal overflow and focuses the pricing heading. Fixture account/billing responses are simulated, not provider acceptance. The live pricing page was inspected and still displays Checkout unavailable. This upgrade improvement awaits exact-candidate review and was not included in the Whatnot deployment.
+
+## Previous compatibility release (historical evidence)
 
 - Chris explicitly approved fixing the compatibility issue and deploying. Source 72c5eb1321ad1a88c25ec043d20ee58eb8c5ae6d shipped from the clean detached worktree backups/release-20260906-portable, without GitHub push.
-- Current Worker: dffca000-41ea-47a0-af74-6b82fda69820; both existing custom domains and */15 * * * * cleanup schedule deployed. DB/ASSETS/APP_ORIGIN bindings confirmed. Bundle 995.30 KiB / gzip 248.99 KiB, startup 28 ms.
+- Previous Worker: dffca000-41ea-47a0-af74-6b82fda69820; both existing custom domains and */15 * * * * cleanup schedule deployed. DB/ASSETS/APP_ORIGIN bindings confirmed. Bundle 995.30 KiB / gzip 248.99 KiB, startup 28 ms.
 - Pre-repair D1 bookmark: 00000035-00000000-000050df-f254ab2e143577af074fc6133a562255. No migrations pending; migration 0003 was not replayed. Previous stable Worker 5ccad6c2-1846-49ab-9658-d49b87416c77 remains the rollback target, not the failed ed44eff2 version.
 - Password repair is isolated in src/passwords.js: pinned @noble/hashes 2.4.0 implements PBKDF2-SHA256 with the same 600,000-round format and legacy verification. An isolated no-DB Cloudflare remote preview passed independent native-oracle equality, correct/wrong password and legacy checks before deploy; preview stopped. Local workerd also passed. No security work-factor downgrade or hosting-plan change.
 - Live scripts/test-deploy-canary.mjs --allow-production: all 18 checks passed. Register 4242 ms; sign-in 4234 ms; bodyless sign-out and expired session rejection; wrong password 401; three-page export 483 ms consuming one batch; identical replay consumes no extra; 200-page export 1340 ms consuming one batch; both downloads have every page at 288x432 points; project save/reopen/delete succeeds.

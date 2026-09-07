@@ -1,10 +1,18 @@
 # Label Ninja backlog
 
+## Upgrade journey (approved and deployed, 2026-09-06)
+
+- [x] Prevent the free-limit paywall from reloading and losing an unsaved label; return from pricing to the original tool.
+- [x] Show actual remaining/exhausted allowance; preserve account access for Pro during pricing outages; focus the offer on deliberate entry.
+- [x] 25 upgrade regressions, full existing suites, local runtime/HTTP/integration, desktop and phone UI fixture checks.
+- [x] Chris approved deployment. Upgrade source ceb6a67 is live as Worker eacac403-fbac-4484-bd6f-24398f2232cf; both-domain exact-source checks and 17/17 live canary checks pass. See DEPLOYMENT_UPGRADE_CEB6A67.md.
+- [ ] Next revenue brick: secure Stripe test setup and real checkout/webhook/portal acceptance, followed by approved live provisioning. Recovery email remains a paid-launch gate.
+
 ## Whatnot Labels feature and search launch
 
 - [x] Build a public numbered-label setup page and a separate print-size troubleshooting guide, preserving the existing Print Bench design and metered export flow.
 - [x] Verify all-stock PDF dimensions, long-prefix fitting, quota/replay and settings transfer; add canonical metadata, structured data, internal links and sitemap entries.
-- [ ] Chris: approve or deny the exact local candidate shown in Chrome. Agent then deploys the unchanged approved source and verifies both public domains.
+- [x] Chris approved the exact Whatnot candidate shown in Chrome. Unchanged 79842db deployed as Worker 99bd8c27-c9e0-479d-b418-08727ff37aa3; both domains and 17/17 live account/PDF checks pass. See DEPLOYMENT_WHATNOT_79842db.md.
 - [ ] Chris/agent: authorized Search Console access, sitemap submission and indexing checks. Establish actual queries/impressions/clicks before expanding the content cluster. No ranking guarantee.
 
 ## Required before paid launch
