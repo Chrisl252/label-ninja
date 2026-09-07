@@ -8,8 +8,9 @@
 - Worker configuration: wrangler.toml, src/worker.js, public ASSETS, nodejs_compat
 - D1: label-ninja-db / 852d3ccd-83b6-4ab9-9c39-49a1cf77b88b / binding DB
 - Local D1: .wrangler/state/v3/d1 ; do not confuse --local and --remote
-- Runtime dependency: pdf-lib; browser JsBarcode/PapaParse remain CDN-loaded
+- Runtime dependencies: pdf-lib and pinned @noble/hashes 2.4.0; browser JsBarcode/PapaParse remain CDN-loaded
 - Scheduler: */15 * * * * ; cleanup is bounded, monitor backlog
+- Live source 72c5eb1 / Worker dffca000-41ea-47a0-af74-6b82fda69820 (2026-09-06); clean release under backups/release-20260906-portable
 
 ## Secrets and provider configuration
 
@@ -32,6 +33,8 @@ Stripe destination: /api/webhooks/stripe. Subscribe to checkout.session.complete
 
 ## Capacity
 
-Workers Paid was confirmed as the current plan in Chrome on 2026-09-06; no hosting plan or spending change was made. The local workerd password test accepts 600,000 PBKDF2-SHA256 iterations, but the real remote runtime rejects anything above 100,000. This caused the attempted release to be rolled back. Replace the incompatible secure-hashing implementation and test it remotely before release. Production CPU usage and 200-page/image-heavy capacity still need measurement.
+Workers Paid was confirmed as the current plan in Chrome on 2026-09-06; no hosting plan or spending change was made. Native PBKDF2 rejects more than 100,000 rounds remotely even though local workerd accepts it. The deployed password module now uses portable @noble/hashes at 600,000 rounds with the same stored format, independently verified on real remote preview and by a live legacy-account upgrade.
+
+Live synthetic measurements: registration 4242 ms, sign-in 4234 ms, three-page vector export 483 ms, 200-page vector export 1340 ms; both PDFs download with exact 4x6-inch pages. These are one-run client wall times, not CPU percentiles, memory/load certification or physical-printer acceptance. Image-heavy and sustained-load cases remain open.
 
 D1 output cap is 12.5 MiB per PDF; images are limited to 4096 px/edge and 4 million decoded pixels across the batch, plus encoded-byte caps. Cleanup deletes at most 10 expired PDFs per scheduled invocation plus lazy sweeps. Watch storage/backlog and provision larger throughput as actual volume grows.

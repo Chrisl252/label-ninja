@@ -16,6 +16,8 @@ Run from C:\Code\label-ninja:
 
 The dry run must include DB and ASSETS bindings. A config change to nodejs_compat requires restarting Wrangler if its hot reload exits. Do not treat a 200 on an unknown SPA path as proof of a valid page; check the expected content.
 
+Crypto compatibility must also be tested on an isolated real Cloudflare remote preview with scripts/password-runtime-worker.js and no data bindings/routes. Point LN_CRYPTO_PROBE at that preview and run npm run test:runtime, then stop the preview. Local workerd alone missed the native 100,000-round production ceiling; do not reintroduce native PBKDF2 or lower the current 600,000-round work factor.
+
 To run scheduled cleanup locally, GET http://127.0.0.1:8787/cdn-cgi/local/scheduled. This mutates only local D1.
 
 ## Provider acceptance before paid launch
@@ -33,9 +35,11 @@ Show the exact release candidate in Chrome at desktop and phone widths. Ask for 
 
 Check the diff and stage only named intended paths; preserve scratch and co-worker files. Commit locally. A direct master push remains owner-gated. If the working tree contains unrelated work, create a clean detached worktree under the project's backups/release area or another explicitly approved C:\Code release path, pinned to the approved commit. Use npm ci there; do not use junction-based destructive cleanup.
 
-Record the current Worker version and a D1 recovery point/export. With approval, apply additive migration 0003 to the remote database, then deploy the approved Worker. Do not remove columns or erase customer data. Do not deploy public/ to Pages: it lacks the API.
+Record the current Worker version and a D1 recovery point/export. Inspect pending remote migrations; migration 0003 is already applied as of Sep 6 and must not be manually replayed. Apply only approved pending additive migrations, then deploy the approved Worker. Do not remove columns or erase customer data. Do not deploy public/ to Pages: it lacks the API.
 
 Verify apex and www real PATH routes /pricing, /billing, /reset, /privacy, /terms and /api/health. Compare served public files to the approved commit. Run the HTTP check with LN_BASE set to the deployed origin and --require-live-billing. Then run the separately approved payment/email canary; an HTTP gate alone cannot certify those workflows.
+
+After an approved deploy, set LN_BASE to the known production origin and run node scripts/test-deploy-canary.mjs --allow-production. It creates one synthetic account, two PDFs (3 and 200 pages), and one project that it deletes; it tests sign-in/out, quota and replay without payments/email. LN_LEGACY_EMAIL optionally selects only a known ln-canary-b3 synthetic account to prove old-hash upgrades. Never substitute a customer account. Confirm success before calling the site repaired; read-only HTTP checks cannot catch password failures.
 
 ## Operational checks
 

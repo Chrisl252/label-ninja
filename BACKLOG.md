@@ -2,17 +2,17 @@
 
 ## Required before paid launch
 
-- [ ] RELEASE BLOCKER: replace native 600,000-iteration PBKDF2 with a secure Worker-compatible implementation; real remote runtime rejects it despite local success. Add remote proof before fresh approval. Previous Worker restored; migration 0003 remains remote.
+- [x] Compatibility release: portable 600,000-round PBKDF2, real remote oracle/legacy proof, explicit repair/deploy approval, and 18/18 live account/PDF/project checks. Source 72c5eb1 is deployed.
 - [ ] Operator/agent: secure test Stripe price, API secret, destination secret, terms URL and portal configuration; real checkout/cancel/renewal test.
 - [ ] Operator/agent: verified recovery-email sender and successful inbox/reset test.
-- [ ] Agent: measure deployed CPU/memory and 200-page output capacity. Workers Paid is already enabled; no upgrade needed for the confirmed crypto API incompatibility.
+- [ ] Agent: measure CPU/memory, image-heavy jobs and sustained load. One deployed 200-page vector batch passed in 1.34 s; Workers Paid already enabled.
 - [ ] Chris: confirm billing operator, refund/contact language and tax requirements.
 - [ ] Chris/agent: rotate exposed test key; provision distinct live credentials securely.
-- [ ] Chris: fresh exact-candidate approval after hashing fix; agent: clean Worker release and registration/export verification. Production migration 0003 already applied.
+- [x] Chris approved compatibility repair/deploy; clean Worker release and real registration/export verification complete. Production migration 0003 was already applied.
 - [ ] Chris/agent: approved real payment canary and operational alert/backup/restore checks.
 - [ ] Chris: physical Rollo 4x6 and tiny-stock print/scan acceptance.
 
-## Implemented locally on 2026-09-06
+## Deployed code on 2026-09-06 (provider configuration still open)
 
 - [x] One-time 10 PDF batches and monthly-only $9.99 offer throughout the UI.
 - [x] Atomic export reservation, input-bound replay, expiry without refunds, interrupted-render recovery.
