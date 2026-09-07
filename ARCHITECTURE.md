@@ -14,7 +14,8 @@ Free accounts get 10 PDF batches total, not 10 pages and not a monthly reset. On
 | src/security.js | Same-origin write guard, JSON request content type, canonical app origin |
 | src/http.js | Sanitized errors, streaming byte-limited body reads |
 | src/auth.js | Register/login/logout, HttpOnly sessions, reset lifecycle, session-safe hash upgrade |
-| src/db.js | Native PBKDF2-SHA256 600,000 iterations; legacy 100,000 verification; tokens/IDs |
+| src/db.js | Token hashing, constant-time byte comparison and IDs |
+| src/passwords.js | Portable PBKDF2-SHA256 600,000 rounds, legacy verification and unknown-user work; pinned @noble/hashes |
 | src/validate.js, src/ratelimit.js | Input shape, per-IP auth and per-user write limits |
 | src/entitlements.js | Shared quota math and paid-through access predicate |
 | src/export.js | Idempotent claim + atomic credit reservation, render, chunk commit, history/download/delete |
@@ -60,4 +61,4 @@ public/css contains tokens and mode-specific styles. public/_headers contains CS
 
 ## Verification
 
-npm test runs pure builders, the DOM contract, and actual API handlers against SQLite with fake Stripe/Resend transports. npm run test:runtime verifies stronger hashing in workerd. Integration/project suites hit a local Wrangler/D1 instance. scripts/check-launch.mjs checks real HTTP pages and headers without mutations; --require-live-billing additionally requires a verified live price. None of these substitutes for a real payment, email-delivery, load, or physical-printer test.
+npm test runs pure builders, the DOM contract, and actual API handlers against SQLite with fake Stripe/Resend transports. npm run test:runtime bundles the real password module and checks native-oracle equality, legacy login and wrong-password rejection; LN_CRYPTO_PROBE points it to an isolated real Cloudflare preview. Local workerd alone is insufficient because the native production PBKDF2 ceiling differs. Integration/project suites hit a local Wrangler/D1 instance. scripts/test-deploy-canary.mjs requires explicit production opt-in and exercises one synthetic account, two batches (3/200 pages) and one owned project. scripts/check-launch.mjs checks HTTP without mutations. None certifies payments, email delivery, image-heavy load, or physical printing.

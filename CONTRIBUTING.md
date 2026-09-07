@@ -24,7 +24,7 @@ Authentication, ownership, then input validation are required before user mutati
 
 Use bounded body readers and provider timeouts. Log codes and event IDs, not credentials, reset URLs, label content, payment payloads, or email bodies. Escape user strings at HTML sinks.
 
-Applied migrations are immutable; add a numbered migration. New tests must demonstrate the defect and a safe failure mode. Runtime native crypto requires nodejs_compat. Do not reduce hashing work to fit a free-tier CPU cap; establish adequate hosting capacity before launch.
+Applied migrations are immutable; add a numbered migration. New tests must demonstrate the defect and a safe failure mode. Password hashing lives only in passwords.js and uses pinned portable @noble/hashes, not native PBKDF2 (the remote runtime caps it at 100,000 iterations). Preserve 600,000 rounds and the stored format. For a KDF change, prove the actual module using the no-DB password-runtime-worker.js on a real remote preview, then run test:runtime with LN_CRYPTO_PROBE. Do not infer remote compatibility from local workerd or weaken work factors.
 
 ## Release
 

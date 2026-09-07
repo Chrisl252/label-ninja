@@ -1,7 +1,8 @@
 // Auth domain: sessions, register/login/logout/me, password reset plumbing.
 
 import { ok, json, readJson, HttpError } from './http.js';
-import { now, uid, randomHex, sha256Hex, hashPassword, verifyPassword, dummyVerify, passwordNeedsUpgrade } from './db.js';
+import { now, uid, randomHex, sha256Hex } from './db.js';
+import { hashPassword, verifyPassword, dummyVerify, passwordNeedsUpgrade } from './passwords.js';
 import { expectEmail, expectPassword, expectHexToken } from './validate.js';
 import { enforceRateLimit } from './ratelimit.js';
 import { isProActive, ledgerSums, computeFreeUses } from './entitlements.js';
