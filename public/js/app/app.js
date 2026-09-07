@@ -20,6 +20,7 @@ import { initProjects, saveProject } from './projects.js';
 import { refreshDashboard } from './dashboard.js';
 import { initPricing, renderPricing, startCheckout } from './pricing.js';
 import { initAccount, showAccount } from './account.js';
+import { rememberWorkspace } from './workspace-navigation.js';
 
 const MODES = ['dashboard', 'editor', 'bin', 'whatnot', 'fnsku', 'guides', 'pricing', 'account'];
 const AUTH_ONLY_MODES = new Set(['dashboard', 'account']);
@@ -44,6 +45,7 @@ export function switchMode(mode) {
   }
 
   if (!MODES.includes(mode) || (AUTH_ONLY_MODES.has(mode) && !isSignedIn())) mode = 'editor';
+  rememberWorkspace(mode);
   document.getElementById(`mode-${mode}`).classList.remove('hidden');
   const activeTab = document.getElementById(`tab-${mode}`);
   if (activeTab && !activeTab.classList.contains('hidden')) {
@@ -59,7 +61,7 @@ export function switchMode(mode) {
     if (!getElements().length) loadTemplate('standard');
   }
   if (mode === 'dashboard') refreshDashboard();
-  if (mode === 'pricing') renderPricing();
+  if (mode === 'pricing') renderPricing({ focus: true });
   if (mode === 'account') showAccount();
 }
 

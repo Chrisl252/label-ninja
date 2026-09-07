@@ -2,9 +2,9 @@
 // work is exactly as they left it. Price area renders from /api/config/pricing.
 
 import { api } from './api.js';
+import { openPricingInPlace } from './workspace-navigation.js';
 
 let initialized = false;
-let upgradeTarget = '#pricing';
 
 function el(id) {
   return document.getElementById(id);
@@ -27,8 +27,7 @@ async function renderPricing() {
     <p class="small muted">Checkout is currently unavailable. Your design remains open in this tab.</p>`;
 }
 
-export function openPaywall(upgradeUrl) {
-  if (upgradeUrl === '/pricing') upgradeTarget = upgradeUrl;
+export function openPaywall() {
   const modal = el('paywall-modal');
   if (!modal) return;
   modal.classList.remove('hidden');
@@ -59,13 +58,6 @@ export function initPaywall() {
   el('paywall-upgrade').addEventListener('click', (event) => {
     event.preventDefault();
     closePaywall();
-    // Same-origin SPA: /pricing serves the app; the shell routes to the
-    // pricing section in guides mode (see app.js path routing).
-    if (upgradeTarget && upgradeTarget.startsWith('/') && !upgradeTarget.includes('#')) {
-      window.location.href = upgradeTarget;
-    } else {
-      window.location.hash = '#pricing';
-      window.dispatchEvent(new HashChangeEvent('hashchange'));
-    }
+    openPricingInPlace();
   });
 }
