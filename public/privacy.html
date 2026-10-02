@@ -3,20 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Privacy Policy — Label Ninja</title>
-  <meta name="description" content="What Label Ninja stores when you create an account, export a PDF, or save a project — and what never leaves your browser.">
+  <title>Privacy Policy | Label Ninja</title>
+  <meta name="description" content="What free label tool Label Ninja stores, what stays in your browser (including the 4x6 label cropper), which ads appear, and how to delete your account.">
   <link rel="canonical" href="https://label-ninja.com/privacy">
   <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#14161c">
+  <meta property="og:site_name" content="Label Ninja">
+  <meta property="og:title" content="Label Ninja Privacy Policy">
+  <meta property="og:description" content="What Label Ninja stores, what stays in your browser, and which ad partners appear on the site.">
+  <meta property="og:url" content="https://label-ninja.com/privacy">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://label-ninja.com/assets/logo.jpg">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Label Ninja Privacy Policy">
+  <meta name="twitter:description" content="What Label Ninja stores, what stays in your browser, and which ad partners appear on the site.">
+  <meta name="twitter:image" content="https://label-ninja.com/assets/logo.jpg">
   <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
   <link rel="stylesheet" href="/css/guides.css">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"WebPage","@id":"https://label-ninja.com/privacy","url":"https://label-ninja.com/privacy","name":"Label Ninja Privacy Policy","inLanguage":"en","dateModified":"2026-10-01","publisher":{"@type":"Organization","name":"Label Ninja","url":"https://label-ninja.com/"}},
+    {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Label Ninja","item":"https://label-ninja.com/"},{"@type":"ListItem","position":2,"name":"Privacy","item":"https://label-ninja.com/privacy"}]}
+  ]}
+  </script>
 </head>
 <body>
 
@@ -30,7 +46,7 @@
     </a>
     <nav class="static-nav" aria-label="Site">
       <a href="/">Tools</a>
-      <a href="/#printer-setup-checklist">Guides</a>
+      <a href="/guides/whatnot-labels-printing-too-small">Guides</a>
       <a href="/privacy" aria-current="page">Privacy</a>
     </nav>
   </header>
@@ -40,56 +56,52 @@
       <header class="doc__head">
         <span class="doc__stamp">Label Ninja · Christopher Lucas</span>
         <h1>Privacy policy</h1>
-        <p class="lede">Label Ninja is a browser-based thermal label studio for warehouse bins, Whatnot show numbers, Amazon FNSKU labels, and custom barcode labels. This page says what we store, what stays on your computer, and who else touches the data.</p>
-        <span class="doc__stamp">Last updated 6 September 2026</span>
+        <p class="lede">Label Ninja is a free, browser-based thermal label studio for Amazon FNSKU labels, warehouse bins, Whatnot show numbers, custom barcode labels and resizing shipping labels to 4 × 6. There is nothing to buy and we take no payments. This page says what we store, what stays on your device, and who else is involved.</p>
+        <span class="doc__stamp">Last updated <time datetime="2026-10-01">1 October 2026</time></span>
       </header>
 
       <section class="doc__section prose">
         <h2>What stays in your browser</h2>
-        <p>Designing a label happens in this browser. Uploaded artwork (PNG, JPEG, or WebP up to 8 MB each), dragged elements, barcode previews, and every setting stay on your machine until you choose Download PDF or Save project. Closing the tab or clearing site data removes unsaved local work.</p>
+        <p>Designing a label happens in your browser. Uploaded artwork, dragged elements, barcode previews and settings stay on your device until you choose to download a PDF or save a project. Closing the tab or clearing site data removes unsaved local work.</p>
+        <p>The <a href="/shipping-label-to-4x6">shipping label to 4×6 tool</a> opens and crops your PDF locally in the browser. The shipping label you load is not uploaded to Label Ninja's servers.</p>
       </section>
 
       <section class="doc__section prose">
-        <h2>Accounts</h2>
-        <p>Exporting a PDF requires a free account. We store your email address and a salted PBKDF2 hash of your password — never the password itself. Signing in sets one cookie, <code>ln_session</code>, which is HttpOnly, Secure, and expires after 30 days or when you sign out. Password reset sends a single-use link to your email that expires after one hour; using it signs out every other session.</p>
-        <p>We keep a count of how many PDF exports your account has used. The free plan includes 10 PDF batches total. Each successfully generated PDF uses one batch, regardless of its label count.</p>
+        <h2>Optional accounts</h2>
+        <p>You can use Label Ninja without paying anything. The 4x6 shipping label converter needs no account. The label studio uses a free account to download PDFs, save projects and keep your recent exports. If you create one, we store your email address and a salted PBKDF2 hash of your password, never the password itself. Signing in sets one cookie, <code>ln_session</code>, which is HttpOnly and Secure and expires after 30 days or when you sign out. A password reset sends a single-use link to your email that expires after one hour.</p>
       </section>
 
       <section class="doc__section prose">
-        <h2>PDF exports</h2>
-        <p>When you click Download PDF, the label specification — text, barcode values, sizes, and any images you placed — is sent to our server, rendered into a PDF, and returned to you. The specification itself is not kept after rendering. The finished PDF remains available from My Exports for up to 7 days; expired files are removed by scheduled cleanup, which normally runs every 15 minutes, and during later export activity. Cleanup may be delayed by service outages or a backlog. You can delete an export sooner from the same drawer.</p>
+        <h2>PDF exports from the studio</h2>
+        <p>When you download a PDF from the studio, the label specification (text, barcode values, sizes and any images you placed) is sent to our server, rendered into a PDF and returned to you. The specification is not kept after rendering. If you are signed in, the finished PDF can stay available in My Exports for up to 7 days before scheduled cleanup removes it; you can delete it sooner.</p>
       </section>
 
       <section class="doc__section prose">
         <h2>Saved projects</h2>
-        <p>If you save a project, its name and settings — including any label text and artwork it contains — are stored with your account until you delete the project. Nothing is saved unless you choose Save.</p>
-      </section>
-
-      <section class="doc__section prose">
-        <h2>Billing</h2>
-        <p>Pro subscriptions are handled by Stripe. Card details are entered on Stripe's checkout and billing pages and never touch Label Ninja's servers. We store your Stripe customer id, subscription id, subscription status, and paid-through date so the site knows what your account is entitled to.</p>
-      </section>
-
-      <section class="doc__section prose">
-        <h2>Abuse protection and logs</h2>
-        <p>Sign-up, sign-in, and password-reset requests are rate-limited by IP address (10 per hour). Export requests are rate-limited per account (30 per hour). Server logs record request outcomes and error codes, not the content of your labels.</p>
+        <p>If you save a project, its name and settings, including any label text and artwork, are stored with your account until you delete it. Nothing is saved unless you choose Save.</p>
       </section>
 
       <section class="doc__section prose">
         <h2>Advertising</h2>
-        <p>Label Ninja's tools are ad-free. If advertising returns, it will appear only on public guide pages, in clearly labeled slots, and those ad companies may use cookies or similar identifiers to choose and measure ads inside their frames. We do not run pop-unders, social bars, or smartlink redirects.</p>
+        <p>Label Ninja is free because of ads. Display ads may appear on public pages in clearly marked slots. The ad partners we use or have applied to use are <strong>Adsterra</strong> and <strong>Google AdSense</strong>. These companies may use cookies or similar identifiers to choose and measure the ads they show. They do not receive the contents of your labels or the files you crop. We do not run pop-unders or redirect ads.</p>
+        <p>You can limit ad personalisation through your browser's cookie settings and, for Google, through <a href="https://adssettings.google.com/">Google's ad settings</a>.</p>
       </section>
 
       <section class="doc__section prose">
-        <h2>Third-party services</h2>
+        <h2>Abuse protection and logs</h2>
+        <p>Sign-up, sign-in, password-reset and export requests are rate-limited to keep the free service available. Server logs record request outcomes and error codes, not the content of your labels.</p>
+      </section>
+
+      <section class="doc__section prose">
+        <h2>Other services</h2>
         <ul>
-          <li><strong>Cloudflare</strong> hosts the site, the API, and the database, and sees requests the way any host does.</li>
-          <li><strong>Google Fonts</strong> serves the typefaces on this page.</li>
-          <li><strong>jsDelivr</strong> serves the barcode-preview and CSV-parsing libraries the tools load.</li>
-          <li><strong>Stripe</strong> handles payment, as described above.</li>
-          <li><strong>Resend</strong> delivers password-reset emails when email recovery is configured. It receives your email address and the recovery link.</li>
+          <li><strong>Cloudflare</strong> hosts the site, the API and the database, and sees requests the way any host does.</li>
+          <li><strong>Google Fonts</strong> serves the typefaces.</li>
+          <li><strong>jsDelivr</strong> serves open-source libraries the tools load in your browser.</li>
+          <li><strong>Resend</strong> delivers password-reset emails. It receives your email address and the reset link.</li>
+          <li>The ad partners listed above.</li>
         </ul>
-        <p>Your browser's cookie and tracking settings control what those services can store.</p>
+        <p>We take no payments, so no card or billing details are collected.</p>
       </section>
 
       <section class="doc__section prose">
@@ -98,16 +110,24 @@
       </section>
 
       <section class="doc__section prose">
-        <h2>Changes</h2>
-        <p>If this policy changes, the date at the top of the page changes with it.</p>
-      </section>
-
-      <section class="doc__section prose">
-        <h2>Contact</h2>
-        <p>Label Ninja is operated by Christopher Lucas. For privacy questions or account deletion, email <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20privacy">chris@bisket.com</a>. Please do not post personal account information in public issues.</p>
+        <h2>Changes and contact</h2>
+        <p>If this policy changes, the date at the top changes with it. Label Ninja is operated by Christopher Lucas. For privacy questions or account deletion, email <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20privacy">chris@bisket.com</a>.</p>
       </section>
     </article>
   </main>
+
+  <aside class="more-tools" aria-labelledby="more-tools-heading">
+    <h2 id="more-tools-heading">More free tools</h2>
+    <ul>
+      <li><a href="/">Label Ninja studio</a> — FNSKU, bin, barcode and custom thermal labels.</li>
+      <li><a href="/shipping-label-to-4x6">Shipping label to 4×6</a> — crop a letter-size label PDF to a 4×6 page in your browser.</li>
+      <li><a href="/whatnot-labels">Whatnot number labels</a> — numbered item labels for live shows.</li>
+      <li><a href="/guides/whatnot-labels-printing-too-small">Fix Whatnot labels printing too small</a></li>
+      <li><a href="/guides/ebay-shipping-label-not-4x6">eBay shipping label not printing 4×6</a></li>
+      <li><a href="/guides/print-amazon-return-label-4x6">Print an Amazon return label on 4×6</a></li>
+      <li><a href="/guides/8-5x11-shipping-label-to-4x6">Convert an 8.5×11 shipping label to 4×6</a></li>
+    </ul>
+  </aside>
 
   <footer class="foot">
     <span class="bars foot__bars" aria-hidden="true"></span>
@@ -118,7 +138,7 @@
       </div>
       <nav class="foot__links" aria-label="Footer">
         <a href="/">Tools</a>
-        <a href="/privacy">Privacy</a>
+        <a href="/privacy" aria-current="page">Privacy</a>
         <a href="/terms">Terms</a>
         <a href="/sitemap.xml">Sitemap</a>
       </nav>

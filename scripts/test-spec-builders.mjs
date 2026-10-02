@@ -141,7 +141,7 @@ assertClose(tp.settings.width_in, 4, 1e-9, 'test_print: width_in');
 assertClose(tp.settings.height_in, 6, 1e-9, 'test_print: height_in');
 assert(!('pages' in tp) || tp.pages == null, 'test_print: no pages (server renders)');
 
-// ---- hash routing (6 guide hashes + pricing mode + tool hashes) ----
+// ---- hash routing (6 guide hashes + tool hashes; pricing mode retired 2026-10-01) ----
 const guideHashes = [
   '#printer-setup-checklist',
   '#best-label-printers',
@@ -153,7 +153,6 @@ const guideHashes = [
 for (const h of guideHashes) {
   assert(modeFromHash(h) === 'guides', `routing: ${h} -> guides`);
 }
-assert(modeFromHash('#pricing') === 'pricing', 'routing: #pricing -> pricing mode (b5)');
 assert(modeFromHash('#tools/warehouse-rack-bin-label-generator') === 'bin', 'routing: bin tool hash');
 assert(modeFromHash('#tools/whatnot-live-show-number-generator') === 'whatnot', 'routing: whatnot tool hash');
 assert(modeFromHash('#tools/amazon-fba-fnsku-generator') === 'fnsku', 'routing: fnsku tool hash');

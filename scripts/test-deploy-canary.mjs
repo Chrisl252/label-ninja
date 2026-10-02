@@ -43,7 +43,7 @@ try {
   const registered = await call('/api/auth/register', 'POST', { email, password });
   check(registered.status === 200, `register (${registered.ms} ms)`);
   const fresh = await call('/api/auth/me');
-  check(fresh.status === 200 && fresh.data.user.free_uses.remaining === 10, 'new account has ten batches');
+  check(fresh.status === 200 && fresh.data.user.plan === 'free' && fresh.data.user.unlimited === true, 'new account is free and unlimited');
   check((await call('/api/auth/logout', 'POST')).status === 200, 'bodyless sign-out');
   check((await call('/api/auth/me')).status === 401, 'signed-out session denied');
   check((await call('/api/auth/login', 'POST', { email, password: 'wrong-password-fixture' })).status === 401, 'wrong password denied');
@@ -51,14 +51,14 @@ try {
   check(login.status === 200, `sign-in (${login.ms} ms)`);
   const payload = { ...binSpec(3), format: 'pdf', idempotency_key: 'release-' + randomUUID() };
   const exported = await call('/api/export', 'POST', payload);
-  check(exported.status === 200 && exported.data.job.status === 'completed' && exported.data.remaining_free_uses === 9,
-    `three pages consume one batch (${exported.ms} ms)`);
+  check(exported.status === 200 && exported.data.job.status === 'completed',
+    `three-page batch completes (${exported.ms} ms)`);
   const replayed = await call('/api/export', 'POST', payload);
-  check(replayed.status === 200 && replayed.data.job.id === exported.data.job.id && replayed.data.remaining_free_uses === 9,
-    'duplicate request does not consume another batch');
+  check(replayed.status === 200 && replayed.data.job.id === exported.data.job.id,
+    'duplicate request returns the same job');
   await pdfCheck(exported.data.job, 3);
   const maximum = await call('/api/export', 'POST', { ...binSpec(200), format: 'pdf', idempotency_key: 'release-max-' + randomUUID() });
-  check(maximum.status === 200 && maximum.data.remaining_free_uses === 8, `200-page batch succeeds (${maximum.ms} ms)`);
+  check(maximum.status === 200 && maximum.data.job.status === 'completed', `200-page batch succeeds (${maximum.ms} ms)`);
   await pdfCheck(maximum.data.job, 200);
   const saved = await call('/api/projects', 'POST', { name: 'Release smoke fixture', tool: 'bin', data: { prefix: 'RELEASE ' } });
   check(saved.status === 200, 'save project');

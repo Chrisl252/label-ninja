@@ -2,7 +2,7 @@
 
 Thermal label PDFs for bins, Whatnot numbers, Amazon FNSKUs and custom designs.
 
-Free: 10 PDF batches total. Pro: $9.99 USD/month, unlimited batches during paid access. Both plans have documented resource limits. Paid launch is not yet cleared; see [LAUNCH_READINESS.md](LAUNCH_READINESS.md).
+Free for everyone: no plans, quotas or payments. Studio export needs a free account and is subject to abuse limits (30 exports/hour, 200 pages/batch). The free in-browser /shipping-label-to-4x6 tool needs no account or upload. Revenue is planned from ads only; ads are currently off.
 
 ## Develop
 

@@ -1,4 +1,4 @@
-// Shared, DOM-free contract for the search landing page and metered Whatnot tool.
+// Shared, DOM-free contract for the search landing page and the free Whatnot tool.
 import { WHATNOT_STOCKS } from './app/presets.js';
 
 export const WHATNOT_TOOL_HASH = '#tools/whatnot-live-show-number-generator';

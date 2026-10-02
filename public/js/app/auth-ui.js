@@ -7,7 +7,7 @@ import { getUser, isSignedIn, onSessionChange, applyUser, refreshSession } from 
 import { toast } from './toast.js';
 
 let afterAuthBaseline = null; // persistent: exporter's pending-export resume (setAfterAuth)
-const afterAuthOnce = []; // one-shot continuations: pending save, pending upgrade…
+const afterAuthOnce = []; // one-shot continuations: pending save…
 let initialized = false;
 
 export function setAfterAuth(fn) {
@@ -24,30 +24,17 @@ function el(id) {
   return document.getElementById(id);
 }
 
-// ---- header auth area + usage chip ----
+// ---- header auth area ----
 
 function renderHeaderAuth() {
   const user = getUser();
-  const chip = el('usage-chip');
   const email = el('user-email');
   const signin = el('signin-btn');
   const signout = el('signout-btn');
   const exportsBtn = el('my-exports-btn');
-  if (!chip) return;
+  if (!email) return;
 
   if (user) {
-    const fu = user.free_uses || {};
-    // Usage chip: PRO -> accent chip · ≤2 free left -> amber (attention) chip · otherwise plain.
-    if (fu.unlimited) {
-      chip.textContent = 'PRO';
-      chip.className = 'chip chip--accent';
-    } else {
-      const granted = fu.granted == null ? 10 : fu.granted;
-      const remaining = fu.remaining == null ? granted : fu.remaining;
-      chip.textContent = `${remaining} of ${granted} free`;
-      chip.className = remaining <= 2 ? 'chip chip--attn' : 'chip';
-    }
-    chip.classList.remove('hidden');
     email.textContent = 'Account';
     email.title = user.email;
     email.classList.remove('hidden');
@@ -55,7 +42,6 @@ function renderHeaderAuth() {
     signin.classList.add('hidden');
     exportsBtn.classList.remove('hidden');
   } else {
-    chip.classList.add('hidden');
     email.classList.add('hidden');
     signout.classList.add('hidden');
     exportsBtn.classList.add('hidden');
@@ -92,13 +78,10 @@ export function openAuthModal({ mode = 'signin', intent = null, token = null } =
   el('auth-error').textContent = '';
   const msg = el('auth-msg');
   if (intent === 'export') {
-    msg.textContent = 'Create a free account to export — you get 10 free PDF batches.';
+    msg.textContent = 'Sign in or create a free account to download your PDF. No card, no export limit.';
     msg.classList.remove('hidden');
   } else if (intent === 'save') {
     msg.textContent = 'Create a free account to save your project right here.';
-    msg.classList.remove('hidden');
-  } else if (intent === 'upgrade') {
-    msg.textContent = 'Create a free account, then upgrade to Pro.';
     msg.classList.remove('hidden');
   } else {
     msg.classList.add('hidden');
@@ -126,7 +109,7 @@ function authError(message) {
 }
 
 async function handleAuthSuccess() {
-  await refreshSession(); // register/login responses lack free_uses — /me has the full shape
+  await refreshSession(); // /me is the authoritative session shape
   closeAuthModal();
   if (typeof afterAuthBaseline === 'function') {
     try {

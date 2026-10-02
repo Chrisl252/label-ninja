@@ -147,7 +147,7 @@ p { margin: 0; }
   min-width: 0;
   overflow: auto;
 }
-/* barcode stripe — takes currentColor via mask */
+/* barcode bars — takes currentColor via mask */
 .bars {
   display: block;
   height: 24px;
@@ -220,7 +220,7 @@ p { margin: 0; }
 .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-3xs) var(--space-sm); font-size: var(--text-sm); }
 .kv__k { color: var(--color-ink-3); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--track-mono); text-transform: uppercase; align-self: baseline; }
 .kv__v { color: var(--color-ink); min-width: 0; overflow-wrap: anywhere; }
-.table-wrap { overflow-x: auto; border: var(--rule); border-radius: var(--radius-card); }
+.table-wrap { position: relative; overflow-x: auto; border: var(--rule); border-radius: var(--radius-card); } /* relative: positioned cells stay inside the scroller (375px overflow fix) */
 .table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
 .table th, .table td { text-align: left; padding: var(--space-2xs) var(--space-xs); border-bottom: var(--rule); vertical-align: top; }
 .table th { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--track-mono); text-transform: uppercase; color: var(--color-ink-3); font-weight: 500; background: var(--color-chassis); }

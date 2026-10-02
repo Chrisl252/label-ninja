@@ -2,12 +2,13 @@
 
 ## Local verification
 
-Run from C:\Code\label-ninja:
+Run from C:\Code\label-ninja.com\label-ninja (or the lane worktree):
 
 - npm ci
 - npx wrangler d1 migrations apply label-ninja-db --local
-- npm run dev (loopback port 8787)
+- npm run dev (loopback port 8787; --local-upstream keeps the canonical redirect from firing locally)
 - npm test
+- node scripts/test-label-crop.mjs
 - npm run test:runtime
 - npm run test:integration
 - npm run test:projects
@@ -20,14 +21,9 @@ Crypto compatibility must also be tested on an isolated real Cloudflare remote p
 
 To run scheduled cleanup locally, GET http://127.0.0.1:8787/cdn-cgi/local/scheduled. This mutates only local D1.
 
-## Provider acceptance before paid launch
+## Before a public push
 
-1. Configure a test-mode Stripe price at $9.99 USD/month, test API key, destination signing secret, terms URL and Customer Portal.
-2. In test mode, verify registration, the first 10 batches, the eleventh-batch paywall, checkout, subscription activation, invoices/portal, cancellation, failed renewal, expired paid access, and re-subscription. Verify duplicate webhook deliveries do not double-apply.
-3. Configure Resend and a verified sender. Deliver a real recovery email to an owner-controlled inbox; use the link, prove one-time behavior and session revocation.
-4. Obtain owner approval for live configuration and spending. Configure distinct live key/price/webhook/portal. Never paste secrets into chat or logs.
-5. Confirm production CPU/storage capacity. Test representative 200-page and image-heavy jobs. Inspect provider usage rather than inferring capacity from local speed.
-6. Owner reviews public operator/contact/refund language and applicable tax requirements. The service-terms draft is not a legal compliance certification.
+Payments are gone (2026-10-01), so there is no provider acceptance gate. Remaining operator checks: recovery email delivered to an owner-controlled inbox (Resend + verified sender), representative 200-page and image-heavy jobs on production capacity, and owner review of the public operator/contact language. Ads stay off until Chris decides; turning them on is its own Ready Check.
 
 ## Release gate
 
@@ -37,22 +33,21 @@ Check the diff and stage only named intended paths; preserve scratch and co-work
 
 Record the current Worker version and a D1 recovery point/export. Inspect pending remote migrations; migration 0003 is already applied as of Sep 6 and must not be manually replayed. Apply only approved pending additive migrations, then deploy the approved Worker. Do not remove columns or erase customer data. Do not deploy public/ to Pages: it lacks the API.
 
-Verify apex and www real PATH routes /pricing, /billing, /reset, /privacy, /terms and /api/health. Compare served public files to the approved commit. Run the HTTP check with LN_BASE set to the deployed origin and --require-live-billing. Then run the separately approved payment/email canary; an HTTP gate alone cannot certify those workflows.
+Verify on https://label-ninja.com the real PATH routes /, /shipping-label-to-4x6, /whatnot-labels, each /guides/* page in the sitemap, /reset, /privacy, /terms, /sitemap.xml, /robots.txt and /api/health. Verify redirects: https://www.label-ninja.com/<path> and http:// return 301 to the https apex with path/query kept (308 for non-GET); /pricing and /billing return 301 to /; /api/config/pricing and billing routes return 404. Confirm /vendor/* carries the immutable cache header. Compare served public files to the approved commit. Run node scripts/check-launch.mjs with LN_BASE set to the deployed origin.
 
-After an approved deploy, set LN_BASE to the known production origin and run node scripts/test-deploy-canary.mjs --allow-production. It creates one synthetic account, two PDFs (3 and 200 pages), and one project that it deletes; it tests sign-in/out, quota and replay without payments/email. LN_LEGACY_EMAIL optionally selects only a known ln-canary-b3 synthetic account to prove old-hash upgrades. Never substitute a customer account. Confirm success before calling the site repaired; read-only HTTP checks cannot catch password failures.
+After an approved deploy, set LN_BASE to the known production origin and run node scripts/test-deploy-canary.mjs --allow-production. It creates one synthetic account, two PDFs (3 and 200 pages), and one project that it deletes; it tests sign-in/out, export and replay without email. LN_LEGACY_EMAIL optionally selects only a known ln-canary-b3 synthetic account to prove old-hash upgrades. Never substitute a customer account. Confirm success before calling the site repaired; read-only HTTP checks cannot catch password failures.
 
 ## Operational checks
 
-Check /api/health, Stripe webhook failures, payment-failure handling, mail delivery, Worker errors/CPU, and D1 storage. Example bounded read-only investigations:
+Check /api/health, mail delivery, export 429 rates, Worker errors/CPU, and D1 storage. Example bounded read-only investigations:
 
-- SELECT event_id,type,result,processed_at FROM webhook_events WHERE result LIKE 'error:%' OR result LIKE 'processing:%' ORDER BY processed_at DESC LIMIT 20;
 - SELECT id,status,started_at FROM export_jobs WHERE status='processing' ORDER BY started_at LIMIT 20;
 - SELECT id,expires_at FROM export_jobs WHERE status='completed' AND expires_at <= <now_ms> ORDER BY expires_at LIMIT 20;
 
-Read first; do not clear ledger entries or expire paid users as a diagnostic. Retry a failed Stripe delivery through the provider after fixing its cause. Unknown checkout outcomes retain their original idempotency key; after 23 hours without a stored session, reconcile in Stripe before releasing the attempt.
+Read first; do not clear job or ledger records as a diagnostic. Billing tables are dormant; leave them in place.
 
 ## Rollback and support
 
-Roll back Worker code to the recorded version if needed; keep additive D1 columns. Do not restore an old full database over new purchases. Reconcile any in-flight checkout/webhook first. Support must verify account ownership before deletion and account for billing/audit retention. Account deletion is a support workflow, not an implemented self-service API.
+Roll back Worker code to the recorded version if needed; keep additive D1 columns. Do not restore an old full database over newer accounts or projects. Rolling back to ceb6a67 would bring back the old quota/paywall; do it only to stop an outage. Support must verify account ownership before deletion and account for audit retention. Account deletion is a support workflow, not an implemented self-service API.
 
 Physical acceptance remains separate: print and scan a 4x6 Rollo label and a 1x0.5 Whatnot label at actual size, zero margins. Record the driver stock names and result.

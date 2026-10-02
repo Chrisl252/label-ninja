@@ -1,5 +1,5 @@
 // Toast — tiny shared notifier (bottom-right card, auto-dismiss), matching
-// the open-pdf toast pattern. Used by pricing/account/projects flows.
+// the open-pdf toast pattern. Used by account/projects flows.
 
 const DEFAULT_MS = 5000;
 

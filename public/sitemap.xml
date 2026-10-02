@@ -2,33 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://label-ninja.com/</loc>
-    <lastmod>2026-09-06</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2026-10-01</lastmod>
   </url>
   <url>
-    <loc>https://label-ninja.com/privacy</loc>
-    <lastmod>2026-09-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://label-ninja.com/pricing</loc>
-    <lastmod>2026-09-06</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://label-ninja.com/terms</loc>
-    <lastmod>2026-09-06</lastmod>
-    <priority>0.4</priority>
+    <loc>https://label-ninja.com/shipping-label-to-4x6</loc>
+    <lastmod>2026-10-01</lastmod>
   </url>
   <url>
     <loc>https://label-ninja.com/whatnot-labels</loc>
-    <lastmod>2026-09-06</lastmod>
+    <lastmod>2026-10-01</lastmod>
   </url>
   <url>
     <loc>https://label-ninja.com/guides/whatnot-labels-printing-too-small</loc>
-    <lastmod>2026-09-06</lastmod>
+    <lastmod>2026-10-01</lastmod>
+  </url>
+  <url>
+    <loc>https://label-ninja.com/guides/ebay-shipping-label-not-4x6</loc>
+    <lastmod>2026-10-01</lastmod>
+  </url>
+  <url>
+    <loc>https://label-ninja.com/guides/print-amazon-return-label-4x6</loc>
+    <lastmod>2026-10-01</lastmod>
+  </url>
+  <url>
+    <loc>https://label-ninja.com/guides/8-5x11-shipping-label-to-4x6</loc>
+    <lastmod>2026-10-01</lastmod>
+  </url>
+  <url>
+    <loc>https://label-ninja.com/privacy</loc>
+    <lastmod>2026-10-01</lastmod>
+  </url>
+  <url>
+    <loc>https://label-ninja.com/terms</loc>
+    <lastmod>2026-10-01</lastmod>
   </url>
 </urlset>

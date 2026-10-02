@@ -48,7 +48,7 @@
 .note__actions .btn { text-decoration: none; }
 .note h3 { font-size: var(--text-md); margin-bottom: var(--space-3xs); }
 
-/* plan bullets on the guide's pricing section */
+/* plan bullets (three-column feature list) */
 .plan { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2xs); }
 @media (min-width: 640px) { .plan { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .plan > li { padding: var(--space-sm); border: var(--rule); border-radius: var(--radius-label); background: var(--color-chassis-2); min-width: 0; }
@@ -67,3 +67,11 @@
 .static-nav a:hover { color: var(--color-ink); background: var(--color-chassis-3); }
 .static-nav a[aria-current="page"] { background: var(--color-stock); color: var(--color-stock-ink); }
 @media (max-width: 899px) { .masthead--static { grid-template-columns: minmax(0, 1fr) auto; } }
+
+/* Shared "More free tools" block (mirrors whatnot-labels.css). */
+.more-tools { width: 100%; max-width: 52rem; margin: var(--space-2xl) auto 0; padding-top: var(--space-md); border-top: var(--rule); display: grid; gap: var(--space-sm); }
+.more-tools h2 { font-size: var(--text-xl); }
+.more-tools ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-xs) var(--space-md); }
+@media (min-width: 640px) { .more-tools ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.more-tools li { min-width: 0; color: var(--color-ink-2); font-size: var(--text-sm); }
+.more-tools li a { font-weight: 600; }

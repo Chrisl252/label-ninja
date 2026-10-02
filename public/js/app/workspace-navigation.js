@@ -1,4 +1,6 @@
-// In-tab navigation keeps unsaved label contents and export retry keys in memory.
+// Remembers the last label tool so the home page can offer "continue where you
+// left off". Mode switches only hide sections, so in-memory drafts and export
+// retry keys survive a trip to the home page or guides.
 const WORKSPACES = Object.freeze({
   editor: { hash: '#editor', label: 'Back to your label' },
   bin: { hash: '#tools/warehouse-rack-bin-label-generator', label: 'Back to bin labels' },
@@ -11,17 +13,7 @@ export function rememberWorkspace(mode) {
   if (Object.hasOwn(WORKSPACES, mode)) lastWorkspace = mode;
 }
 
-export function pricingReturn() {
-  return lastWorkspace ? { ...WORKSPACES[lastWorkspace] } : { hash: '#editor', label: 'Start creating labels' };
-}
-
-export function openPricingInPlace() {
-  navigateInPlace('#pricing');
-}
-
-export function navigateInPlace(hash) {
-  if (hash !== '#pricing' && !Object.values(WORKSPACES).some(workspace => workspace.hash === hash)) return;
-  // The hash may already say pricing after a customer switched tools via a tab.
-  if (window.location.hash === hash) window.dispatchEvent(new HashChangeEvent('hashchange'));
-  else window.location.hash = hash;
+// null until a label tool has been opened in this tab.
+export function lastWorkspaceLink() {
+  return lastWorkspace ? { ...WORKSPACES[lastWorkspace] } : null;
 }

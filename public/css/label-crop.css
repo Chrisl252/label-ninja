@@ -1,0 +1,85 @@
+/* Shipping label to 4x6 converter. Reuses the seller-page layout from whatnot-labels.css and
+ * the Print Bench tokens; this file only styles the tool (drop zone, crop stage, tiles). */
+.lc [hidden] { display: none !important; }
+.lc { border-block: var(--rule-2); padding-block: var(--space-md); display: grid; gap: var(--space-md); }
+.lc h2 { font-size: var(--text-2xl); }
+.lc-drop {
+  display: grid; gap: var(--space-2xs); justify-items: center; text-align: center;
+  padding: var(--space-lg) var(--space-md); border: 2px dashed var(--color-rule-2);
+  border-radius: var(--radius-card); background: var(--color-chassis-2); cursor: pointer;
+}
+.lc-drop:hover, .lc-drop.is-over { border-color: var(--color-accent-2); background: var(--color-accent-dim); }
+.lc-drop:focus-within { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.lc-drop__title { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; letter-spacing: var(--track-display); text-transform: uppercase; }
+.lc-drop__hint { color: var(--color-ink-2); font-size: var(--text-base); max-width: 46ch; }
+.lc-drop input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.lc-drop .btn { pointer-events: none; }
+.lc-private { display: flex; gap: var(--space-2xs); align-items: baseline; color: var(--color-ink-2); font-size: var(--text-base); }
+.lc-private::before { content: ""; flex: none; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--color-ready); }
+
+.lc-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-sm); }
+.lc-controls .field { min-width: 0; }
+.lc-controls .select { min-height: 48px; width: 100%; font-size: 1rem; }
+.lc-controls fieldset { border: 0; margin: 0; padding: 0; grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-md); align-items: center; }
+.lc-controls legend { float: left; margin-right: var(--space-sm); font-size: var(--text-base); }
+.lc-radio { display: inline-flex; gap: var(--space-2xs); align-items: center; min-height: 40px; font-size: var(--text-base); }
+.lc-radio input { width: 1.1rem; height: 1.1rem; accent-color: var(--color-accent); }
+
+.lc-work { display: grid; gap: var(--space-md); }
+.lc-editor { display: grid; gap: var(--space-xs); align-content: start; min-width: 0; }
+.lc-stage { background: var(--color-chassis-2); border: var(--rule); border-radius: var(--radius-card); padding: var(--space-sm); min-height: 220px; display: grid; place-items: center; overflow: hidden; }
+.lc-stage__frame { position: relative; width: 100%; max-width: 640px; line-height: 0; touch-action: none; }
+.lc-stage__page { display: block; width: 100%; height: auto; background: var(--color-stock); box-shadow: var(--shadow-stock); border-radius: 2px; }
+.lc-stage__empty { line-height: var(--leading-body); color: var(--color-ink-2); text-align: center; padding: var(--space-lg) var(--space-sm); }
+.lc-crop {
+  position: absolute; box-sizing: border-box; border: 2px solid var(--color-accent);
+  background: var(--color-accent-dim); box-shadow: 0 0 0 9999px color-mix(in oklch, var(--color-chassis) 45%, transparent);
+  cursor: move; touch-action: none;
+}
+.lc-crop:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.lc-crop__handle { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; background: var(--color-accent); border: 2px solid var(--color-accent-ink); touch-action: none; }
+.lc-crop__handle--nw { left: 0; top: 0; cursor: nwse-resize; }
+.lc-crop__handle--n { left: 50%; top: 0; cursor: ns-resize; }
+.lc-crop__handle--ne { left: 100%; top: 0; cursor: nesw-resize; }
+.lc-crop__handle--e { left: 100%; top: 50%; cursor: ew-resize; }
+.lc-crop__handle--se { left: 100%; top: 100%; cursor: nwse-resize; }
+.lc-crop__handle--s { left: 50%; top: 100%; cursor: ns-resize; }
+.lc-crop__handle--sw { left: 0; top: 100%; cursor: nesw-resize; }
+.lc-crop__handle--w { left: 0; top: 50%; cursor: ew-resize; }
+.lc-editor__actions, .lc-output { display: flex; flex-wrap: wrap; gap: var(--space-2xs); }
+.lc-editor__actions .btn, .lc-output .btn { min-height: 44px; }
+.lc-editor__hint { color: var(--color-ink-2); font-size: var(--text-sm); }
+
+.lc-pages-wrap { display: grid; gap: var(--space-xs); align-content: start; min-width: 0; }
+.lc-pages-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-2xs); font-family: var(--font-mono); font-size: var(--text-sm); color: var(--color-ink-2); }
+.lc-pages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--space-xs); max-height: 560px; overflow-y: auto; }
+.lc-tile { display: grid; gap: var(--space-3xs); min-width: 0; }
+.lc-tile__pick { display: grid; gap: var(--space-3xs); padding: var(--space-3xs); background: var(--color-chassis-2); border: var(--rule); border-radius: var(--radius-label); color: var(--color-ink-2); text-align: left; cursor: pointer; font: inherit; }
+.lc-tile__pick[aria-pressed="true"] { border-color: var(--color-accent); outline: 1px solid var(--color-accent); }
+.lc-tile__pick:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.lc-tile__frame { position: relative; display: block; line-height: 0; }
+.lc-tile__thumb { width: 100%; height: auto; background: var(--color-stock); }
+.lc-tile__crop { position: absolute; box-sizing: border-box; border: 2px solid var(--color-accent); background: var(--color-accent-dim); }
+.lc-tile__cap { font-size: var(--text-xs); line-height: var(--leading-snug); overflow-wrap: anywhere; }
+.lc-tile__remove { justify-self: start; background: none; border: 0; padding: var(--space-3xs) 0; color: var(--color-ink-2); font: inherit; font-size: var(--text-xs); text-decoration: underline; cursor: pointer; }
+.lc-tile__remove:hover { color: var(--color-ink); }
+
+.lc-make { display: grid; gap: var(--space-xs); border-top: var(--rule); padding-top: var(--space-md); }
+.lc-make .btn--lg { min-height: 52px; justify-self: start; }
+.lc-status { min-height: 1lh; font-size: var(--text-base); color: var(--color-ink-2); }
+.lc-status[data-tone="ok"] { color: var(--color-ready); }
+.lc-status[data-tone="error"] { color: var(--color-attn); }
+.lc-tips { border-left: 3px solid var(--color-rule-2); padding-left: var(--space-md); color: var(--color-ink-2); font-size: var(--text-base); }
+.lc-tips strong { color: var(--color-ink); }
+
+@media (min-width: 900px) {
+  .lc-controls { grid-template-columns: repeat(2, minmax(0, 18rem)); }
+  .lc-work { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+}
+@media (max-width: 414px) {
+  .lc-controls { grid-template-columns: minmax(0, 1fr); }
+  .lc-drop { padding: var(--space-md) var(--space-sm); }
+  .lc-stage { padding: var(--space-2xs); }
+  .lc-pages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media print { .lc { display: none; } }

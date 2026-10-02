@@ -1,5 +1,5 @@
-// Export domain: job creation with atomic entitlement reservation, D1-blob storage,
-// authorized downloads, expiry, history. One use = one completed export; failures consume nothing.
+// Export domain: idempotent job claim, D1-blob storage, authorized downloads, expiry, history.
+// Exports are free and unlimited; only the per-user hourly rate limit and spec limits apply.
 
 import { ok, HttpError, readJson } from './http.js';
 import { now, uid, sha256Hex } from './db.js';
@@ -8,16 +8,6 @@ import { enforceUserRateLimit } from './ratelimit.js';
 import { LIMITS } from './limits.js';
 import { validateJobSpec } from './spec-validate.js';
 import { renderSpecPdf, buildTestPrintSpec } from './render/pdf-label.js';
-import { isProActive, remainingFreeUses } from './entitlements.js';
-
-// Atomic reservation: the INSERT only lands while free uses remain. stmt.changes===0 -> no use left.
-const RESERVATION_SQL = `INSERT INTO usage_ledger (user_id, job_id, kind, delta, reason, created_at)
-SELECT ?, ?, 'export', 1, NULL, ?
-WHERE (
-  (SELECT free_uses_granted FROM users WHERE id = ?)
-  + IFNULL((SELECT SUM(delta) FROM usage_ledger WHERE user_id = ? AND kind IN ('admin_grant','admin_revoke')), 0)
-  - (SELECT COUNT(*) FROM usage_ledger WHERE user_id = ? AND kind = 'export')
-) > 0 AND EXISTS (SELECT 1 FROM export_jobs WHERE id = ? AND status = 'processing')`;
 
 function splitChunks(bytes, size) {
   const chunks = [];
@@ -85,32 +75,24 @@ async function createExport(request, env, user) {
       throw new HttpError(409, 'export_in_progress', 'This PDF is still processing. Try again shortly.');
     }
     if (existing.status === 'expired' || (existing.expires_at && existing.expires_at <= now())) {
-      throw new HttpError(410, 'export_expired', 'This PDF has expired. Start a new export; it will use a new batch credit.');
+      throw new HttpError(410, 'export_expired', 'This PDF has expired. Start a new export.');
     }
     if (existing.status === 'completed') {
       await cleanupExpired(env);
-      return ok({ job: publicJob(existing), remaining_free_uses: await remainingFreeUses(env.DB, user) });
+      return ok({ job: publicJob(existing) });
     }
     throw new HttpError(409, 'export_retry_required', 'This export did not finish. Start a new export.');
   }
 
   const jobId = uid();
   const t = now();
-  const pro = isProActive(user);
   const claim = env.DB.prepare(
     `INSERT OR IGNORE INTO export_jobs (id, user_id, idempotency_key, tool, status, input_meta_json, input_hash, created_at, started_at)
      VALUES (?, ?, ?, ?, 'processing', ?, ?, ?, ?)`
   ).bind(jobId, user.id, spec.idempotency_key, spec.tool, JSON.stringify({ pages: spec.pages ? spec.pages.length : 1 }), inputHash, t, t);
-  const statements = [claim];
-  if (!pro) statements.push(env.DB.prepare(RESERVATION_SQL).bind(user.id, jobId, t, user.id, user.id, user.id, jobId));
-  const claimed = await env.DB.batch(statements);
+  const claimed = await env.DB.batch([claim]);
   if (!claimed[0].meta?.changes) {
     throw new HttpError(409, 'export_in_progress', 'This PDF is already processing. Try again shortly.');
-  }
-  const reserved = !pro && !!claimed[1].meta?.changes;
-  if (!pro && !reserved) {
-    await env.DB.prepare("UPDATE export_jobs SET status = 'failed', failure_reason = 'free_limit_reached' WHERE id = ?").bind(jobId).run();
-    throw new HttpError(402, 'free_limit_reached', 'Your 10 free PDF batches are used. Upgrade to Pro for unlimited batches.', {}, { upgrade_url: '/pricing' });
   }
 
   try {
@@ -143,28 +125,27 @@ async function createExport(request, env, user) {
       env.DB.prepare(
         `UPDATE export_jobs SET status = 'completed', completed_at = ?, expires_at = ?,
            output_storage = 'd1', output_key = ?, output_meta_json = ?, uses_consumed = ? WHERE id = ? AND status = 'processing'`
-      ).bind(t2, expiresAt, jobId, JSON.stringify(outputMeta), pro ? 0 : 1, jobId)
+      ).bind(t2, expiresAt, jobId, JSON.stringify(outputMeta), 0, jobId)
     );
     const saved = await env.DB.batch(stmts);
     if (!saved.at(-1).meta?.changes) throw new Error('export_interrupted');
   } catch (err) {
     // A lost response after a successful commit must not refund an available PDF.
     const saved = await env.DB.prepare('SELECT * FROM export_jobs WHERE id = ?').bind(jobId).first().catch(() => null);
-    if (saved?.status === 'completed') return ok({ job: publicJob(saved), remaining_free_uses: await remainingFreeUses(env.DB, user) });
-    // Compensation: a failed export consumes zero uses.
+    if (saved?.status === 'completed') return ok({ job: publicJob(saved) });
+    // Compensation: a failed export leaves no bytes behind.
     const reason = `${err && err.name ? err.name : 'Error'}`.slice(0, 60);
     const undo = [];
     undo.push(env.DB.prepare("DELETE FROM output_chunks WHERE job_id = ? AND EXISTS (SELECT 1 FROM export_jobs WHERE id = ? AND status = 'processing')").bind(jobId, jobId));
-    if (reserved) undo.push(env.DB.prepare("DELETE FROM usage_ledger WHERE job_id = ? AND EXISTS (SELECT 1 FROM export_jobs WHERE id = ? AND status = 'processing')").bind(jobId, jobId));
     undo.push(env.DB.prepare("UPDATE export_jobs SET status = 'failed', failure_reason = ? WHERE id = ? AND status = 'processing'").bind(reason, jobId));
     await env.DB.batch(undo).catch(() => {});
     console.error(`export job ${jobId} failed (${reason})`);
-    throw new HttpError(500, 'export_failed', 'PDF generation did not finish. Check My Exports before retrying; failed batch credits are restored automatically.');
+    throw new HttpError(500, 'export_failed', 'PDF generation did not finish. Check My Exports, then try again.');
   }
 
   await cleanupExpired(env);
   const row = await env.DB.prepare('SELECT * FROM export_jobs WHERE id = ?').bind(jobId).first();
-  return ok({ job: publicJob(row), remaining_free_uses: await remainingFreeUses(env.DB, user) });
+  return ok({ job: publicJob(row) });
 }
 
 async function getJob(env, user, id) {
@@ -175,7 +156,7 @@ async function getJob(env, user, id) {
 
 async function showJob(env, user, id) {
   const row = await getJob(env, user, id);
-  return ok({ job: publicJob(row), remaining_free_uses: await remainingFreeUses(env.DB, user) });
+  return ok({ job: publicJob(row) });
 }
 
 async function downloadJob(env, user, id) {

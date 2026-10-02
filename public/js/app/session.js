@@ -15,11 +15,6 @@ export function isSignedIn() {
   return !!currentUser;
 }
 
-export function isPro() {
-  const u = currentUser;
-  return !!(u && u.free_uses && u.free_uses.unlimited);
-}
-
 export function onSessionChange(fn) {
   listeners.add(fn);
   return () => listeners.delete(fn);

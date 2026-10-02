@@ -1,6 +1,6 @@
 /* Hallmark · macrostructure: Panel list · tone: utilitarian/technical · anchor hue: electric blue (kept)
- * Label Ninja "Print Bench" — dashboard, pricing, account, and the overlays
- * (auth / paywall / exports drawer / save / toasts). Tokens: css/tokens.css. Primitives: css/app.css. */
+ * Label Ninja "Print Bench" — home, dashboard, account, and the overlays
+ * (auth / exports drawer / save / toasts). Tokens: css/tokens.css. Primitives: css/app.css. */
 
 /* body scroll-lock every overlay toggles via JS */
 .overflow-hidden { overflow: hidden !important; }
@@ -10,19 +10,9 @@
 .dash-h { font-size: var(--text-lg); letter-spacing: 0.08em; color: var(--color-ink-2); display: flex; align-items: center; gap: var(--space-xs); }
 .dash-h::after { content: ""; flex: 1 1 auto; border-top: var(--rule); }
 
-/* ---------- dashboard: start + usage ---------- */
+/* ---------- dashboard: start + account panel ---------- */
 .dash-start { display: flex; flex-direction: column; justify-content: center; gap: var(--space-sm); }
 .dash-usage { display: flex; flex-direction: column; justify-content: center; gap: var(--space-2xs); }
-.usage__num {
-  display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2xs);
-  font-family: var(--font-display); font-weight: 700; font-size: var(--text-3xl);
-  line-height: 1; text-transform: uppercase; letter-spacing: 0.03em;
-}
-.usage__num .mono { font-size: var(--text-3xl); font-weight: 500; letter-spacing: 0; }
-.usage__of { font-family: var(--font-body); font-weight: 500; font-size: var(--text-sm); color: var(--color-ink-2); text-transform: none; letter-spacing: 0; }
-.meter { height: 6px; border-radius: 3px; background: var(--color-chassis); border: var(--rule); overflow: hidden; }
-.meter__fill { height: 100%; background: var(--color-ink-2); transition: width var(--dur-med) var(--ease-out); }
-.meter__fill--attn { background: var(--color-attn); }
 
 /* ---------- dropzone ---------- */
 .dropzone {
@@ -72,27 +62,36 @@
 .tile__hint { font-size: var(--text-xs); color: var(--color-ink-3); }
 @media (max-width: 639px) { .grid--sizes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
-/* ---------- pricing ---------- */
-.plans { display: grid; gap: var(--space-sm); grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 720px) {
-  .plans--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .plans--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-.plan {
-  display: flex; flex-direction: column; gap: var(--space-xs); min-width: 0;
-  padding: var(--space-md);
-  background: var(--color-chassis); border: var(--rule-2); border-radius: var(--radius-card);
-}
-.plan--pro { border-color: var(--color-ready); }
-.plan__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2xs); flex-wrap: wrap; }
-.plan__price { font-family: var(--font-display); font-weight: 700; font-size: var(--text-3xl); line-height: 1; letter-spacing: 0.02em; text-transform: uppercase; overflow-wrap: anywhere; }
-.plan__name { font-size: var(--text-xs); color: var(--color-ink-3); }
-.plan .btn { margin-top: auto; }
+/* ---------- lists ---------- */
 .tick-list, .dot-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3xs); font-size: var(--text-sm); color: var(--color-ink-2); }
 .tick-list li, .dot-list li { display: flex; gap: var(--space-2xs); align-items: flex-start; }
 .tick { color: var(--color-ready); font-weight: 600; flex: 0 0 auto; }
 .dot { color: var(--color-ink-3); flex: 0 0 auto; }
-.pricing-notify { display: flex; flex-direction: column; gap: var(--space-3xs); }
+
+/* ---------- home (public landing: hero, free tools, FAQ) ---------- */
+.home { gap: var(--space-xl); }
+.home-hero { display: grid; gap: var(--space-md); grid-template-columns: minmax(0, 1fr); align-items: center; }
+@media (min-width: 900px) { .home-hero { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--space-lg); } }
+.home-hero h1 { font-size: clamp(1.875rem, 7vw, 3rem); line-height: 1.05; overflow-wrap: break-word; }
+.home-hero .lede { font-size: var(--text-md); line-height: 1.55; }
+.home-facts { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2xs); }
+.home-cta { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+@media (max-width: 480px) { .home-cta .btn { flex: 1 1 100%; justify-content: center; } }
+.home-stock { display: flex; flex-direction: column; gap: var(--space-xs); }
+.home-stock__row { display: flex; justify-content: space-between; gap: var(--space-xs); border-bottom: var(--rule); padding-bottom: var(--space-3xs); font-size: var(--text-sm); min-width: 0; }
+.home-stock__row:last-child { border-bottom: 0; padding-bottom: 0; }
+.home-stock__row span:last-child { color: var(--color-ink-3); text-align: right; }
+.home-section { display: flex; flex-direction: column; gap: var(--space-sm); scroll-margin-top: var(--space-xl); }
+.home-section > p { max-width: 70ch; color: var(--color-ink-2); line-height: 1.55; }
+.home-tools { list-style: none; margin: 0; padding: 0; }
+.home-tool { display: flex; flex-direction: column; gap: var(--space-2xs); padding: var(--space-sm); min-width: 0; }
+.home-tool h3 { font-size: var(--text-lg); line-height: 1.15; }
+.home-tool h3 a { color: inherit; text-decoration: none; }
+.home-tool h3 a::after { content: " →"; }
+.home-tool h3 a:hover, .home-tool h3 a:focus-visible { text-decoration: underline; }
+.home-tool p { font-size: var(--text-sm); color: var(--color-ink-2); line-height: 1.5; }
+.home-steps { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: var(--space-2xs); color: var(--color-ink-2); max-width: 70ch; line-height: 1.5; }
+.home-steps strong { color: var(--color-ink); }
 
 /* ---------- account ---------- */
 .acct-actions { display: flex; flex-wrap: wrap; gap: var(--space-2xs); }

@@ -1,8 +1,18 @@
 # Label Ninja launch readiness
 
-Status: approved upgrade-flow repair and Whatnot Labels are deployed on both domains; live account/PDF/project checks passed. Updated 2026-09-06 (evidence is Sep 7 UTC). Paid production launch remains blocked by provider provisioning/acceptance. Billing credentials and the hosting plan were not changed.
+Status (2026-10-01): paid-launch gates are RETIRED. Chris removed the payment system and Stripe; everything is free and revenue is ads only (ads off pending his decision). Live production is still ceb6a67 with the old 10-batch quota and paywall. The free-everything lane (branch lane/free-everything-20261001, base d354b16) is NOT deployed and awaits a Ready Check.
 
-## Current upgrade release
+## Free-everything lane (candidate, not deployed)
+
+- Removes all billing/Stripe code, quota and paywall; adds the free /shipping-label-to-4x6 converter, three guides, canonical www/http redirects and /pricing, /billing redirects. Billing DB tables stay dormant; no migration.
+- Local evidence: npm test passes (spec-builders, redesign-contract, test-launch 52, whatnot-feature 105); test-label-crop 13 pass; wrangler dry-run bundle 976 KiB.
+- Still required before deploy: Ready Check in Chrome (desktop + phone), Chris approval, clean release worktree, then RUNBOOKS.md release verification and the production canary.
+
+## Former paid-launch evidence (historical)
+
+The sections below record the paid-offer era. Their Stripe/quota gates no longer apply.
+
+## Upgrade release ceb6a67 (still live, historical evidence)
 
 - Explicit deploy approval for unchanged source ceb6a67; clean isolated backups/release-upgrade-20260907. Live Worker eacac403-fbac-4484-bd6f-24398f2232cf. Prior Whatnot Worker 99bd8c27-c9e0-479d-b418-08727ff37aa3 is the rollback target.
 - Both domains match all 41 public source hashes and pass route/header/DB/offer gates. Production canary passes 17/17, including exact 3/200-page PDFs, one batch per PDF, no replay charge and saved-project lifecycle. Live browser preserves custom Whatnot settings through pricing/return; no browser warnings/errors. Sanitized health/pricing tail: two ok outcomes, zero exceptions.
@@ -42,9 +52,9 @@ Local-only candidate added 2026-09-06: the paywall/pricing journey preserves in-
 - Root cause reproduced in an isolated remote-development Worker without database bindings: native PBKDF2 100,000 iterations succeeds; 600,000 returns NotSupportedError: iteration counts above 100000 are not supported. Local workerd accepts the same code, so local runtime proof is insufficient. Probe stopped; source retained under backups/crypto-probe-20260906.
 - Cloudflare dashboard confirms Workers Paid is already the current plan. This failure is a crypto API limit, not evidence of an insufficient hosting plan. Do not silently lower the security work factor; replace the incompatible implementation and prove it remotely before a fresh approved release.
 
-## Confirmed offer
+## Offer
 
-Chris confirmed 10 PDF batches total. A PDF containing 1 or 200 labels consumes one free batch. Failed generation consumes no batch; an available PDF may be re-downloaded without another charge. Pro is $9.99 USD/month with unlimited batches during paid access, subject to the disclosed 200-page and 30-request/hour safeguards. There is no annual plan.
+Free for everyone (2026-10-01). Studio export needs a free account; limits are 200 pages/batch and 30 export requests/hour. No plans, quotas or payments. The former offer (10 batches total, then $9.99/month) is retired.
 
 ## Audit findings addressed in deployed code
 
@@ -80,19 +90,16 @@ Chris confirmed 10 PDF batches total. A PDF containing 1 or 200 labels consumes 
 
 | Gate | Evidence / next action | Owner |
 | --- | --- | --- |
-| Stripe payout verification | Read-only live dashboard inspection showed Payments active but Payouts paused on Sep 6, 2026. Outstanding task: Provide a valid ID document. That tab was later closed; no identity documents or secrets were revealed/submitted. | Chris completes the task directly in Stripe |
-| Stripe provisioning | Production secret list returned []; public /api/config/pricing returned configured:false. Need matching test and live API key, monthly price, signing secret, terms URL, and enabled billing portal. Screenshot of a product is not checkout proof. | Chris provides secure access; agent wires and verifies |
-| Real billing lifecycle | Mock-provider checks passed; no actual purchase, webhook delivery, portal cancellation, renewal failure, or live payment has been tested. Test-mode acceptance first; live payment only with explicit approval. | Agent + Chris |
 | Recovery email | No production RESEND_API_KEY or verified EMAIL_FROM. Need a delivered recovery message and completed single-use reset from an owner-controlled inbox. | Chris + agent |
 | Hosting capacity | Workers Paid confirmed. Compatibility repaired; one live 200-page vector PDF passed in 1.34 s. Measure image-heavy jobs, sustained load and CPU/memory separately. No plan change made. | Agent |
-| Operational readiness | Configure error/delivery alerts, verify backup/recovery, check bounded cleanup keeps up with output volume, and choose support ownership. No monitoring service was provisioned. | Chris + agent |
-| Public terms | Service-terms/privacy drafts now describe the offer and data flows. Confirm business operator, support mailbox, refund handling, retention and tax requirements. No legal/tax compliance clearance claimed. | Chris |
-| Secrets | The pasted test secret remains exposed and needs rotation. It was not saved to Obsidian, Jarvis, source, or a new reusable store. Use project-scoped restricted replacements and a secure store. | Chris |
+| Operational readiness | Configure error/delivery alerts, verify backup/recovery, check bounded cleanup keeps up with output volume (free exports may raise volume), and choose support ownership. | Chris + agent |
+| Public terms | Terms/privacy rewritten for the free service in this lane. Confirm business operator, support mailbox and retention language; ads disclosure is needed before ads go on. No legal compliance clearance claimed. | Chris |
+| Retired Stripe credentials | Code no longer reads STRIPE_*. After deploy, delete any STRIPE_* Worker secrets, disable the Stripe webhook endpoint, and revoke the previously exposed test key. | Chris |
 | Physical output | Exact PDF geometry is proven. Rollo/tiny-stock printing and barcode scanning still need physical acceptance. | Chris |
 
 ## Limits and follow-ups
 
-Email ownership verification, self-service account deletion, stricter CSP without inline handlers, automated billing reconciliation, high-volume output storage, and crawlable per-tool pages remain backlog items. Free credits are per account, not per real-world person. Existing IP limits mitigate abuse but do not prevent repeated account creation.
+Email ownership verification, self-service account deletion, stricter CSP without inline handlers, high-volume output storage, and crawlable per-tool pages remain backlog items. Existing IP and per-user export limits mitigate abuse but do not prevent repeated account creation.
 
 The historical Pages mirror is static and has no first-party API. Its deployment script was removed from the SaaS release path; no external mirror/DNS setting was changed. Decide whether to retire or redirect it before advertising the launch.
 

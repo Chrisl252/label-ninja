@@ -1,15 +1,14 @@
-// Dashboard — the signed-in home: usage + new-conversion hero, drag-drop
+// Dashboard — the signed-in home: new-label hero, drag-drop
 // uploader, recent projects + templates, recent exports, quick tools, and
 // common sizes. Renders into the #mode-dashboard skeleton on every entry
 // (fresh data, no client cache). Cards are built with listeners (drawer
 // pattern), not inline onclick.
 
 import { api, apiFetchBlob } from './api.js';
-import { getUser } from './session.js';
 import { fmtDate, fmtBytes } from './exporter.js';
 import { handleImageUpload } from './editor.js';
 import { openProject, duplicateProject, deleteProject } from './projects.js';
-import { escapeHtml } from './plan.js';
+import { escapeHtml } from './html.js';
 import { toast } from './toast.js';
 
 const TOOL_LABELS = {
@@ -29,32 +28,6 @@ const COMMON_SIZES = [
 
 function el(id) {
   return document.getElementById(id);
-}
-
-function renderUsage() {
-  const user = getUser();
-  const box = el('dash-usage');
-  if (!user) {
-    box.innerHTML = '';
-    return;
-  }
-  const fu = user.free_uses || {};
-  if (fu.unlimited) {
-    box.innerHTML = `
-      <p class="label led led--ready">Pro</p>
-      <p class="usage__num">Unlimited exports</p>
-      <p class="small muted">Thanks for supporting Label Ninja.</p>`;
-    return;
-  }
-  const granted = fu.granted == null ? 10 : fu.granted;
-  const remaining = fu.remaining == null ? granted : fu.remaining;
-  const used = Math.max(0, granted - remaining);
-  const pct = granted ? Math.min(100, Math.round((used / granted) * 100)) : 100;
-  box.innerHTML = `
-    <p class="label led${remaining <= 2 ? ' led--attn' : ''}">Free plan</p>
-    <p class="usage__num"><span class="mono">${remaining}</span> <span class="usage__of">of ${granted} free PDF batches left</span></p>
-    <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="${granted}" aria-valuenow="${used}" aria-label="Free PDF batches used"><div class="meter__fill${pct >= 90 ? ' meter__fill--attn' : ''}" style="width:${pct}%"></div></div>
-    <div><a href="#pricing" class="link small">Upgrade to Pro →</a></div>`;
 }
 
 // Saved projects are white label stock — the design, printed. Buttons on stock are black print.
@@ -151,7 +124,7 @@ function renderExports(exports) {
   const grid = el('dash-exports');
   grid.innerHTML = '';
   if (!exports.length) {
-    grid.innerHTML = '<p class="small muted">No exports yet — your PDF batches will appear here for 7 days.</p>';
+    grid.innerHTML = '<p class="small muted">No exports yet — your PDFs will appear here for 7 days.</p>';
     return;
   }
   for (const job of exports.slice(0, 6)) grid.appendChild(exportCard(job));
@@ -161,7 +134,7 @@ function renderQuickTools() {
   const row = el('dash-quick-tools');
   if (row.childElementCount) return; // static after first render
   const tools = [
-    { mode: 'bin', label: 'Warehouse bins', hint: '4×6 bin + barcode batches' },
+    { mode: 'bin', label: 'Warehouse bins', hint: '4×6 bin number + barcode' },
     { mode: 'whatnot', label: 'Whatnot numbers', hint: 'Live show sequences' },
     { mode: 'fnsku', label: 'FNSKU', hint: 'Amazon barcode labels' },
     { mode: 'guides', label: 'Test print + guides', hint: 'Printer setup, 4×6 / 2×1 test PDFs' },
@@ -232,7 +205,6 @@ function wireUploader() {
 }
 
 export async function refreshDashboard() {
-  renderUsage();
   renderQuickTools();
   renderCommonSizes();
   wireUploader();

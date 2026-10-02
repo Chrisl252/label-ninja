@@ -5,7 +5,6 @@ import { now, uid, randomHex, sha256Hex } from './db.js';
 import { hashPassword, verifyPassword, dummyVerify, passwordNeedsUpgrade } from './passwords.js';
 import { expectEmail, expectPassword, expectHexToken } from './validate.js';
 import { enforceRateLimit } from './ratelimit.js';
-import { isProActive, ledgerSums, computeFreeUses } from './entitlements.js';
 import { appOrigin } from './security.js';
 import { mailConfigured, sendResetEmail } from './mailer.js';
 
@@ -50,8 +49,7 @@ export async function getSessionUser(env, request) {
   if (!token || !/^[0-9a-f]{64}$/.test(token)) return null;
   const tokenHash = await sha256Hex(token);
   const row = await env.DB.prepare(
-    `SELECT u.id, u.email, u.role, u.plan, u.subscription_status, u.paid_through,
-            u.free_uses_granted, u.disabled, u.cancel_at_period_end, s.expires_at
+    `SELECT u.id, u.email, u.role, u.created_at, u.disabled, s.expires_at
      FROM sessions s JOIN users u ON u.id = s.user_id
      WHERE s.token_hash = ?`
   ).bind(tokenHash).first();
@@ -60,7 +58,8 @@ export async function getSessionUser(env, request) {
 }
 
 function pickPublic(user) {
-  return { id: user.id, email: user.email, role: user.role, plan: user.plan, created_at: user.created_at };
+  // Everything is free: every account has the same unlimited (rate-limited) access.
+  return { id: user.id, email: user.email, role: user.role, plan: 'free', unlimited: true, created_at: user.created_at };
 }
 
 async function health(env) {
@@ -135,23 +134,7 @@ async function logout(request, env) {
 async function me(request, env) {
   const user = await getSessionUser(env, request);
   if (!user) throw new HttpError(401, 'unauthorized', 'Not signed in.');
-  const unlimited = isProActive(user);
-  const { consumed, remaining } = computeFreeUses(user, await ledgerSums(env.DB, user.id));
-  return ok({
-    user: {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      plan: user.plan,
-      subscription: { status: user.subscription_status, paid_through: user.paid_through, cancel_at_period_end: !!user.cancel_at_period_end },
-      free_uses: {
-        granted: user.free_uses_granted,
-        consumed,
-        remaining: unlimited ? null : remaining,
-        unlimited,
-      },
-    },
-  });
+  return ok({ user: pickPublic(user) });
 }
 
 async function resetRequest(request, env) {

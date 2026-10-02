@@ -1,6 +1,7 @@
 // Release UI contract check: every DOM id / selector the JS modules query must exist in
 // public/index.html, every LN.* inline handler in the HTML must be exported on window.LN,
-// and no Tailwind class strings survive anywhere in public/ (html + app js).
+// no Tailwind class strings survive anywhere in public/ (html + app js), no payment UI
+// remains (everything is free since 2026-10-01), and the home page keeps its SEO contract.
 import { readFileSync, readdirSync } from 'node:fs';
 
 const html = readFileSync('public/index.html', 'utf8');
@@ -56,6 +57,39 @@ for (const f of readdirSync('public/css')) {
     if (/(?:#[0-9a-fA-F]{3,8}\b|\brgba?\(|\boklch\(|\bhsl\()/.test(l) && !/url\(|mask/.test(l)) bad(`inline colour ${f}:${i + 1}: ${l.trim().slice(0, 100)}`);
   });
 }
+
+// 5. free product (2026-10-01): no payment UI, modules, routes, or copy in the app shell
+for (const gone of ['paywall.js', 'pricing.js', 'plan.js']) if (jsFiles.includes(gone)) bad(`retired module public/js/app/${gone} still present`);
+const paidRe = /stripe|paywall|pricing|upgrade|checkout|\bPro\b|9\.99|batches remaining|free_uses|subscription/i;
+for (const [name, src] of [['index.html', html], ...Object.entries(js)]) {
+  src.split('\n').forEach((l, i) => { if (paidRe.test(l)) bad(`payment residue ${name}:${i + 1}: ${l.trim().slice(0, 110)}`); });
+}
+if (/['"]pricing['"]/.test(js['app.js'])) bad('pricing mode still routed in app.js');
+
+// 6. home page SEO contract
+const title = (html.match(/<title>([^<]*)<\/title>/) || [])[1] || '';
+const titleText = title.replace(/&amp;/g, '&');
+if (!titleText || titleText.length >= 60) bad(`<title> missing or >= 60 chars (${titleText.length})`);
+const desc = (html.match(/<meta name="description" content="([^"]*)"/) || [])[1] || '';
+if (!desc || desc.length >= 155) bad(`meta description missing or >= 155 chars (${desc.length})`);
+if (!html.includes('<link rel="canonical" href="https://label-ninja.com/">')) bad('canonical link missing');
+for (const tag of ['og:title', 'og:description', 'og:url', 'twitter:card']) if (!html.includes(`"${tag}"`)) bad(`${tag} meta missing`);
+const ld = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+let ldData = null;
+try { ldData = ld && JSON.parse(ld[1]); } catch { bad('JSON-LD does not parse'); }
+if (!ldData || ldData['@type'] !== 'WebApplication' || ldData.offers?.price !== '0') bad('WebApplication JSON-LD with offers price 0 missing');
+if (ldData && (ldData.aggregateRating || ldData.review)) bad('JSON-LD must not carry ratings/reviews');
+const homeMain = (html.match(/<main id="mode-home"[\s\S]*?<\/main>/) || [''])[0];
+if (!homeMain) bad('#mode-home missing');
+if (/<main id="mode-home"[^>]*\bhidden\b/.test(html)) bad('#mode-home must be visible without JS');
+if ((homeMain.match(/<h1\b/g) || []).length !== 1) bad('#mode-home needs exactly one <h1>');
+for (const href of ['/shipping-label-to-4x6', '/whatnot-labels', '/guides/whatnot-labels-printing-too-small', '/#tools/warehouse-rack-bin-label-generator', '/#tools/amazon-fba-fnsku-generator', '/#editor']) {
+  if (!homeMain.includes(`<a href="${href}"`)) bad(`free tools section missing link ${href}`);
+}
+if (!/id="free-tools"/.test(homeMain) || !/id="faq"/.test(homeMain)) bad('home needs #free-tools and #faq sections');
+const foot = (html.match(/<footer class="foot[\s\S]*?<\/footer>/) || [''])[0];
+for (const href of ['/privacy', '/terms', '/#free-tools']) if (!foot.includes(`href="${href}"`)) bad(`footer missing ${href}`);
+if (!/MODES = \[[^\]]*'home'/.test(js['app.js'])) bad('home mode not routed in app.js');
 
 console.log(fail ? `${fail} contract failures` : `contract OK — ${queried.size} queried ids resolved, ${lnCalls.size} LN handlers wired, ${htmlIds.size} ids in page`);
 process.exit(fail ? 1 : 0);

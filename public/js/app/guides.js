@@ -1,6 +1,9 @@
 // Hash routing helper — pure, DOM-free, node-testable.
 // Guides content lives in index.html; this maps a URL hash to the app mode
-// that owns it (SEO landing hashes -> guides / tool pages).
+// that owns it (SEO landing hashes -> home / guides / tool pages).
+
+// Home-page anchors (free tools list, FAQ) keep the home mode visible.
+const HOME_SECTION_IDS = ['home', 'free-tools', 'faq'];
 
 const GUIDE_HASH_HINTS = [
   'best-label-printers',
@@ -13,7 +16,7 @@ const GUIDE_HASH_HINTS = [
 
 export function modeFromHash(hash) {
   const h = String(hash || '');
-  if (h.includes('#pricing')) return 'pricing';
+  if (HOME_SECTION_IDS.includes(h.replace(/^#/, ''))) return 'home';
   for (const hint of GUIDE_HASH_HINTS) {
     if (h.includes(hint)) return 'guides';
   }
@@ -25,7 +28,6 @@ export function modeFromHash(hash) {
 
 // Every #section id a guide hash may target for scroll-into-view.
 export const GUIDE_SECTION_IDS = [
-  'pricing',
   'printer-setup-checklist',
   'best-label-printers',
   'seo-keywords',
@@ -38,5 +40,5 @@ export function sectionIdFromHash(hash) {
   const h = String(hash || '').replace(/^#/, '');
   if (!h) return null;
   const tail = h.includes('/') ? h.split('/').pop() : h;
-  return GUIDE_SECTION_IDS.includes(tail) ? tail : null;
+  return GUIDE_SECTION_IDS.includes(tail) || HOME_SECTION_IDS.includes(tail) ? tail : null;
 }

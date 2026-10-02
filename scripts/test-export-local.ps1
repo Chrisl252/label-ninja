@@ -1,6 +1,7 @@
 param([string]$Base = "http://127.0.0.1:8787")
 # Brick 2 local verification: server-side PDF export pipeline against a running `wrangler dev`.
-# 13 numbered cases + 1 bonus (pro-plan override). See DECISIONS_LOG 2026-08-31 brick 2.
+# Numbered cases from DECISIONS_LOG 2026-08-31 brick 2, updated 2026-10-01: exports are free
+# (no 10-batch quota, no 402); the 30/hour per-user rate limit is the only export ceiling.
 $ErrorActionPreference = "Stop"
 
 $script:Failures = 0
@@ -90,28 +91,27 @@ if ($r.Status -ne 200) { Write-Output "FATAL: wrangler dev not healthy at $Base 
 
 # ================= USER 1: metering, idempotency, compensation =================
 
-# --- case 1: fresh user has 10 remaining ---
+# --- case 1: fresh user is free + unlimited ---
 $email1 = "ln-b2-$ts@bisket.com"
 $r = Req "POST" "/api/auth/register" (@{ email = $email1; password = $password } | ConvertTo-Json) $null
 $c1 = if ($r.SetCookie -match 'ln_session=([0-9a-f]{64})') { $Matches[1] } else { $null }
 $r = Req "GET" "/api/auth/me" $null $c1
-$fu = JsonField $r.Body "user.free_uses"
-Check "case1  register fresh user -> remaining 10" ($fu.remaining -eq 10 -and $fu.consumed -eq 0 -and $fu.granted -eq 10) "free_uses=$(($fu | ConvertTo-Json -Compress))"
+$u = JsonField $r.Body "user"
+Check "case1  register fresh user -> plan free, unlimited" ($u.plan -eq 'free' -and $u.unlimited -eq $true) "user=$(($u | ConvertTo-Json -Compress))"
 
 # --- case 2: 3-page bin export -> completed, 3 pages, bytes>0, consumes exactly 1 ---
 $r = Req "POST" "/api/export" (BinSpec "b2-$ts-01" 3) $c1
 $job1 = JsonField $r.Body "job.id"
 $meta1 = JsonField $r.Body "job.output_meta"
-Check "case2  export 3-page bin -> 200 completed pages=3 bytes>0" ($r.Status -eq 200 -and (JsonField $r.Body "job.status") -eq 'completed' -and $meta1.pages -eq 3 -and $meta1.bytes -gt 0 -and (JsonField $r.Body "remaining_free_uses") -eq 9) "status=$($r.Status) job=$job1 meta=$(($meta1 | ConvertTo-Json -Compress))"
+Check "case2  export 3-page bin -> 200 completed pages=3 bytes>0" ($r.Status -eq 200 -and (JsonField $r.Body "job.status") -eq 'completed' -and $meta1.pages -eq 3 -and $meta1.bytes -gt 0) "status=$($r.Status) job=$job1 meta=$(($meta1 | ConvertTo-Json -Compress))"
 $r = Req "GET" "/api/auth/me" $null $c1
-$fu = JsonField $r.Body "user.free_uses"
-Check "case2b me after export -> consumed=1 remaining=9" ($fu.consumed -eq 1 -and $fu.remaining -eq 9) "consumed=$($fu.consumed) remaining=$($fu.remaining)"
+Check "case2b me after export -> still unlimited" ((JsonField $r.Body "user.unlimited") -eq $true) "body=$($r.Body)"
 
 # --- case 3: idempotent replay -> same job id, no double consumption ---
 $r = Req "POST" "/api/export" (BinSpec "b2-$ts-01" 3) $c1
-Check "case3  same idempotency_key -> same id, remaining still 9" ($r.Status -eq 200 -and (JsonField $r.Body "job.id") -eq $job1 -and (JsonField $r.Body "remaining_free_uses") -eq 9) "status=$($r.Status) id=$(JsonField $r.Body 'job.id') remaining=$(JsonField $r.Body 'remaining_free_uses')"
+Check "case3  same idempotency_key -> same id" ($r.Status -eq 200 -and (JsonField $r.Body "job.id") -eq $job1) "status=$($r.Status) id=$(JsonField $r.Body 'job.id')"
 
-# --- cases 8/10 fixtures: mm label (25x13mm) + test_print (2x1in), then fill to 10 ---
+# --- cases 8/10 fixtures: mm label (25x13mm) + test_print (2x1in), then more exports ---
 $r = Req "POST" "/api/export" (MmSpec "b2-$ts-mm") $c1
 $mmJob = JsonField $r.Body "job.id"
 Check "case8a mm 25x13mm export -> 200" ($r.Status -eq 200 -and (JsonField $r.Body "job.status") -eq 'completed') "status=$($r.Status) job=$mmJob"
@@ -124,38 +124,31 @@ for ($i = 4; $i -le 9; $i++) {
   $r = Req "POST" "/api/export" (BinSpec $k 1) $c1
   if ($r.Status -ne 200) { Check "case4 fill export $i" $false "status=$($r.Status) body=$($r.Body)" }
 }
-$r = Req "GET" "/api/auth/me" $null $c1
-$fu = JsonField $r.Body "user.free_uses"
-Check "case4a 9 distinct exports so far -> consumed=9 remaining=1" ($fu.consumed -eq 9 -and $fu.remaining -eq 1) "consumed=$($fu.consumed) remaining=$($fu.remaining)"
-
-# --- case 9: render failure (valid PNG magic, corrupt payload) -> 500, ZERO consumption ---
+# --- case 9: render failure (valid PNG magic, corrupt payload) -> 500, no job listed ---
 $r = Req "POST" "/api/export" (CorruptImageSpec "b2-$ts-corrupt") $c1
 Check "case9a corrupt PNG payload -> 500 export_failed" ($r.Status -eq 500 -and (JsonField $r.Body "error.code") -eq 'export_failed') "status=$($r.Status) body=$($r.Body)"
-$r = Req "GET" "/api/auth/me" $null $c1
-$fu = JsonField $r.Body "user.free_uses"
-Check "case9b failed export consumed NOTHING -> consumed=9 remaining=1" ($fu.consumed -eq 9 -and $fu.remaining -eq 1) "consumed=$($fu.consumed) remaining=$($fu.remaining)"
 $r = Req "POST" "/api/export" (WebpSpec "b2-$ts-webp") $c1
-Check "case9c webp image -> 400 unsupported_image_format (nothing consumed)" ($r.Status -eq 400 -and (JsonField $r.Body "error.code") -eq 'unsupported_image_format') "status=$($r.Status) body=$($r.Body)"
+Check "case9c webp image -> 400 unsupported_image_format" ($r.Status -eq 400 -and (JsonField $r.Body "error.code") -eq 'unsupported_image_format') "status=$($r.Status) body=$($r.Body)"
 
-# --- case 4 completion: tenth export succeeds -> remaining 0 ---
+# --- case 4 completion: tenth export succeeds ---
 $r = Req "POST" "/api/export" (BinSpec "b2-$ts-10" 1) $c1
-Check "case4b tenth export -> 200 remaining=0" ($r.Status -eq 200 -and (JsonField $r.Body "remaining_free_uses") -eq 0) "status=$($r.Status) remaining=$(JsonField $r.Body 'remaining_free_uses')"
+Check "case4b tenth export -> 200 completed" ($r.Status -eq 200 -and (JsonField $r.Body "job.status") -eq 'completed') "status=$($r.Status)"
 
-# --- case 5: eleventh -> 402 free_limit_reached, job NOT created ---
+# --- case 5: eleventh -> still free (no paywall) ---
 $r = Req "POST" "/api/export" (BinSpec "b2-$ts-11" 1) $c1
-Check "case5  eleventh export -> 402 free_limit_reached + upgrade_url" ($r.Status -eq 402 -and (JsonField $r.Body "error.code") -eq 'free_limit_reached' -and (JsonField $r.Body "error.upgrade_url") -eq '/pricing') "status=$($r.Status) body=$($r.Body)"
+Check "case5  eleventh export -> 200 completed (free, no 402)" ($r.Status -eq 200 -and (JsonField $r.Body "job.status") -eq 'completed') "status=$($r.Status) body=$($r.Body)"
 
-# --- case 6: history lists 10; delete one -> gone; download deleted -> 410 ---
+# --- case 6: history lists 11; delete one -> gone; download deleted -> 410 ---
 $r = Req "GET" "/api/exports" $null $c1
 $exports = JsonField $r.Body "exports"; if ($exports -is [System.Array]) { $listCount = $exports.Count } else { $listCount = 1 }
-Check "case6a GET /api/exports lists 10 jobs" ($r.Status -eq 200 -and $listCount -eq 10) "status=$($r.Status) count=$listCount"
+Check "case6a GET /api/exports lists 11 jobs" ($r.Status -eq 200 -and $listCount -eq 11) "status=$($r.Status) count=$listCount"
 $exports = JsonField $r.Body "exports"
-$secondJob = $exports[0].id # newest-first: the 10th export
+$secondJob = $exports[0].id # newest-first: the 11th export
 $r = Req "DELETE" "/api/export/$secondJob" $null $c1
 Check "case6b DELETE export -> 200" ($r.Status -eq 200) "status=$($r.Status)"
 $r = Req "GET" "/api/exports" $null $c1
 $exports = (JsonField $r.Body "exports"); if ($exports -is [System.Array]) { $listCount = $exports.Count } else { $listCount = 1 }
-Check "case6c deleted job gone from list -> 9" ($listCount -eq 9) "count=$listCount"
+Check "case6c deleted job gone from list -> 10" ($listCount -eq 10) "count=$listCount"
 $r = Req "GET" "/api/export/$secondJob/download" $null $c1
 Check "case6d download after delete -> 410 expired" ($r.Status -eq 410 -and (JsonField $r.Body "error.code") -eq 'expired') "status=$($r.Status) body=$($r.Body)"
 
@@ -179,7 +172,7 @@ $r = Req "GET" "/api/export/$tpJob/download" $null $c1 $pdfTp
 & node "$PSScriptRoot\verify-pdf.mjs" $pdfTp 144 72 1
 Check "case10b test_print 2x1 = 144.00 x 72.00 pt" ($LASTEXITCODE -eq 0) "verify-pdf exit=$LASTEXITCODE status=$($r.Status)"
 
-# ================= USER 2: ownership (404, never 403) + pro override =================
+# ================= USER 2: ownership (404, never 403) =================
 $email2 = "ln-b2-own-$ts@bisket.com"
 $r = Req "POST" "/api/auth/register" (@{ email = $email2; password = $password } | ConvertTo-Json) $null
 $c2 = if ($r.SetCookie -match 'ln_session=([0-9a-f]{64})') { $Matches[1] } else { $null }
@@ -188,26 +181,10 @@ Check "case11 other user's job id -> 404 (no existence leak)" ($r.Status -eq 404
 $r = Req "GET" "/api/export/$job1/download" $null $c2
 Check "case11b other user's download -> 404" ($r.Status -eq 404) "status=$($r.Status)"
 
-# bonus: flip user2 to active pro via local DB, export with NO reservation, remaining null
-& npx wrangler d1 execute label-ninja-db --local --command ("UPDATE users SET plan='pro', subscription_status='active' WHERE email='" + $email2 + "'") | Out-Null
-$r = Req "POST" "/api/export" (BinSpec "b2-$ts-pro" 1) $c2
-$proJob = JsonField $r.Body "job.id"
-Check "bonus pro-active export -> 200, remaining null, no ledger row" ($r.Status -eq 200 -and ($null -eq (JsonField $r.Body "remaining_free_uses"))) "status=$($r.Status) remaining=$(JsonField $r.Body 'remaining_free_uses')"
-$r = Req "GET" "/api/auth/me" $null $c2
-$fu = JsonField $r.Body "user.free_uses"
-Check "bonus pro me -> unlimited=true remaining=null consumed=0" ($fu.unlimited -eq $true -and $null -eq $fu.remaining -and $fu.consumed -eq 0) "free_uses=$(($fu | ConvertTo-Json -Compress))"
-
-# ================= USER 4: parallel race, 1 remaining =================
+# ================= USER 4: parallel distinct exports both succeed =================
 $email4 = "ln-b2-race-$ts@bisket.com"
 $r = Req "POST" "/api/auth/register" (@{ email = $email4; password = $password } | ConvertTo-Json) $null
 $c4 = if ($r.SetCookie -match 'ln_session=([0-9a-f]{64})') { $Matches[1] } else { $null }
-for ($i = 1; $i -le 9; $i++) {
-  $r = Req "POST" "/api/export" (BinSpec ("b2-$ts-race-{0:D2}" -f $i) 1) $c4
-  if ($r.Status -ne 200) { Check "case12 fill race user export $i" $false "status=$($r.Status)" }
-}
-$r = Req "GET" "/api/auth/me" $null $c4
-$fu = JsonField $r.Body "user.free_uses"
-Check "case12a race user at exactly 1 remaining" ($fu.remaining -eq 1) "remaining=$($fu.remaining)"
 $specA = BinSpec "b2-$ts-race-A" 1; $specB = BinSpec "b2-$ts-race-B" 1
 $pa = "$env:TEMP\ln-race-a-$ts.json"; $pb = "$env:TEMP\ln-race-b-$ts.json"
 [IO.File]::WriteAllText($pa, $specA); [IO.File]::WriteAllText($pb, $specB)
@@ -216,25 +193,23 @@ $jj += Start-Job -ScriptBlock { param($b, $ck, $p) & curl.exe -s -o "$env:TEMP\l
 $jj += Start-Job -ScriptBlock { param($b, $ck, $p) & curl.exe -s -o "$env:TEMP\ln-race-out-b.json" -w "%{http_code}" -X POST "$b/api/export" -H "Content-Type: application/json" -H "Cookie: ln_session=$ck" --data-binary "@$p" } -ArgumentList $Base, $c4, $pb
 Wait-Job $jj -Timeout 60 | Out-Null
 $codes = @($jj | ForEach-Object { [string](Receive-Job $_) }); $jj | Remove-Job
-$okCount = @($codes | Where-Object { $_ -eq '200' }).Count; $limitCount = @($codes | Where-Object { $_ -eq '402' }).Count
-Check "case12b parallel 2xPOST 1-remaining -> exactly one 200 + one 402" ($okCount -eq 1 -and $limitCount -eq 1) "codes=$($codes -join ',')"
+$okCount = @($codes | Where-Object { $_ -eq '200' }).Count
+Check "case12b parallel 2xPOST distinct keys -> two 200s" ($okCount -eq 2) "codes=$($codes -join ',')"
 $r = Req "GET" "/api/exports" $null $c4
 $exports = (JsonField $r.Body "exports"); if ($exports -is [System.Array]) { $raceCount = $exports.Count } else { $raceCount = 1 }
-$r2 = Req "GET" "/api/auth/me" $null $c4
-$fu = JsonField $r2.Body "user.free_uses"
-Check "case12c race user -> 10 completed jobs, remaining 0" ($raceCount -eq 10 -and $fu.remaining -eq 0) "jobs=$raceCount remaining=$($fu.remaining)"
+Check "case12c race user -> 2 completed jobs" ($raceCount -eq 2) "jobs=$raceCount"
 
 # ================= USER 3: export rate limit (30/hour) =================
 $email3 = "ln-b2-rl-$ts@bisket.com"
 $r = Req "POST" "/api/auth/register" (@{ email = $email3; password = $password } | ConvertTo-Json) $null
 $c3 = if ($r.SetCookie -match 'ln_session=([0-9a-f]{64})') { $Matches[1] } else { $null }
-$saw200 = 0; $saw402 = 0
+$saw200 = 0
 for ($i = 1; $i -le 30; $i++) {
   $r = Req "POST" "/api/export" (BinSpec ("b2-$ts-rl-{0:D2}" -f $i) 1) $c3
-  if ($r.Status -eq 200) { $saw200++ } elseif ($r.Status -eq 402) { $saw402++ }
+  if ($r.Status -eq 200) { $saw200++ }
 }
 $r = Req "POST" "/api/export" (BinSpec "b2-$ts-rl-31" 1) $c3
-Check "case13 31st export in hour -> 429 rate_limited (10x200 + 20x402 first)" ($r.Status -eq 429 -and (JsonField $r.Body "error.code") -eq 'rate_limited' -and $saw200 -eq 10 -and $saw402 -eq 20) "31st=$($r.Status) saw200=$saw200 saw402=$saw402 body=$($r.Body)"
+Check "case13 31st export in hour -> 429 rate_limited (30x200 first)" ($r.Status -eq 429 -and (JsonField $r.Body "error.code") -eq 'rate_limited' -and $saw200 -eq 30) "31st=$($r.Status) saw200=$saw200 body=$($r.Body)"
 
 Write-Output ("RESULT failures={0}" -f $script:Failures)
 if ($script:Failures -gt 0) { exit 1 } else { exit 0 }

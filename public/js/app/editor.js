@@ -184,7 +184,7 @@ export function addElement(type, customProps = {}) {
     type,
     x: 25,
     y: 20 + elements.length * 45,
-    text: type === 'barcode' ? 'X001ABC123' : type === 'badge' ? '$19.99' : type === 'box' ? 'BORDER BOX' : 'SAMPLE TEXT',
+    text: type === 'barcode' ? 'X001ABC123' : type === 'badge' ? 'SALE' : type === 'box' ? 'BORDER BOX' : 'SAMPLE TEXT',
     fontSize: type === 'barcode' ? 14 : type === 'badge' ? 16 : 24,
     width: 120,
     aspectRatio: 1,

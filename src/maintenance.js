@@ -13,11 +13,10 @@ export async function maintain(env) {
   for (const { id } of stale.results || []) {
     statements.push(
       env.DB.prepare("UPDATE export_jobs SET status = 'failed', failure_reason = 'interrupted' WHERE id = ? AND status = 'processing' AND started_at < ?").bind(id, t - 15 * 60 * 1000),
-      env.DB.prepare("DELETE FROM output_chunks WHERE job_id = ? AND EXISTS (SELECT 1 FROM export_jobs WHERE id = ? AND status = 'failed' AND failure_reason = 'interrupted')").bind(id, id),
-      env.DB.prepare("DELETE FROM usage_ledger WHERE job_id = ? AND EXISTS (SELECT 1 FROM export_jobs WHERE id = ? AND status = 'failed' AND failure_reason = 'interrupted')").bind(id, id));
+      env.DB.prepare("DELETE FROM output_chunks WHERE job_id = ? AND EXISTS (SELECT 1 FROM export_jobs WHERE id = ? AND status = 'failed' AND failure_reason = 'interrupted')").bind(id, id));
   }
   // Each group stays in one transaction. A late renderer may only complete a
-  // processing job; it cannot resurrect a recovered/refunded export.
+  // processing job; it cannot resurrect a recovered export.
   if (statements.length) await env.DB.batch(statements);
   await env.DB.batch([
     env.DB.prepare('DELETE FROM sessions WHERE token_hash IN (SELECT token_hash FROM sessions WHERE expires_at <= ? LIMIT 500)').bind(t),

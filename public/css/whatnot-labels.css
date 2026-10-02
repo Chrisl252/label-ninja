@@ -81,3 +81,12 @@
   .seller-header, .seller-nav, .seller-jump, .seller-form, .seller-next, .seller-footer { display: none; }
   .seller-main { max-width: none; padding: 0; }
 }
+
+/* Shared "More free tools" block (also in guides.css for privacy/terms). */
+.more-tools { width: 100%; max-width: var(--wrap); margin: var(--space-lg) auto 0; padding: var(--space-md); border-top: var(--rule-2); display: grid; gap: var(--space-sm); }
+.more-tools h2 { font-size: var(--text-xl); }
+.more-tools ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-xs) var(--space-md); }
+@media (min-width: 768px) { .more-tools ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.more-tools li { min-width: 0; color: var(--color-ink-2); font-size: var(--text-sm); }
+.more-tools li a { font-weight: 600; font-size: var(--text-base); }
+.seller-tldr { border-left: 3px solid var(--color-accent-3); padding-left: var(--space-md); }

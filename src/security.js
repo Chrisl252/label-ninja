@@ -14,14 +14,13 @@ export function appOrigin(env) {
 export function guardBrowserWrite(request) {
   if (['GET', 'HEAD', 'OPTIONS'].includes(request.method)) return;
   const path = new URL(request.url).pathname;
-  if (path === '/api/webhooks/stripe') return;
   const origin = request.headers.get('origin');
   if ((origin && origin !== new URL(request.url).origin) || request.headers.get('sec-fetch-site') === 'cross-site') {
     throw new HttpError(403, 'cross_origin_denied', 'Open Label Ninja directly and try again.');
   }
   // workerd exposes an empty POST as a body stream. These routes deliberately
   // accept no input; Origin/SameSite still guard them, without requiring JSON.
-  const noInput = request.method === 'DELETE' || ['/api/auth/logout', '/api/billing/portal'].includes(path);
+  const noInput = request.method === 'DELETE' || path === '/api/auth/logout';
   if (!noInput && request.body &&
       !request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) {
     throw new HttpError(415, 'json_required', 'Use application/json.');

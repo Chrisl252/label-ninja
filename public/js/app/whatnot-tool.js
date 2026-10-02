@@ -1,4 +1,4 @@
-// Whatnot tool — sequential live-show number batches as metered PDF exports.
+// Whatnot tool — sequential live-show number labels as one PDF export.
 
 import { WHATNOT_STOCKS } from './presets.js';
 import { buildWhatnotSpec } from './spec-builders.js';
@@ -42,7 +42,7 @@ export function updateWhatnotPrintHint() {
     const settings = validateWhatnotSettings(readSettings());
     text.textContent = `${settings.prefix}${settings.start}`;
     text.style.fontSize = `${Math.min(4.25, 12 / Math.max(text.textContent.length, 1))}rem`;
-    document.getElementById('wn-preview-caption').textContent = `${stock.name} · ${settings.end - settings.start + 1} labels · 1 PDF batch`;
+    document.getElementById('wn-preview-caption').textContent = `${stock.name} · ${settings.end - settings.start + 1} labels · 1 PDF`;
   } catch {
     text.textContent = '—';
     document.getElementById('wn-preview-caption').textContent = 'Check your number range and prefix';

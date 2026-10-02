@@ -3,8 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Thermal Label Maker — 10 Free PDF Batches | Label Ninja</title>
-  <meta name="description" content="Create exact-size bin, Whatnot, FNSKU, and custom labels. Get 10 PDF batches free, then unlimited batches with Label Ninja Pro for $9.99 USD/month.">
+  <title>Free Thermal Label Maker – 4x6, Bin &amp; FNSKU | Label Ninja</title>
+  <meta name="description" content="Make exact-size PDF labels for Rollo, Zebra, Munbyn and Dymo printers: 4x6 bin labels, Whatnot numbers, Amazon FNSKU and custom designs. Free.">
+  <link rel="canonical" href="https://label-ninja.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Label Ninja">
+  <meta property="og:title" content="Free thermal label maker for 4x6 and small label printers">
+  <meta property="og:description" content="Make exact-size PDF labels for Rollo, Zebra, Munbyn and Dymo printers: 4x6 bin labels, Whatnot numbers, Amazon FNSKU and custom designs. Free.">
+  <meta property="og:url" content="https://label-ninja.com/">
+  <meta property="og:image" content="https://label-ninja.com/assets/logo.jpg">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Free thermal label maker for 4x6 and small label printers">
+  <meta name="twitter:description" content="Make exact-size PDF labels for Rollo, Zebra, Munbyn and Dymo printers: 4x6 bin labels, Whatnot numbers, Amazon FNSKU and custom designs. Free.">
+  <meta name="twitter:image" content="https://label-ninja.com/assets/logo.jpg">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Label Ninja",
+    "url": "https://label-ninja.com/",
+    "description": "Browser label maker that exports exact-size PDF labels for direct thermal printers: 4x6 bin labels, Whatnot show numbers, Amazon FNSKU labels and custom designs.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript and a modern web browser",
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
   <meta name="theme-color" content="#14161c">
   <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
 
@@ -38,16 +63,15 @@
 
     <nav class="roll" aria-label="Tools">
       <button type="button" id="tab-dashboard" class="roll__tab hidden" onclick="LN.switchMode('dashboard')">Dashboard</button>
-      <button type="button" id="tab-editor" class="roll__tab is-active" onclick="LN.switchMode('editor')">Editor</button>
+      <button type="button" id="tab-home" class="roll__tab is-active" onclick="LN.switchMode('home')">Home</button>
+      <button type="button" id="tab-editor" class="roll__tab" onclick="LN.switchMode('editor')">Editor</button>
       <button type="button" id="tab-bin" class="roll__tab" onclick="LN.switchMode('bin')">Bin Labels</button>
       <button type="button" id="tab-whatnot" class="roll__tab" onclick="LN.switchMode('whatnot')">Whatnot</button>
       <button type="button" id="tab-fnsku" class="roll__tab" onclick="LN.switchMode('fnsku')">FNSKU</button>
       <button type="button" id="tab-guides" class="roll__tab" onclick="LN.switchMode('guides')">Guides</button>
-      <button type="button" id="tab-pricing" class="roll__tab" onclick="LN.switchMode('pricing')">Pricing</button>
     </nav>
 
     <div class="masthead__actions">
-      <span id="usage-chip" class="chip hidden"></span>
       <button type="button" id="my-exports-btn" class="btn btn--ghost btn--sm hidden" onclick="LN.openExportsDrawer()">My Exports</button>
       <button type="button" id="user-email" class="masthead__email hidden" onclick="LN.switchMode('account')" title="Open account"></button>
       <button type="button" id="signout-btn" class="btn btn--quiet btn--sm hidden" onclick="LN.authSignOut()">Sign out</button>
@@ -55,6 +79,108 @@
     </div>
   </header>
 
+  <!-- MODE: Home (public landing; default for a bare "/") -->
+  <main id="mode-home" class="mode mode--wide home no-print">
+    <section class="home-hero" aria-labelledby="home-title">
+      <div class="stack">
+        <p class="label">Free label maker · PDF at true size</p>
+        <h1 id="home-title">Free thermal label maker for 4x6 and small label printers</h1>
+        <p class="lede">Label Ninja makes exact-size PDF labels for direct thermal printers such as Rollo, Zebra, Munbyn, and Dymo. Build warehouse bin labels, Whatnot show numbers, Amazon FNSKU labels, or your own design, then print the PDF at 100% scale.</p>
+        <p class="lede">It is free to use: no paid plan, no card, and no limit on how many PDFs you download. A free account is only needed to download PDFs and save projects.</p>
+        <ul class="home-facts" aria-label="What you get">
+          <li class="chip chip--ready">Unlimited PDFs</li>
+          <li class="chip">Exact physical size</li>
+          <li class="chip">CODE128 barcodes</li>
+          <li class="chip">Saved projects</li>
+        </ul>
+        <div class="home-cta">
+          <a href="#editor" class="btn btn--primary btn--lg">Start a custom label</a>
+          <a href="#free-tools" class="btn btn--ghost btn--lg">See the free tools</a>
+          <a id="home-resume" href="#editor" class="btn btn--ghost btn--lg hidden">Back to your label</a>
+        </div>
+      </div>
+      <aside class="panel home-stock" aria-label="Supported label sizes">
+        <p class="label">Label sizes ready to print</p>
+        <div class="home-stock__row"><span>4" x 6"</span><span>Shipping, bin labels · Rollo, Zebra, Munbyn</span></div>
+        <div class="home-stock__row"><span>4" x 3"</span><span>Carton and box inventory</span></div>
+        <div class="home-stock__row"><span>3" x 2"</span><span>Whatnot show numbers</span></div>
+        <div class="home-stock__row"><span>2" x 1"</span><span>Amazon FNSKU · Dymo 30334</span></div>
+        <div class="home-stock__row"><span>2.25" x 1.25"</span><span>Dymo 30336 multipurpose</span></div>
+        <div class="home-stock__row"><span>1" x 0.5"</span><span>Tiny 25 x 13 mm stock</span></div>
+      </aside>
+    </section>
+
+    <section id="free-tools" class="home-section" aria-labelledby="free-tools-title">
+      <h2 id="free-tools-title">Free label tools</h2>
+      <p>Every tool exports a PDF at the label's real size, so the printer does not have to guess. Pick the job you have.</p>
+      <ul class="grid grid--3 home-tools">
+        <li class="panel home-tool">
+          <h3><a href="/shipping-label-to-4x6">Shipping label to 4x6</a></h3>
+          <p>Turn a full-page shipping label PDF into a 4x6 label for a thermal printer.</p>
+        </li>
+        <li class="panel home-tool">
+          <h3><a href="/whatnot-labels">Whatnot show number labels</a></h3>
+          <p>Sequential lot numbers for Whatnot live shows, sized for small thermal stock.</p>
+        </li>
+        <li class="panel home-tool">
+          <h3><a href="/#tools/warehouse-rack-bin-label-generator">Warehouse bin labels</a></h3>
+          <p>One 4x6 label per bin: the bin number on top and its CODE128 barcode underneath.</p>
+        </li>
+        <li class="panel home-tool">
+          <h3><a href="/#tools/amazon-fba-fnsku-generator">Amazon FNSKU labels</a></h3>
+          <p>Print an FNSKU you already have from Seller Central on a 2x1 label with title and condition.</p>
+        </li>
+        <li class="panel home-tool">
+          <h3><a href="/#editor">Custom label editor</a></h3>
+          <p>Add text, barcodes, borders, and images to any preset size, then export an exact-size PDF.</p>
+        </li>
+        <li class="panel home-tool">
+          <h3><a href="/guides/whatnot-labels-printing-too-small">Fix labels printing too small</a></h3>
+          <p>Paper size, scale, and margin settings that stop a label from shrinking in the print dialog.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="home-section" aria-labelledby="how-title">
+      <h2 id="how-title">How it works</h2>
+      <ol class="home-steps">
+        <li><strong>Pick a tool and label size.</strong> Match the size to the roll in your printer.</li>
+        <li><strong>Fill in your labels.</strong> The preview updates as you type; no account needed yet.</li>
+        <li><strong>Download the PDF.</strong> Sign in or create a free account the first time.</li>
+        <li><strong>Print at 100% scale.</strong> Choose the matching paper size, set margins to none, and print one test label before the full run. See the <a href="#printer-setup-checklist" class="link">printer setup checklist</a>.</li>
+      </ol>
+    </section>
+
+    <section id="faq" class="home-section" aria-labelledby="faq-title">
+      <h2 id="faq-title">Questions</h2>
+      <div class="faq">
+        <article>
+          <h3>Is Label Ninja free?</h3>
+          <p>Yes. Every tool and every PDF download is free. There is no paid plan and no card to enter.</p>
+        </article>
+        <article>
+          <h3>Do I need an account?</h3>
+          <p>You can design and preview labels without one. Downloading a PDF and saving projects need a free account (email and password), so your PDFs and projects stay with you.</p>
+        </article>
+        <article>
+          <h3>Which printers work?</h3>
+          <p>Any printer that can print a PDF at the label's real size. That includes 4-inch direct thermal printers such as Rollo, Zebra, and Munbyn for 4x6 labels, and Dymo LabelWriter-style printers for small rolls.</p>
+        </article>
+        <article>
+          <h3>Why is my label printing too small or cut off?</h3>
+          <p>The print dialog is usually scaling the page. Pick the paper size that matches your label, set scale to 100% or Actual size, and set margins to none. The <a href="/guides/whatnot-labels-printing-too-small" class="link">too-small printing guide</a> walks through it.</p>
+        </article>
+        <article>
+          <h3>Does Label Ninja create FNSKUs or buy postage?</h3>
+          <p>No. The FNSKU tool prints identifiers you already have from Seller Central, and Label Ninja does not sell shipping postage.</p>
+        </article>
+        <article>
+          <h3>How long are my PDFs kept?</h3>
+          <p>A downloaded PDF is yours to keep and reprint. Copies in My Exports can be downloaded again for 7 days.</p>
+        </article>
+      </div>
+    </section>
+  </main>
   <!-- MODE 0: Dashboard (signed-in account home) -->
   <main id="mode-dashboard" class="mode mode--wide hidden no-print">
     <div class="grid grid--2">
@@ -65,7 +191,10 @@
           <button type="button" class="btn btn--primary btn--lg" onclick="LN.switchMode('editor')">New label</button>
         </div>
       </section>
-      <section id="dash-usage" class="panel dash-usage" aria-live="polite"></section>
+      <section class="panel dash-usage">
+        <p class="label led led--ready">Free account</p>
+        <p class="small">Every tool, unlimited PDF downloads, saved projects, and 7-day re-downloads in My Exports.</p>
+      </section>
     </div>
 
     <div id="dash-uploader" class="dropzone" role="button" tabindex="0" aria-label="Upload artwork to the label editor">
@@ -336,7 +465,7 @@
           </div>
 
           <button type="button" onclick="LN.generateBinBatch(this)" class="btn btn--primary btn--lg tool__cta">Download bin labels (PDF)</button>
-          <p class="tool__fine">One 4x6 page per bin · exact physical size · free account includes 10 exports.</p>
+          <p class="tool__fine">One 4x6 page per bin · exact physical size · free, no limit on PDFs.</p>
         </aside>
       </div>
     </div>
@@ -397,14 +526,14 @@
             </div>
           </div>
           <div class="tool__caption">
-            <span id="wn-preview-caption" class="tiny muted">1 x 0.5 in · 50 labels · 1 PDF batch</span>
+            <span id="wn-preview-caption" class="tiny muted">1 x 0.5 in · 50 labels · 1 PDF</span>
             <span class="tiny mono muted">not to scale</span>
           </div>
 
           <div id="wn-print-hint" class="note note--attn" role="status"></div>
 
           <button type="button" onclick="LN.generateWhatnotBatch(this)" class="btn btn--primary btn--lg tool__cta">Download Whatnot labels (PDF)</button>
-          <p class="tool__fine">Free account: 10 PDF batches total, shared across tools. Up to 200 labels in each batch. Downloading uses one batch; preparing this preview uses none.</p>
+          <p class="tool__fine">Free, with no limit on PDFs. Up to 200 labels in each PDF. The preview works without an account; downloading needs a free one.</p>
         </aside>
       </div>
     </div>
@@ -468,7 +597,7 @@
           <div class="note">Print on 2&quot; x 1&quot; stock at 100% scale, margins none. If the barcode looks stretched in the print dialog, the paper size is wrong — not the label.</div>
 
           <button type="button" onclick="LN.printSingleFNSKU(this)" class="btn btn--primary btn--lg tool__cta">Download FNSKU label (PDF)</button>
-          <p class="tool__fine">Title + CODE128 barcode + condition on a 2&quot; x 1&quot; label · free account includes 10 exports.</p>
+          <p class="tool__fine">Title + CODE128 barcode + condition on a 2&quot; x 1&quot; label · free, no limit on PDFs.</p>
         </aside>
       </div>
     </div>
@@ -625,20 +754,6 @@
         </div>
       </section>
 
-      <section id="pricing" class="doc__section">
-        <h2>Label Ninja Pro</h2>
-        <p class="lede">The free plan includes 10 PDF batches to try every tool. Pro is for the packing table that prints every day — bin resets, Whatnot shows, FNSKU batches, and custom labels without counting.</p>
-        <ul class="plan">
-          <li><strong>Unlimited exports</strong><span>All label tools, up to 200 labels per batch.</span></li>
-          <li><strong>Saved projects</strong><span>Keep label designs and export history at your fingertips.</span></li>
-          <li><strong>No ads</strong><span>A clean workspace, forever.</span></li>
-        </ul>
-        <div class="note note--accent">
-          <h3>Pro is $9.99 USD/month</h3>
-          <p>10 PDF batches are free. Pro has no monthly batch quota. <a href="/pricing">See plan details and checkout availability</a>. Both plans include saved projects, seven-day downloads, and an ad-free workspace.</p>
-        </div>
-      </section>
-
       <section id="seo-keywords" class="doc__section">
         <h2>Choose the tool for your labels</h2>
         <div class="table-wrap">
@@ -656,7 +771,7 @@
         </div>
         <div class="note">
           <h3>Test before a full run</h3>
-          <p>Inspect the PDF, print one page, and scan any barcode before printing the rest. A downloaded PDF can be printed again without using another batch credit. Label Ninja creates label artwork; it does not purchase shipping postage.</p>
+          <p>Inspect the PDF, print one page, and scan any barcode before printing the rest. A downloaded PDF can be printed again as many times as you need. Label Ninja creates label artwork; it does not purchase shipping postage.</p>
         </div>
       </section>
 
@@ -683,19 +798,12 @@
       </section>
     </article>
   </main>
-  <!-- MODE 6: Pricing (public; rendered by pricing.js from /api/config/pricing — real Stripe data only) -->
-  <main id="mode-pricing" class="mode mode--wide hidden no-print">
-    <div id="pricing-mount"><p class="small muted">Loading pricing…</p></div>
-  </main>
-  <!-- MODE 7: Account / Billing (authed) -->
+  <!-- MODE: Account (authed) -->
   <main id="mode-account" class="mode hidden no-print">
     <header class="page-head">
-      <h1>Account &amp; billing</h1>
-      <p class="lede small">Your profile, plan, and billing controls.</p>
+      <h1>Account</h1>
+      <p class="lede small">Your sign-in details and account help.</p>
     </header>
-    <div id="account-checkout-banner" class="note note--ready hidden" role="status">
-      Checking your subscription status…
-    </div>
     <div id="account-mount" class="stack"><p class="small muted">Loading…</p></div>
   </main>
   <footer class="foot no-print">
@@ -706,14 +814,15 @@
         <span class="foot__owner">© 2026 Christopher Lucas</span>
       </div>
       <nav class="foot__links" aria-label="Footer">
+        <a href="/#free-tools">Free tools</a>
+        <a href="/shipping-label-to-4x6">Shipping label to 4x6</a>
+        <a href="/whatnot-labels">Whatnot labels</a>
+        <a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a>
+        <a href="#best-label-printers" onclick="LN.switchMode('guides')">Best printers</a>
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
         <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20support">Support</a>
-        <a href="#pricing">Pricing</a>
         <a href="/sitemap.xml">Sitemap</a>
-        <a href="#tools/amazon-fba-fnsku-generator">FNSKU tool</a>
-        <a href="/whatnot-labels">Whatnot Labels</a>
-        <a href="#best-label-printers" onclick="LN.switchMode('guides')">Best printers</a>
       </nav>
     </div>
   </footer>
@@ -765,7 +874,7 @@
           <input id="auth-register-confirm" name="confirm" type="password" autocomplete="new-password" required class="input">
         </div>
         <button type="submit" class="btn btn--primary btn--block">Create free account</button>
-        <p class="tiny muted center">10 free PDF batches · no card required · designs upload when you export or save</p>
+        <p class="tiny muted center">Free · no card · unlimited PDFs · designs upload when you export or save</p>
         <p class="tiny center">By creating an account, you agree to the <a href="/terms" target="_blank" rel="noopener" class="link">Service terms</a>. Read our <a href="/privacy" target="_blank" rel="noopener" class="link">Privacy policy</a>.</p>
         <p class="tiny center"><a href="#" id="auth-to-signin" class="link">Already have an account? Sign in</a></p>
       </form>
@@ -790,27 +899,6 @@
       </form>
 
       <button id="auth-cancel" type="button" class="btn btn--quiet btn--sm btn--block">Cancel</button>
-    </div>
-  </div>
-
-  <!-- Paywall Modal (402 free_limit_reached) -->
-  <div id="paywall-modal" class="scrim hidden no-print" role="dialog" aria-modal="true" aria-label="Free limit reached">
-    <div class="modal modal--wide">
-      <div class="modal__head">
-        <h3 class="modal__title">You've used your 10 free PDF batches</h3>
-        <button id="paywall-close" type="button" class="btn btn--quiet btn--sm btn--icon modal__close x" aria-label="Close">✕</button>
-      </div>
-      <p class="small">Your design is still open in this tab. Upgrade to Pro to keep exporting, or return to your work.</p>
-      <ul class="tick-list">
-        <li><span class="tick">✓</span><span>Unlimited label PDF exports</span></li>
-        <li><span class="tick">✓</span><span>Everything in Free, including saved projects</span></li>
-        <li><span class="tick">✓</span><span>No ads — ever</span></li>
-      </ul>
-      <div id="paywall-pricing" class="panel panel--tight panel--flat stack stack--xs"></div>
-      <div class="modal__foot modal__foot--split">
-        <button id="paywall-back" type="button" class="btn btn--ghost grow">Back to my work</button>
-        <a id="paywall-upgrade" href="#pricing" class="btn btn--primary grow">View Pro options</a>
-      </div>
     </div>
   </div>
 

@@ -1,4 +1,4 @@
-// Public batch setup: no account data, credentials, exports or quota mutations.
+// Public batch setup: reads the form and builds a studio link. No account data, credentials or exports.
 import { WHATNOT_STOCKS } from './app/presets.js';
 import { validateWhatnotSettings, whatnotToolUrl } from './whatnot-settings.js';
 

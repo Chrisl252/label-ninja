@@ -59,8 +59,8 @@ Check "register 200 + user + cookie flags" ($r.Status -eq 200 -and (JsonField $r
 $cookie = if ($r.SetCookie -match "ln_session=([0-9a-f]{64})") { $Matches[1] } else { $null }
 
 $r = Req "GET" "/api/auth/me" $null $cookie
-$fu = JsonField $r.Body "user.free_uses"
-Check "me free_uses granted=10 consumed=0 remaining=10" ($r.Status -eq 200 -and $fu.granted -eq 10 -and $fu.consumed -eq 0 -and $fu.remaining -eq 10 -and $fu.unlimited -eq $false) "status=$($r.Status) body=$($r.Body)"
+$u = JsonField $r.Body "user"
+Check "me plan=free unlimited=true" ($r.Status -eq 200 -and $u.plan -eq 'free' -and $u.unlimited -eq $true) "status=$($r.Status) body=$($r.Body)"
 
 $r = Req "POST" "/api/auth/login" @{ email = $email; password = "wrong-password-xx" } $null
 Check "login wrong password 401 invalid_credentials" ($r.Status -eq 401 -and (JsonField $r.Body "error.code") -eq "invalid_credentials") "status=$($r.Status) body=$($r.Body)"

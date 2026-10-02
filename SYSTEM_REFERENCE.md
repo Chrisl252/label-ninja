@@ -1,35 +1,28 @@
 # Label Ninja system reference
 
-- Canonical code: C:\Code\label-ninja
+- Canonical code: C:\Code\label-ninja.com\label-ninja
 - GitHub: https://github.com/Chrisl252/label-ninja ; branch master
 - Local full-stack preview: http://127.0.0.1:8787 (npm run dev)
-- Production Worker: https://label-ninja.com and https://www.label-ninja.com
+- Production Worker: https://label-ninja.com (www and http redirect to it via src/redirects.js once this lane deploys)
 - Historical static mirror: https://label-ninja.pages.dev ; not a full-stack release target
-- Worker configuration: wrangler.toml, src/worker.js, public ASSETS, nodejs_compat
+- Worker configuration: wrangler.toml, src/worker.js, public ASSETS (run_worker_first = true), nodejs_compat
 - D1: label-ninja-db / 852d3ccd-83b6-4ab9-9c39-49a1cf77b88b / binding DB
 - Local D1: .wrangler/state/v3/d1 ; do not confuse --local and --remote
-- Runtime dependencies: pdf-lib and pinned @noble/hashes 2.4.0; browser JsBarcode/PapaParse remain CDN-loaded
+- Runtime dependencies: pdf-lib and pinned @noble/hashes 2.4.0; browser JsBarcode/PapaParse remain CDN-loaded; the 4x6 converter uses vendored public/vendor/pdfjs-4.10.38 and pdf-lib-1.17.1
 - Scheduler: */15 * * * * ; cleanup is bounded, monitor backlog
-- Live source 72c5eb1 / Worker dffca000-41ea-47a0-af74-6b82fda69820 (2026-09-06); clean release under backups/release-20260906-portable
+- Live source ceb6a67 / Worker eacac403-fbac-4484-bd6f-24398f2232cf (2026-09-07 UTC; receipt DEPLOYMENT_UPGRADE_CEB6A67.md). The free-everything lane (branch lane/free-everything-20261001) is NOT deployed
 
 ## Secrets and provider configuration
 
 | Name | Purpose |
 | --- | --- |
-| STRIPE_SECRET_KEY | Project-scoped Stripe API access; keep test and live separate |
-| STRIPE_WEBHOOK_SECRET | Signing secret for this environment's webhook destination |
-| STRIPE_PRICE_MONTHLY | Active $9.99 USD recurring monthly price in the same mode |
 | RESEND_API_KEY | Transactional recovery email |
 | EMAIL_FROM | Sender address on a verified sending domain |
 | APP_ORIGIN | Non-secret canonical origin; production https://label-ninja.com |
 
-Local secrets belong in ignored .dev.vars. Production values belong in the Worker secret store, entered through a secure prompt/dashboard. A Stripe publishable key is not needed for server-created hosted Checkout. No annual price is used.
+Local secrets belong in ignored .dev.vars. Production values belong in the Worker secret store, entered through a secure prompt/dashboard. Never put values in docs, chat or command arguments.
 
-A reusable credential directory was not created and the secret pasted in chat was not copied. Use a protected credential store for replacements; Obsidian/Jarvis may contain a path and purpose only, never values. Prefer separate restricted keys per project so one project's compromise does not expose every SaaS.
-
-Read-only inspection on 2026-09-06 returned [] from wrangler secret list. The public pricing endpoint returned configured:false. No live price ID, portal configuration, sending domain, or payment lifecycle has been verified.
-
-Stripe destination: /api/webhooks/stripe. Subscribe to checkout.session.completed, customer.subscription.created/updated/deleted, invoice.paid, invoice.payment_failed. Configure Stripe's public terms URL /terms, privacy URL /privacy, and Customer Portal cancellation/payment-method/invoice features. Checkout requires terms consent.
+Payments were removed on 2026-10-01. STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET and STRIPE_PRICE_MONTHLY are no longer read by any code. If any exist in the Worker secret store (the 2026-09-06 read-only check returned []), Chris can delete them after this lane deploys and disable any Stripe webhook endpoint that pointed at /api/webhooks/stripe (now 404). Use a protected credential store for any remaining keys; Obsidian/Jarvis may hold a path and purpose only.
 
 ## Capacity
 

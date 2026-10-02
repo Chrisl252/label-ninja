@@ -1,15 +1,17 @@
-// Label Ninja Worker — thin router: /api/* to the API, everything else to static assets.
+// Label Ninja Worker — thin router: canonical host first, /api/* to the API, everything else to static assets.
 
-import { errorResponse, HttpError } from './http.js';
+import { errorResponse } from './http.js';
 import { handleApi } from './auth.js';
 import { handleExportApi } from './export.js';
-import { handleBillingApi } from './billing.js';
 import { handleProjectsApi } from './projects.js';
 import { guardBrowserWrite, privateApiResponse } from './security.js';
+import { canonicalRedirect, legacyPageRedirect } from './redirects.js';
 import { maintain } from './maintenance.js';
 
 export default {
   async fetch(request, env, ctx) {
+    const redirect = canonicalRedirect(request) || legacyPageRedirect(request);
+    if (redirect) return redirect;
     const response = await route(request, env, ctx);
     return new URL(request.url).pathname.startsWith('/api/') ? privateApiResponse(response) : response;
   },
@@ -25,13 +27,6 @@ async function route(request, env, ctx) {
       }
       if (url.pathname.startsWith('/api/projects')) {
         return await handleProjectsApi(request, env, url.pathname, url.searchParams);
-      }
-      if (
-        url.pathname === '/api/config/pricing' ||
-        url.pathname.startsWith('/api/billing/') ||
-        url.pathname === '/api/webhooks/stripe'
-      ) {
-        return await handleBillingApi(request, env, url.pathname);
       }
       if (url.pathname.startsWith('/api/')) {
         return await handleApi(request, env, url.pathname);

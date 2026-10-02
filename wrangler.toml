@@ -13,6 +13,9 @@ binding = "ASSETS"
 directory = "./public"
 html_handling = "auto-trailing-slash"
 not_found_handling = "single-page-application"
+# The Worker must see every request so it can 301 www/http to https://label-ninja.com
+# and retire /pricing; serveStatic() then hands the request to ASSETS.
+run_worker_first = true
 
 [[d1_databases]]
 binding = "DB"

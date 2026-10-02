@@ -1,13 +1,11 @@
-// Exporter — metered server exports: idempotency-key lifecycle, the shared
+// Exporter — server PDF exports: idempotency-key lifecycle, the shared
 // export flow (auth gate -> POST /api/export -> download -> save + "Open PDF"
 // toast), pending-export-after-auth continuation, and the My Exports drawer.
-// The direct browser-print bypass was removed deliberately: server metering is
-// authoritative; printing happens from the downloaded PDF.
+// Printing happens from the downloaded exact-size PDF, not the browser preview.
 
 import { api, apiFetchBlob } from './api.js';
-import { isSignedIn, refreshSession } from './session.js';
+import { isSignedIn } from './session.js';
 import { openAuthModal, setAfterAuth } from './auth-ui.js';
-import { openPaywall } from './paywall.js';
 
 const idemKeys = Object.create(null);
 const dirty = Object.create(null);
@@ -135,16 +133,12 @@ export async function runExport(tool, buildBody, button) {
     const payload = { idempotency_key: getIdempotencyKey(tool), format: 'pdf', ...body };
     const data = await api('/api/export', { method: 'POST', body: payload });
     const job = data.job;
-    refreshSession(); // chip re-renders from authoritative /me (remaining included in response too)
     const blob = await downloadJobPdf(job);
     const filename = (job.output_meta && job.output_meta.filename) || `${tool}-label-ninja.pdf`;
     saveBlob(blob, filename);
     offerOpenPdf(blob, filename);
   } catch (err) {
-    if (err.status === 402) {
-      markDirty(tool); // nothing was consumed; a clean key for the post-upgrade retry
-      openPaywall(err.extra && err.extra.upgrade_url);
-    } else if (err.status === 401) {
+    if (err.status === 401) {
       setPending(tool, buildBody, button);
       openAuthModal({ mode: 'signin', intent: 'export' });
     } else {
@@ -197,7 +191,7 @@ function renderDrawer(exportsList) {
   const container = document.getElementById('exports-list');
   container.innerHTML = '';
   if (!exportsList.length) {
-    container.innerHTML = '<p class="small muted">No exports yet. Your PDF batches will appear here for 7 days.</p>';
+    container.innerHTML = '<p class="small muted">No exports yet. Your PDFs will appear here for 7 days.</p>';
     return;
   }
   for (const job of exportsList) {

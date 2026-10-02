@@ -5,7 +5,6 @@
 import { modeFromHash, sectionIdFromHash } from './guides.js';
 import { startSessionWatch, onSessionChange, isSignedIn } from './session.js';
 import { initAuthUi, openAuthModal, closeAuthModal, authSignOut } from './auth-ui.js';
-import { initPaywall, openPaywall, closePaywall } from './paywall.js';
 import { initExporter, runExport, markDirty, openExportsDrawer, closeExportsDrawer } from './exporter.js';
 import { buildTestPrintJob } from './spec-builders.js';
 import {
@@ -18,11 +17,10 @@ import { exportFnskuLabel } from './fnsku-tool.js';
 import { initToast } from './toast.js';
 import { initProjects, saveProject } from './projects.js';
 import { refreshDashboard } from './dashboard.js';
-import { initPricing, renderPricing, startCheckout } from './pricing.js';
 import { initAccount, showAccount } from './account.js';
-import { rememberWorkspace } from './workspace-navigation.js';
+import { rememberWorkspace, lastWorkspaceLink } from './workspace-navigation.js';
 
-const MODES = ['dashboard', 'editor', 'bin', 'whatnot', 'fnsku', 'guides', 'pricing', 'account'];
+const MODES = ['home', 'dashboard', 'editor', 'bin', 'whatnot', 'fnsku', 'guides', 'account'];
 const AUTH_ONLY_MODES = new Set(['dashboard', 'account']);
 let pendingAccountRoute = false;
 let accountPrompted = false;
@@ -61,8 +59,25 @@ export function switchMode(mode) {
     if (!getElements().length) loadTemplate('standard');
   }
   if (mode === 'dashboard') refreshDashboard();
-  if (mode === 'pricing') renderPricing({ focus: true });
+  if (mode === 'home') renderHomeResume();
   if (mode === 'account') showAccount();
+}
+
+// Home page: offer a way back to an unsaved in-tab draft (modes only hide).
+function renderHomeResume() {
+  const link = document.getElementById('home-resume');
+  if (!link) return;
+  const last = lastWorkspaceLink();
+  link.classList.toggle('hidden', !last);
+  if (last) {
+    link.href = last.hash;
+    link.textContent = last.label;
+  }
+}
+
+// Mode for the current hash; a bare "/" (no hash) lands on the home page.
+function modeForLocation(hash) {
+  return hash ? modeFromHash(hash) : 'home';
 }
 
 function scrollToHashSection() {
@@ -81,15 +96,10 @@ function routeFromLocation() {
   const hash = window.location.hash;
 
   // SPA fallback paths served by the worker (real URLs, not just hashes).
-  if (path === '/pricing') {
-    navigatedExplicitly = true;
-    switchMode('pricing');
-    return true;
-  }
-  if (path === '/billing' || path === '/account') {
+  if (path === '/account') {
     navigatedExplicitly = true;
     pendingAccountRoute = true;
-    switchMode('account'); // /billing carries ?checkout=success — banner shown by showAccount
+    switchMode('account');
     return true;
   }
   if (path === '/reset') {
@@ -102,10 +112,10 @@ function routeFromLocation() {
     }
   }
 
-  const mode = modeFromHash(hash);
+  const mode = modeForLocation(hash);
   if (hash) navigatedExplicitly = true;
   switchMode(mode);
-  if (mode === 'guides') scrollToHashSection();
+  if (mode === 'guides' || mode === 'home') scrollToHashSection();
   return true;
 }
 
@@ -160,17 +170,13 @@ window.LN = {
   // projects
   saveProject,
   refreshDashboard,
-  // pricing
-  startCheckout,
-  // auth + exports + paywall
+  // auth + exports
   openAuthSignIn: () => openAuthModal({ mode: 'signin' }),
   openAuthRegister: () => openAuthModal({ mode: 'register' }),
   closeAuthModal,
   authSignOut,
   openExportsDrawer,
   closeExportsDrawer,
-  openPaywall,
-  closePaywall,
 };
 
 function wireDirtyFlags() {
@@ -197,7 +203,7 @@ function renderAuthNav(user) {
 function wireSessionDefaults() {
   onSessionChange((user) => {
     renderAuthNav(user);
-    // Session bootstrap is asynchronous. Preserve checkout/account deep links
+    // Session bootstrap is asynchronous. Preserve the /account deep link
     // until identity is known, including when a returning customer must sign in.
     if (pendingAccountRoute) {
       if (user) {
@@ -209,13 +215,13 @@ function wireSessionDefaults() {
       }
       return;
     }
-    const visible = MODES.find((m) => !document.getElementById(`mode-${m}`).classList.contains('hidden')) || 'editor';
+    const visible = MODES.find((m) => !document.getElementById(`mode-${m}`).classList.contains('hidden')) || 'home';
     if (!user && (visible === 'dashboard' || visible === 'account')) {
-      switchMode('editor'); // signed out of an authed view — fall back to the tools
+      switchMode('home'); // signed out of an authed view — fall back to the home page
       return;
     }
     // First load, signed in, no explicit route: the account home is Dashboard.
-    if (user && !navigatedExplicitly && visible === 'editor') {
+    if (user && !navigatedExplicitly && visible === 'home') {
       navigatedExplicitly = true;
       switchMode('dashboard');
     }
@@ -226,10 +232,8 @@ function init() {
   initToast();
   initEditor();
   initAuthUi();
-  initPaywall();
   initExporter();
   initProjects();
-  initPricing();
   initAccount();
   startSessionWatch();
   wireSessionDefaults();
@@ -240,10 +244,25 @@ function init() {
 
   window.addEventListener('hashchange', () => {
     navigatedExplicitly = true;
-    const mode = modeFromHash(window.location.hash);
+    const mode = modeForLocation(window.location.hash);
     switchMode(mode);
-    if (mode === 'guides') scrollToHashSection();
+    if (mode === 'guides' || mode === 'home') scrollToHashSection();
   });
+
+  // The wordmark is a real link to "/" for crawlers; in-app it switches to the
+  // home mode without a reload so unsaved drafts stay in memory.
+  const wordmark = document.querySelector('.wordmark');
+  if (wordmark) {
+    wordmark.addEventListener('click', (event) => {
+      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+      if (window.location.pathname !== '/') return;
+      event.preventDefault();
+      if (window.location.hash) history.pushState(null, '', '/');
+      navigatedExplicitly = true;
+      switchMode('home');
+      window.scrollTo({ top: 0 });
+    });
+  }
 }
 
 init();

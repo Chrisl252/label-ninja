@@ -1,10 +1,10 @@
 // test-b3-integration.mjs — brick 3 frontend↔backend contract proof against a
 // running server (default http://127.0.0.1:8787, override with LN_BASE).
 // Simulates the UI export flow EXACTLY: builder-produced spec -> POST /api/export
-// -> download -> dimension check; idempotent double-click; 402 paywall body.
+// -> download -> dimension check; idempotent double-click; no paywall after 10.
 // Usage: node scripts/test-b3-integration.mjs
 // Env:   LN_BASE (default http://127.0.0.1:8787), LN_CANARY=1 for the single
-//        prod canary export (register+export+download only, burns 1 use).
+//        prod canary export (register+export+download only).
 
 import { spawnSync } from 'child_process';
 import { writeFileSync, mkdirSync } from 'fs';
@@ -16,12 +16,12 @@ const PASSWORD = 'B3-Dev!Pass-123';
 const MODULES = [
   '/js/app/app.js', '/js/app/api.js', '/js/app/auth-ui.js', '/js/app/bin-tool.js',
   '/js/app/editor.js', '/js/app/exporter.js', '/js/app/fnsku-tool.js', '/js/app/guides.js',
-  '/js/app/paywall.js', '/js/app/presets.js', '/js/app/session.js', '/js/app/spec-builders.js',
+  '/js/app/presets.js', '/js/app/session.js', '/js/app/spec-builders.js',
   '/js/app/whatnot-tool.js',
 ];
 const HASHES = [
   '#printer-setup-checklist', '#best-label-printers', '#seo-keywords',
-  '#rollo-setup', '#zebra-setup', '#dymo-setup', '#pricing',
+  '#rollo-setup', '#zebra-setup', '#dymo-setup',
 ];
 
 let failures = 0;
@@ -104,7 +104,6 @@ async function main() {
     const key = `b3-canary-${TS}-${Math.random().toString(36).slice(2, 8)}`;
     const r = await exportSpec(client, 'bin', spec, key);
     ok(r.status === 200 && r.data.job.status === 'completed', `canary export -> ${r.status} job=${r.data && r.data.job ? r.data.job.id : 'n/a'}`);
-    line(`   canary remaining_free_uses=${r.data.remaining_free_uses}`);
     const dl = await client.call(`/api/export/${r.data.job.id}/download`, { raw: true });
     ok(dl.status === 200 && dl.bytes.subarray(0, 4).toString() === '%PDF', `canary download -> ${dl.status} %PDF (${dl.bytes.length} bytes)`);
     mkdirSync('scratch', { recursive: true });
@@ -127,12 +126,11 @@ async function main() {
   const binKey = `b3-bin-${TS}-a1a3`;
   const first = await exportSpec(userA, 'bin', binSpec, binKey);
   ok(first.status === 200 && first.data.ok && first.data.job.status === 'completed', `POST /api/export (bin A1-A3 builder spec) -> ${first.status} job=${first.data?.job?.id}`);
-  line(`   job pages=${first.data.job.output_meta.pages} ${first.data.job.output_meta.width_in}x${first.data.job.output_meta.height_in}in remaining=${first.data.remaining_free_uses}`);
+  line(`   job pages=${first.data.job.output_meta.pages} ${first.data.job.output_meta.width_in}x${first.data.job.output_meta.height_in}in`);
 
-  // 4. double-click sim: same key twice -> same job id, remaining unchanged
+  // 4. double-click sim: same key twice -> same job id
   const second = await exportSpec(userA, 'bin', binSpec, binKey);
   ok(second.status === 200 && second.data.job.id === first.data.job.id, `idempotent replay -> same job id (${second.data?.job?.id})`);
-  ok(second.data.remaining_free_uses === first.data.remaining_free_uses, `idempotent replay -> remaining unchanged (${second.data.remaining_free_uses})`);
 
   // 5. download -> %PDF -> exact dims
   const dl = await userA.call(`/api/export/${first.data.job.id}/download`, { raw: true });
@@ -152,7 +150,7 @@ async function main() {
   const anonPost = await anon.call('/api/export', { method: 'POST', body: { idempotency_key: `b3-anon-${TS}`, format: 'pdf', ...binSpec } });
   ok(anonPost.status === 401, `signed-out POST /api/export -> ${anonPost.status} (UI opens auth modal)`);
 
-  // 8. 402 flow: fresh user burns all 10 -> 11th carries upgrade_url
+  // 8. free flow: a fresh user's 11th export still succeeds (no paywall)
   const { client: userB } = await register('burner');
   let last = null;
   for (let i = 1; i <= 10; i++) {
@@ -160,12 +158,9 @@ async function main() {
     last = await exportSpec(userB, 'whatnot', spec, `b3-burn-${TS}-${i}`);
     if (last.status !== 200) break;
   }
-  ok(last.status === 200 && last.data.remaining_free_uses === 0, `burned 10 exports -> remaining 0 (last status ${last.status})`);
+  ok(last.status === 200 && !('remaining_free_uses' in last.data), `10 exports -> 200, no allowance field (last status ${last.status})`);
   const eleventh = await exportSpec(userB, 'whatnot', buildWhatnotSpec({ prefix: '#', start: 99, end: 99, width: 1, height: 0.5, padding: 0.02 }), `b3-burn-${TS}-11`);
-  ok(eleventh.status === 402, `11th export -> ${eleventh.status}`);
-  ok(eleventh.data?.error?.code === 'free_limit_reached', `402 code=${eleventh.data?.error?.code}`);
-  ok(eleventh.data?.error?.upgrade_url === '/pricing', `402 upgrade_url=${eleventh.data?.error?.upgrade_url}`);
-  line(`   402 body: ${JSON.stringify(eleventh.data.error)}`);
+  ok(eleventh.status === 200 && eleventh.data.job.status === 'completed', `11th export -> ${eleventh.status} (free)`);
 
   line(failures ? `\n${failures} FAILURE(S)` : '\nALL B3 INTEGRATION CHECKS PASSED');
   process.exit(failures ? 1 : 0);
