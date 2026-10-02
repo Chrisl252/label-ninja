@@ -1,18 +1,19 @@
 # Label Ninja current state
 
-## Start here (2026-10-01)
+## Start here (2026-10-01, LIVE)
 
-- Owner decision (Chris): payment system and Stripe removed; everything is free; revenue = ads only. Ads are OFF (public/js/ads-config.js enabled:false) pending his call.
-- This lane: worktree C:\Code\label-ninja.com\lane-free-20261001, branch lane/free-everything-20261001, base d354b16. NOT YET DEPLOYED, not committed or pushed; awaiting Ready Check.
-- Live production is still ceb6a67 / Worker eacac403-fbac-4484-bd6f-24398f2232cf (10-batch quota + paywall) until this lane ships.
-- Removed: all billing/Stripe/entitlement modules, dead src/index.js bundle, paywall/pricing/plan frontend, upgrade-flow tests. Billing DB tables dormant, no migration.
-- Export: no quota; free account still required (401 without session); 30 exports/hour (429), 200 pages/batch kept. /api/auth/me reports plan:"free", unlimited:true; billing routes 404.
-- New: free in-browser /shipping-label-to-4x6 (public/js/label-crop/*, vendored pdfjs 4.10.38 + pdf-lib 1.17.1, no upload/account); guides ebay-shipping-label-not-4x6, print-amazon-return-label-4x6, 8-5x11-shipping-label-to-4x6; rewritten home, Whatnot pages, privacy, terms; sitemap 9 URLs; robots disallows /api/.
-- New src/redirects.js: www/http -> https://label-ninja.com 301 (308 non-GET); /pricing, /billing -> / 301. wrangler.toml run_worker_first = true; npm run dev uses --local-upstream localhost:8787.
-- Evidence: npm test pass (spec-builders, redesign-contract, launch 52, Whatnot 105); test-label-crop 13 pass; dry-run bundle 976 KiB. No Chrome Ready Check yet.
-- GSC baseline (90d pre-lane): ~150 impressions, 13 clicks; "shipping label generator" pos 9.7, "whatnot sorting labels" pos 7.4.
-- Next: Ready Check -> approve -> commit + clean release deploy -> RUNBOOKS verify + canary -> GSC sitemap resubmit/inspect. Chris: delete STRIPE_* secrets + disable Stripe webhook after deploy; decide ads.
-- Superseded $9 Stripe candidate preserved at C:\Code\label-ninja.com\label-ninja\backups\uncommitted-9usd-candidate.bak-20261001-154856.patch.
+- LIVE 2026-10-02T00:35Z: commit 03a1229 (branch lane/free-everything-20261001, worktree C:\Code\label-ninja.com\lane-free-20261001), Worker version 28e897a3-ba6c-4cf3-a276-c1cd2f8076f9 on label-ninja.com + www. Pushed; origin/master fast-forwarded to 03a1229 (local master in the main checkout still at d354b16 with the superseded dirty tree).
+- Rollback: Worker eacac403-fbac-4484-bd6f-24398f2232cf (ceb6a67, old paywall build) via wrangler rollback.
+- Owner decision (Chris): payment system and Stripe removed; everything is free; revenue = ads only. Ads still OFF (public/js/ads-config.js enabled:false) pending his call.
+- Removed: all billing/Stripe/entitlement modules, dead src/index.js, paywall/pricing/plan frontend. Billing DB tables dormant, no migration.
+- Export: no quota; free account still required in the studio (401 without session); 30 exports/hour, 200 pages/batch kept.
+- New: free in-browser /shipping-label-to-4x6 (no upload/account); 3 new guides; rewritten home, Whatnot, privacy, terms; sitemap 9 URLs.
+- src/redirects.js: www/http -> https://label-ninja.com 301; /pricing, /billing -> / 301. run_worker_first = true.
+- Live evidence: all 9 sitemap URLs + /api/health 200; /pricing, /billing, www, http 301 to apex; /api/config/pricing 404; home has 0 stripe/9.99 hits. npm test exit 0; test-label-crop exit 0.
+- No Chrome Ready Check happened (preview killed by low memory); Chris approved deploy without it. Eyeball the live 4x6 tool with a real label.
+- GSC sitemap resubmit FAILED 403 (wgf gsc token is read-only scope). Submit/inspect in the GSC UI. Baseline 90d: ~150 impr, 13 clicks.
+- Stripe cleanup: nothing to do — wrangler secret list returns [] and no Stripe webhook was ever created. Ads: Chris said ON; blocked — ad wells need a looser CSP on SEO pages (script/frame/img https:), which needs his explicit permission. GSC check at 28/56 days.
+- Superseded $9 Stripe candidate: C:\Code\label-ninja.com\label-ninja\backups\uncommitted-9usd-candidate.bak-20261001-154856.patch. Main checkout C:\Code\label-ninja.com\label-ninja still has that dirty tree at d354b16.
 
 Module map: ARCHITECTURE.md. Procedures: RUNBOOKS.md. Evidence: LAUNCH_READINESS.md. Backlog: BACKLOG.md.
 
