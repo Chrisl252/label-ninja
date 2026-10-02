@@ -7,18 +7,24 @@
   <meta name="description" content="What free label tool Label Ninja stores, what stays in your browser (including the 4x6 label cropper), which ads appear, and how to delete your account.">
   <link rel="canonical" href="https://label-ninja.com/privacy">
   <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#14161c">
   <meta property="og:site_name" content="Label Ninja">
   <meta property="og:title" content="Label Ninja Privacy Policy">
   <meta property="og:description" content="What Label Ninja stores, what stays in your browser, and which ad partners appear on the site.">
   <meta property="og:url" content="https://label-ninja.com/privacy">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://label-ninja.com/assets/logo.jpg">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://label-ninja.com/assets/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Label Ninja - free thermal label maker">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Label Ninja Privacy Policy">
   <meta name="twitter:description" content="What Label Ninja stores, what stays in your browser, and which ad partners appear on the site.">
-  <meta name="twitter:image" content="https://label-ninja.com/assets/logo.jpg">
-  <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
+  <meta name="twitter:image" content="https://label-ninja.com/assets/og-default.png">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#14161c">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,6 +32,8 @@
 
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/site.css">
+  <script src="/js/site-nav.js" defer></script>
   <link rel="stylesheet" href="/css/guides.css">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[
@@ -36,64 +44,81 @@
 </head>
 <body>
 
-  <header class="masthead masthead--static">
-    <a class="wordmark" href="/" aria-label="Label Ninja home">
-      <img class="wordmark__logo" src="/assets/logo.jpg" alt="">
-      <span class="wordmark__text">
-        <span class="wordmark__name">Label Ninja</span>
-        <span class="wordmark__tag">Thermal label studio</span>
-      </span>
-    </a>
-    <nav class="static-nav" aria-label="Site">
-      <a href="/">Tools</a>
-      <a href="/guides/whatnot-labels-printing-too-small">Guides</a>
-      <a href="/privacy" aria-current="page">Privacy</a>
-    </nav>
-  </header>
+  <header class="site-header"><a class="site-brand" href="/"><img src="/assets/icon-192.png" alt="" width="28" height="28"> Label Ninja</a><nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/">Guides</a></nav></header>
 
   <main class="mode">
     <article class="doc">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><ol><li><a href="/">Label Ninja</a></li><li aria-current="page">Privacy</li></ol></nav>
       <header class="doc__head">
         <span class="doc__stamp">Label Ninja · Christopher Lucas</span>
         <h1>Privacy policy</h1>
         <p class="lede">Label Ninja is a free, browser-based thermal label studio for Amazon FNSKU labels, warehouse bins, Whatnot show numbers, custom barcode labels and resizing shipping labels to 4 × 6. There is nothing to buy and we take no payments. This page says what we store, what stays on your device, and who else is involved.</p>
-        <span class="doc__stamp">Last updated <time datetime="2026-10-01">1 October 2026</time></span>
+        <span class="doc__stamp">Last updated <time datetime="2026-10-01">2026-10-01</time></span>
       </header>
 
-      <section class="doc__section prose">
-        <h2>What stays in your browser</h2>
+      <section class="gd-summary" aria-labelledby="summary-heading">
+        <h2 id="summary-heading">The short version</h2>
+        <ul>
+          <li>Label Ninja is free. We take no payments and collect no card details.</li>
+          <li>The shipping label to 4×6 converter works in your browser. The label file you load is not uploaded to us.</li>
+          <li>Accounts are optional. The studio needs a free account to download PDFs; we store your email and a hashed password.</li>
+          <li>Studio PDFs are rendered on our server. The label details are not kept after rendering; signed-in users' PDFs are kept up to 7 days.</li>
+          <li>The site may show ads. Our ad partners, used or applied for, are Adsterra and Google AdSense.</li>
+          <li>Email <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20privacy">chris@bisket.com</a> to delete your account.</li>
+        </ul>
+        <p class="small">This summary is for convenience. The sections below are the policy.</p>
+      </section>
+
+      <nav class="gd-toc" aria-labelledby="toc-heading">
+        <h2 id="toc-heading">Sections</h2>
+        <ol>
+          <li><a href="#local">What stays in your browser</a></li>
+          <li><a href="#accounts">Optional accounts</a></li>
+          <li><a href="#exports">PDF exports from the studio</a></li>
+          <li><a href="#projects">Saved projects</a></li>
+          <li><a href="#ads">Advertising</a></li>
+          <li><a href="#logs">Abuse protection and logs</a></li>
+          <li><a href="#services">Other services</a></li>
+          <li><a href="#children">Children</a></li>
+          <li><a href="#contact">Changes and contact</a></li>
+        </ol>
+      </nav>
+
+
+      <section id="local" class="doc__section prose">
+        <h2>1. What stays in your browser</h2>
         <p>Designing a label happens in your browser. Uploaded artwork, dragged elements, barcode previews and settings stay on your device until you choose to download a PDF or save a project. Closing the tab or clearing site data removes unsaved local work.</p>
         <p>The <a href="/shipping-label-to-4x6">shipping label to 4×6 tool</a> opens and crops your PDF locally in the browser. The shipping label you load is not uploaded to Label Ninja's servers.</p>
       </section>
 
-      <section class="doc__section prose">
-        <h2>Optional accounts</h2>
+      <section id="accounts" class="doc__section prose">
+        <h2>2. Optional accounts</h2>
         <p>You can use Label Ninja without paying anything. The 4x6 shipping label converter needs no account. The label studio uses a free account to download PDFs, save projects and keep your recent exports. If you create one, we store your email address and a salted PBKDF2 hash of your password, never the password itself. Signing in sets one cookie, <code>ln_session</code>, which is HttpOnly and Secure and expires after 30 days or when you sign out. A password reset sends a single-use link to your email that expires after one hour.</p>
       </section>
 
-      <section class="doc__section prose">
-        <h2>PDF exports from the studio</h2>
+      <section id="exports" class="doc__section prose">
+        <h2>3. PDF exports from the studio</h2>
         <p>When you download a PDF from the studio, the label specification (text, barcode values, sizes and any images you placed) is sent to our server, rendered into a PDF and returned to you. The specification is not kept after rendering. If you are signed in, the finished PDF can stay available in My Exports for up to 7 days before scheduled cleanup removes it; you can delete it sooner.</p>
       </section>
 
-      <section class="doc__section prose">
-        <h2>Saved projects</h2>
+      <section id="projects" class="doc__section prose">
+        <h2>4. Saved projects</h2>
         <p>If you save a project, its name and settings, including any label text and artwork, are stored with your account until you delete it. Nothing is saved unless you choose Save.</p>
       </section>
 
-      <section class="doc__section prose">
-        <h2>Advertising</h2>
-        <p>Label Ninja is free because of ads. Display ads may appear on public pages in clearly marked slots. The ad partners we use or have applied to use are <strong>Adsterra</strong> and <strong>Google AdSense</strong>. These companies may use cookies or similar identifiers to choose and measure the ads they show. They do not receive the contents of your labels or the files you crop. We do not run pop-unders or redirect ads.</p>
+      <section id="ads" class="doc__section prose">
+        <h2>5. Advertising</h2>
+        <p>Label Ninja is free and may show ads to cover its costs. When ads run, they appear on public pages in clearly marked slots. The ad partners we use or have applied to use are <strong>Adsterra</strong> and <strong>Google AdSense</strong>. These companies may use cookies or similar identifiers to choose and measure the ads they show. They do not receive the contents of your labels or the files you crop. We do not run pop-unders or redirect ads.</p>
         <p>You can limit ad personalisation through your browser's cookie settings and, for Google, through <a href="https://adssettings.google.com/">Google's ad settings</a>.</p>
       </section>
 
-      <section class="doc__section prose">
-        <h2>Abuse protection and logs</h2>
+      <section id="logs" class="doc__section prose">
+        <h2>6. Abuse protection and logs</h2>
         <p>Sign-up, sign-in, password-reset and export requests are rate-limited to keep the free service available. Server logs record request outcomes and error codes, not the content of your labels.</p>
       </section>
 
-      <section class="doc__section prose">
-        <h2>Other services</h2>
+      <section id="services" class="doc__section prose">
+        <h2>7. Other services</h2>
         <ul>
           <li><strong>Cloudflare</strong> hosts the site, the API and the database, and sees requests the way any host does.</li>
           <li><strong>Google Fonts</strong> serves the typefaces.</li>
@@ -104,13 +129,13 @@
         <p>We take no payments, so no card or billing details are collected.</p>
       </section>
 
-      <section class="doc__section prose">
-        <h2>Children</h2>
+      <section id="children" class="doc__section prose">
+        <h2>8. Children</h2>
         <p>Label Ninja is built for sellers and warehouse work. It is not directed at children under 13, and we do not knowingly collect personal information from children.</p>
       </section>
 
-      <section class="doc__section prose">
-        <h2>Changes and contact</h2>
+      <section id="contact" class="doc__section prose">
+        <h2>9. Changes and contact</h2>
         <p>If this policy changes, the date at the top changes with it. Label Ninja is operated by Christopher Lucas. For privacy questions or account deletion, email <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20privacy">chris@bisket.com</a>.</p>
       </section>
     </article>
@@ -122,6 +147,7 @@
       <li><a href="/">Label Ninja studio</a> — FNSKU, bin, barcode and custom thermal labels.</li>
       <li><a href="/shipping-label-to-4x6">Shipping label to 4×6</a> — crop a letter-size label PDF to a 4×6 page in your browser.</li>
       <li><a href="/whatnot-labels">Whatnot number labels</a> — numbered item labels for live shows.</li>
+      <li><a href="/guides/">All label printing guides</a> — shipping labels, Whatnot and printer setup.</li>
       <li><a href="/guides/whatnot-labels-printing-too-small">Fix Whatnot labels printing too small</a></li>
       <li><a href="/guides/ebay-shipping-label-not-4x6">eBay shipping label not printing 4×6</a></li>
       <li><a href="/guides/print-amazon-return-label-4x6">Print an Amazon return label on 4×6</a></li>
@@ -138,6 +164,7 @@
       </div>
       <nav class="foot__links" aria-label="Footer">
         <a href="/">Tools</a>
+        <a href="/guides/">Guides</a>
         <a href="/privacy" aria-current="page">Privacy</a>
         <a href="/terms">Terms</a>
         <a href="/sitemap.xml">Sitemap</a>

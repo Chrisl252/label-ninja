@@ -14,7 +14,8 @@ Everything is free. There are no plans, quotas, credits, payments or Stripe. Rev
 
 | File | Responsibility |
 | --- | --- |
-| src/worker.js | Thin dispatch: redirects first, then /api/* to domain routers, else static assets with SPA fallback; private API headers; scheduled cleanup |
+| src/worker.js | Thin dispatch: redirects first, then /api/* to domain routers, else src/static.js; private API headers; scheduled cleanup |
+| src/static.js | Static serving: studio SPA only for /account and /reset (SPA_PATHS); everything else via ASSETS; unknown paths return public/404.html with status 404, noindex, no-store (wrangler not_found_handling = "404-page"). Add any new real front-end path to SPA_PATHS. |
 | src/redirects.js | www/http to https://label-ninja.com (301 GET/HEAD, 308 otherwise); legacy /pricing and /billing to / (301) |
 | src/security.js | Same-origin write guard, JSON request content type, canonical app origin |
 | src/http.js | Sanitized errors, streaming byte-limited body reads |
@@ -58,10 +59,10 @@ Entry is public/js/app/app.js. It owns mode routing (home, dashboard, editor, bi
 | workspace-navigation | Remember the last label tool for the home resume link |
 | guides, toast | Guide hashes and user feedback |
 
-public/index.html is the studio SPA (952 lines; split is a backlog item).
+public/index.html is the studio SPA + crawlable home (685 lines). App-only markup (editor workbench, dashboard, account, dialogs) renders from public/js/app/views/*; live-previews.js + barcode-svg.js draw on-screen barcodes matching the PDF renderer; focus-trap.js handles dialogs. Shared header/breadcrumb: public/css/site.css + public/js/site-nav.js on every page; 404 page public/404.html; guides hub public/guides/index.html.
 
 ### Free 4x6 converter
-
+ v2 adds layouts (1/2/4-up sheets, packing slip), batch, jobs, sample (fake SAMPLE ONLY label), errors, prefs (localStorage ln.labelcrop.v1).
 public/shipping-label-to-4x6.html with public/js/label-crop/ modules: geometry (pure crop/fit/rotate math), detect (pure label detection on RGBA pixels), sources (PDF/image loading), cropbox (draggable crop editor), pages-view (page picker), output (pdf-lib 4x6 or 100x150 mm PDF, vector crop for PDF sources), app (page wiring; libraries load on first use). Styles in public/css/label-crop.css. Vendored public/vendor/pdfjs-4.10.38 and public/vendor/pdf-lib-1.17.1 are served with immutable cache from public/_headers. Tests: scripts/test-label-crop.mjs.
 
 ### Crawlable pages
@@ -72,4 +73,4 @@ public/css contains tokens and mode-specific styles. public/_headers contains CS
 
 ## Verification
 
-npm test runs spec-builders, the DOM contract, test-launch (52) and whatnot-feature (105) against pure modules and real API handlers on SQLite with a fake Resend transport. node scripts/test-label-crop.mjs runs 13 converter tests. npm run test:runtime checks the real password module (LN_CRYPTO_PROBE points it at an isolated real Cloudflare preview; local workerd alone is insufficient). Integration/project suites hit a local Wrangler/D1 instance. scripts/test-deploy-canary.mjs requires explicit production opt-in. scripts/check-launch.mjs checks HTTP routes, redirects and headers without mutations. None certifies email delivery, image-heavy load or physical printing.
+npm test runs spec-builders, the DOM contract, test-launch (52) and whatnot-feature (105) against pure modules and real API handlers on SQLite with a fake Resend transport. node scripts/test-routing.mjs (in npm test) covers 200/404/301 routing. node scripts/test-label-crop.mjs runs 23 converter tests. npm run test:runtime checks the real password module (LN_CRYPTO_PROBE points it at an isolated real Cloudflare preview; local workerd alone is insufficient). Integration/project suites hit a local Wrangler/D1 instance. scripts/test-deploy-canary.mjs requires explicit production opt-in. scripts/check-launch.mjs checks HTTP routes, redirects and headers without mutations. None certifies email delivery, image-heavy load or physical printing.

@@ -7,6 +7,8 @@ import {
   buildTestPrintJob, binTitleSizeIn, whatnotFontSizeIn, parseDataUrl,
 } from '../public/js/app/spec-builders.js';
 import { modeFromHash, sectionIdFromHash } from '../public/js/app/guides.js';
+import { encodeBars, barcodePathData } from '../public/js/app/barcode-svg.js';
+import { encodeCode128 } from '../src/code128.js';
 
 let failures = 0;
 
@@ -159,6 +161,18 @@ assert(modeFromHash('#tools/amazon-fba-fnsku-generator') === 'fnsku', 'routing: 
 assert(modeFromHash('') === 'editor', 'routing: no hash -> editor');
 assert(sectionIdFromHash('#best-label-printers') === 'best-label-printers', 'routing: scroll target extracted');
 assert(sectionIdFromHash('#tools/warehouse-rack-bin-label-generator') === null, 'routing: tool hash has no guide section');
+
+// Preview barcodes (barcode-svg.js) must draw the same bars the PDF renderer prints.
+for (const value of ['X001ABC123', 'BIN-1A', '#27', 'Hello World ~!']) {
+  const preview = encodeBars(value);
+  const pdf = encodeCode128(value);
+  const same = preview && preview.total === pdf.totalModules
+    && preview.bars.length === pdf.bars.length
+    && preview.bars.every((b, i) => b.bar === pdf.bars[i].bar && b.width === pdf.bars[i].width);
+  assert(same, `barcode preview matches PDF CODE128 bars: ${value}`);
+}
+assert(encodeBars('') === null && encodeBars('café') === null, 'barcode preview rejects empty and non-ASCII values');
+assert(barcodePathData('A1', 50, 2).width === encodeBars('A1').total * 2, 'barcode preview scales by module width');
 
 console.log(failures ? `\n${failures} FAILURE(S)` : '\nALL SPEC-BUILDER TESTS PASSED');
 process.exit(failures ? 1 : 0);

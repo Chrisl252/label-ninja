@@ -2,6 +2,7 @@
 // read with the File API and rendered by a self-hosted pdf.js; nothing is uploaded.
 
 import * as pdfjsLib from '/vendor/pdfjs-4.10.38/pdf.min.mjs';
+import { LabelFileError } from './errors.js';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs-4.10.38/pdf.worker.min.mjs';
 
@@ -19,8 +20,9 @@ export function fileKind(file) {
 /** Load one File. Resolves to a source {id, name, kind, bytes, pages:[{index, dispW, dispH}]}. */
 export async function loadFile(file) {
   const kind = fileKind(file);
-  if (!kind) throw new Error(`${file.name}: not a PDF, PNG or JPG file.`);
-  if (file.size > MAX_FILE_BYTES) throw new Error(`${file.name}: larger than 80 MB.`);
+  if (!kind) throw new LabelFileError('unsupported', file.name);
+  if (file.size > MAX_FILE_BYTES) throw new LabelFileError('too-big', file.name);
+  if (!file.size) throw new LabelFileError('empty', file.name);
   const bytes = new Uint8Array(await file.arrayBuffer());
   const base = { id: nextId++, name: file.name || 'label', bytes };
   if (kind === 'pdf') {
@@ -33,7 +35,8 @@ export async function loadFile(file) {
     }
     return { ...base, kind: 'pdf', pdf, pages };
   }
-  const bitmap = await createImageBitmap(new Blob([bytes], { type: kind === 'png' ? 'image/png' : 'image/jpeg' }));
+  let bitmap;
+  try { bitmap = await createImageBitmap(new Blob([bytes], { type: kind === 'png' ? 'image/png' : 'image/jpeg' })); } catch (err) { throw new LabelFileError('image-decode', file.name, err?.message); }
   return { ...base, kind: 'image', format: kind, bitmap, pages: [{ index: 0, dispW: bitmap.width, dispH: bitmap.height }] };
 }
 

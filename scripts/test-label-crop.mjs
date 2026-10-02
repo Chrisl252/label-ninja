@@ -8,6 +8,11 @@ import {
 } from '../public/js/label-crop/geometry.js';
 import { detectLabel } from '../public/js/label-crop/detect.js';
 import { buildLabelPdf, pdfPageInfo } from '../public/js/label-crop/output.js';
+import { LAYOUTS, layoutCells, cellToPage, cropPixels, slipRegion, planPage } from '../public/js/label-crop/layouts.js';
+import { buildSamplePdf } from '../public/js/label-crop/sample.js';
+import { friendlyError, LabelFileError } from '../public/js/label-crop/errors.js';
+import { readPrefs, writePrefs, sanitizePrefs, PREF_DEFAULTS, PREF_KEY } from '../public/js/label-crop/prefs.js';
+import { inflateSync } from 'node:zlib';
 
 let passed = 0;
 const near = (a, b, eps = 1e-6, msg = '') => assert.ok(Math.abs(a - b) <= eps, `${msg} expected ${b}, got ${a}`);
@@ -172,6 +177,145 @@ await test('image output: PNG embedded at native size on a 4x6 page', async () =
   const out = await PDFLib.PDFDocument.load(bytes);
   const { width, height } = out.getPage(0).getSize();
   assert.equal(width, 288); assert.equal(height, 432);
+});
+
+// --- multi-label sheets, packing slips, sample, errors, prefs -------------------------------
+
+await test('layouts: cells tile the page exactly with no overlap', () => {
+  for (const id of Object.keys(LAYOUTS)) {
+    const cells = layoutCells(id);
+    near(cells.reduce((a, c) => a + c.w * c.h, 0), 1, 1e-9, `${id} area`);
+    for (let i = 0; i < cells.length; i++) for (let j = i + 1; j < cells.length; j++) {
+      const a = cells[i], b = cells[j];
+      const ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), oy = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+      assert.ok(ox <= 1e-9 || oy <= 1e-9, `${id} cells ${i},${j} overlap`);
+    }
+  }
+  assert.equal(layoutCells('four').length, 4);
+  assert.equal(layoutCells('nope').length, 1);
+  const c = layoutCells('four'); c[0].w = 9; assert.equal(LAYOUTS.four.cells[0].w, 0.5); // copies
+});
+
+await test('layouts: cellToPage and cropPixels agree on geometry', () => {
+  nearRect(cellToPage({ x: 0.5, y: 0.5, w: 0.5, h: 0.5 }, { x: 0.2, y: 0.4, w: 0.6, h: 0.2 }), { x: 0.6, y: 0.7, w: 0.3, h: 0.1 });
+  const img = syntheticPage(100, 200, (ink) => ink(75, 150));
+  const sub = cropPixels(img, { x: 0.5, y: 0.5, w: 0.5, h: 0.5 });
+  assert.equal(sub.width, 50); assert.equal(sub.height, 100);
+  assert.equal(sub.data[((150 - 100) * 50 + (75 - 50)) * 4], 0, 'ink pixel kept at the mapped spot');
+  assert.equal(sub.data[0], 255);
+});
+
+// A letter page at 1 px/pt with labels framed at the given page rects (pt, top-left origin).
+const framedSheet = (frames) => syntheticPage(612, 792, (ink) => {
+  for (const [x0, y0, x1, y1] of frames) { strokeRect(ink, x0, y0, x1, y1, 3); fillRect(ink, x0 + 30, y0 + 40, x1 - 30, y0 + 90); }
+});
+const planWith = (pixels, layout, extra = {}) => planPage({ pixels, layout, detect: (p) => detectLabel(p, { margin: 0 }), ...extra });
+
+await test('multi-label: 2-up stacked sheet splits into two label crops', () => {
+  const parts = planWith(framedSheet([[90, 40, 521, 327], [90, 436, 521, 723]]), 'two-stack');
+  assert.equal(parts.length, 2);
+  nearRect(parts[0].rect, { x: 90 / 612, y: 40 / 792, w: 432 / 612, h: 288 / 792 }, 0.005);
+  nearRect(parts[1].rect, { x: 90 / 612, y: 436 / 792, w: 432 / 612, h: 288 / 792 }, 0.005);
+  assert.ok(parts.every((p) => p.role === 'label'));
+});
+
+await test('multi-label: side-by-side and 4-up sheets; blank slots skipped', () => {
+  const side = planWith(framedSheet([[20, 100, 291, 507], [326, 100, 597, 507]]), 'two-side');
+  assert.equal(side.length, 2);
+  near(side[1].rect.x, 326 / 612, 0.005); near(side[1].rect.w, 272 / 612, 0.005);
+  const four = planWith(framedSheet([[30, 40, 280, 360], [336, 40, 586, 360], [30, 436, 280, 756]]), 'four');
+  assert.equal(four.length, 3, 'fourth slot is blank on a partly used sheet');
+  assert.deepEqual(four.map((p) => p.slot), [1, 2, 3]);
+  for (const p of four) assert.ok(p.rect.w <= 0.5 + 1e-9 && p.rect.h <= 0.5 + 1e-9, 'crop stays in its slot');
+  const fixed = planWith(framedSheet([[30, 40, 280, 360]]), 'four', { preset: 'letter-top', fixedRect: { x: 0, y: 0, w: 1, h: 0.5 } });
+  assert.equal(fixed.length, 4, 'fixed preset keeps every slot');
+  nearRect(fixed[3].rect, { x: 0.5, y: 0.5, w: 0.5, h: 0.5 });
+  const blank = planWith(syntheticPage(612, 792, () => {}), 'four');
+  assert.equal(blank.length, 1); nearRect(blank[0].rect, { x: 0, y: 0, w: 1, h: 1 });
+});
+
+await test('packing slip: slipRegion picks the largest leftover strip', () => {
+  nearRect(slipRegion({ x: 0, y: 0, w: 1, h: 0.5 }), { x: 0, y: 0.5, w: 1, h: 0.5 });
+  nearRect(slipRegion({ x: 0.1, y: 0.4, w: 0.8, h: 0.6 }), { x: 0, y: 0, w: 1, h: 0.4 });
+  nearRect(slipRegion({ x: 0, y: 0, w: 0.45, h: 1 }), { x: 0.45, y: 0, w: 0.55, h: 1 });
+  assert.equal(slipRegion({ x: 0, y: 0, w: 1, h: 1 }), null);
+  assert.equal(slipRegion({ x: 0, y: 0, w: 1, h: 0.96 }), null);
+});
+
+await test('packing slip: dropped by default, own page on request, skipped when blank', () => {
+  const sheet = syntheticPage(612, 792, (ink) => {
+    strokeRect(ink, 90, 36, 521, 323, 3); fillRect(ink, 120, 200, 480, 260);
+    for (let y = 460; y < 620; y += 16) fillRect(ink, 72, y, 540, y + 5); // slip text lines
+  });
+  assert.equal(planWith(sheet, 'single').length, 1);
+  const kept = planWith(sheet, 'single', { slip: 'page' });
+  assert.deepEqual(kept.map((p) => p.role), ['label', 'slip']);
+  const s = kept[1].rect;
+  assert.ok(s.y >= kept[0].rect.y + kept[0].rect.h - 1e-9, 'slip sits below the label');
+  near(s.y, 460 / 792, 0.01); near(s.x, 72 / 612, 0.01);
+  const noSlip = framedSheet([[90, 36, 521, 323]]);
+  assert.equal(planWith(noSlip, 'single', { slip: 'page' }).length, 1, 'blank remainder adds no page');
+  assert.equal(planWith(sheet, 'two-stack', { slip: 'page' }).every((p) => p.role === 'label'), true);
+});
+
+const pdfText = (bytes) => {
+  // pdf-lib may Flate-compress streams; inflate any we find so drawn text can be searched.
+  const raw = Buffer.from(bytes).toString('latin1');
+  let out = raw;
+  for (const m of raw.matchAll(/stream\r?\n([\s\S]*?)endstream/g)) { try { out += inflateSync(Buffer.from(m[1], 'latin1')).toString('latin1'); } catch { /* not flate */ } }
+  return out;
+};
+const hasText = (txt, s) => txt.includes(s) || txt.toUpperCase().includes(Buffer.from(s, 'latin1').toString('hex').toUpperCase());
+
+await test('sample: generator makes a valid letter PDF marked SAMPLE ONLY', async () => {
+  const bytes = await buildSamplePdf(PDFLib);
+  assert.equal(Buffer.from(bytes.slice(0, 5)).toString('latin1'), '%PDF-');
+  const doc = await PDFLib.PDFDocument.load(bytes);
+  assert.equal(doc.getPageCount(), 1);
+  const { width, height } = doc.getPage(0).getSize();
+  assert.equal(width, 612); assert.equal(height, 792);
+  const txt = pdfText(bytes);
+  assert.ok(hasText(txt, 'SAMPLE ONLY - NOT A REAL LABEL'), 'sample marking present');
+  assert.ok(hasText(txt, 'PACKING SLIP (SAMPLE ONLY)'), 'slip present');
+  for (const layout of ['two-stack', 'two-side', 'four']) {
+    const d = await PDFLib.PDFDocument.load(await buildSamplePdf(PDFLib, { layout }));
+    assert.equal(d.getPageCount(), 1, layout);
+  }
+});
+
+await test('sample: converts to 288 x 432 pt vector pages (label + slip)', async () => {
+  const src = await PDFLib.PDFDocument.load(await buildSamplePdf(PDFLib));
+  const label = { x: 90 / 612, y: 36 / 792, w: 432 / 612, h: 288 / 792 };
+  const slip = slipRegion(label);
+  const jobs = [{ kind: 'pdf', doc: src, pageIndex: 0, rect: label, rotation: 'auto' }, { kind: 'pdf', doc: src, pageIndex: 0, rect: slip, rotation: 'auto' }];
+  const { bytes, pages } = await buildLabelPdf(PDFLib, jobs, { size: '4x6' });
+  assert.equal(pages, 2);
+  const out = await PDFLib.PDFDocument.load(bytes);
+  for (const p of out.getPages()) { const { width, height } = p.getSize(); near(width, 288); near(height, 432); }
+});
+
+await test('errors: plain-language messages for common failures', () => {
+  assert.match(friendlyError({ name: 'PasswordException', message: 'No password given' }, 'label.pdf'), /label\.pdf is password-protected.*without the password/);
+  assert.match(friendlyError(new LabelFileError('unsupported', 'label.heic'), 'label.heic'), /HEIC file\. Add a PDF, PNG or JPG/);
+  assert.match(friendlyError({ name: 'InvalidPDFException', message: 'Invalid PDF structure.' }, 'x.pdf'), /does not open as a PDF/);
+  assert.match(friendlyError(new LabelFileError('too-big', 'big.pdf'), 'big.pdf'), /larger than 80 MB/);
+  assert.match(friendlyError(new LabelFileError('empty', 'e.pdf'), 'e.pdf'), /empty/);
+  assert.match(friendlyError(new Error('boom'), 'z.pdf'), /Could not open z\.pdf.*boom/);
+});
+
+await test('prefs: sanitized round trip; broken storage falls back to defaults', () => {
+  const mem = new Map();
+  const store = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, String(v)) };
+  assert.deepEqual(readPrefs(store), PREF_DEFAULTS);
+  assert.equal(writePrefs({ preset: 'letter-top', layout: 'four', slip: 'page', rotate: '90', size: '100x150' }, store), true);
+  assert.deepEqual(readPrefs(store), { preset: 'letter-top', layout: 'four', slip: 'page', rotate: '90', size: '100x150' });
+  mem.set(PREF_KEY, '{not json');
+  assert.deepEqual(readPrefs(store), PREF_DEFAULTS);
+  assert.deepEqual(sanitizePrefs({ preset: '<script>', size: '4x6', extra: 1 }), PREF_DEFAULTS);
+  const throwing = { getItem() { throw new Error('denied'); }, setItem() { throw new Error('denied'); } };
+  assert.deepEqual(readPrefs(throwing), PREF_DEFAULTS);
+  assert.equal(writePrefs(PREF_DEFAULTS, throwing), false);
+  assert.deepEqual(readPrefs(null), PREF_DEFAULTS);
 });
 
 console.log(`\n${passed} tests passed`);

@@ -2,20 +2,24 @@
 // public/index.html, every LN.* inline handler in the HTML must be exported on window.LN,
 // no Tailwind class strings survive anywhere in public/ (html + app js), no payment UI
 // remains (everything is free since 2026-10-01), and the home page keeps its SEO contract.
+// App-only markup lives in public/js/app/views/*.js templates mounted at boot; their ids
+// and LN.* handlers are checked together with index.html.
 import { readFileSync, readdirSync } from 'node:fs';
 
 const html = readFileSync('public/index.html', 'utf8');
 const jsDir = 'public/js/app';
-const jsFiles = readdirSync(jsDir).filter((f) => f.endsWith('.js'));
+const jsFiles = readdirSync(jsDir, { recursive: true }).map((f) => f.replace(/\\/g, '/')).filter((f) => f.endsWith('.js'));
 const js = Object.fromEntries(jsFiles.map((f) => [f, readFileSync(`${jsDir}/${f}`, 'utf8')]));
 const allJs = Object.values(js).join('\n');
+const views = jsFiles.filter((f) => f.startsWith('views/') && f !== 'views/mount.js').map((f) => js[f]).join('\n');
+const markup = `${html}\n${views}`; // everything the browser ends up with
 
 let fail = 0;
 const bad = (msg) => { fail++; console.log('FAIL', msg); };
 
 // 1. ids queried by JS exist in HTML (skip ids the JS itself creates or template-only ids)
 const idRe = /getElementById\(['"]([^'"]+)['"]\)|querySelector(?:All)?\(['"]#([a-zA-Z][\w-]*)['"]\)/g;
-const htmlIds = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
+const htmlIds = new Set([...markup.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
 const jsCreated = new Set([...allJs.matchAll(/\.id\s*=\s*['"]([^'"]+)['"]/g)].map((m) => m[1]));
 const jsTemplateIds = new Set([...allJs.matchAll(/id="([^"$]+)"/g)].map((m) => m[1]));
 const queried = new Map();
@@ -31,11 +35,11 @@ for (const [id, files] of queried) {
 }
 // duplicates
 const idCounts = {};
-for (const m of html.matchAll(/\sid="([^"]+)"/g)) idCounts[m[1]] = (idCounts[m[1]] || 0) + 1;
+for (const m of markup.matchAll(/\sid="([^"]+)"/g)) idCounts[m[1]] = (idCounts[m[1]] || 0) + 1;
 for (const [id, n] of Object.entries(idCounts)) if (n > 1) bad(`duplicate id #${id} x${n}`);
 
 // 2. LN.* handlers in HTML are exported on window.LN in app.js
-const lnCalls = new Set([...html.matchAll(/LN\.([a-zA-Z]+)\(/g)].map((m) => m[1]));
+const lnCalls = new Set([...markup.matchAll(/LN\.([a-zA-Z]+)\(/g)].map((m) => m[1]));
 const lnBlock = js['app.js'].match(/window\.LN\s*=\s*\{([\s\S]*?)\n\};/);
 const exported = new Set(lnBlock ? [...lnBlock[1].matchAll(/^\s*([a-zA-Z]+)\s*[,:]/gm)].map((m) => m[1]) : []);
 for (const fn of lnCalls) if (!exported.has(fn) && !js['app.js'].includes(`${fn},`) && !js['app.js'].includes(`${fn}:`)) bad(`LN.${fn} used in HTML but not on window.LN`);
@@ -74,9 +78,10 @@ const desc = (html.match(/<meta name="description" content="([^"]*)"/) || [])[1]
 if (!desc || desc.length >= 155) bad(`meta description missing or >= 155 chars (${desc.length})`);
 if (!html.includes('<link rel="canonical" href="https://label-ninja.com/">')) bad('canonical link missing');
 for (const tag of ['og:title', 'og:description', 'og:url', 'twitter:card']) if (!html.includes(`"${tag}"`)) bad(`${tag} meta missing`);
-const ld = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
-let ldData = null;
-try { ldData = ld && JSON.parse(ld[1]); } catch { bad('JSON-LD does not parse'); }
+const lds = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => {
+  try { return JSON.parse(m[1]); } catch { bad('JSON-LD does not parse'); return {}; }
+});
+const ldData = lds.find((d) => d['@type'] === 'WebApplication') || null;
 if (!ldData || ldData['@type'] !== 'WebApplication' || ldData.offers?.price !== '0') bad('WebApplication JSON-LD with offers price 0 missing');
 if (ldData && (ldData.aggregateRating || ldData.review)) bad('JSON-LD must not carry ratings/reviews');
 const homeMain = (html.match(/<main id="mode-home"[\s\S]*?<\/main>/) || [''])[0];
@@ -90,6 +95,30 @@ if (!/id="free-tools"/.test(homeMain) || !/id="faq"/.test(homeMain)) bad('home n
 const foot = (html.match(/<footer class="foot[\s\S]*?<\/footer>/) || [''])[0];
 for (const href of ['/privacy', '/terms', '/#free-tools']) if (!foot.includes(`href="${href}"`)) bad(`footer missing ${href}`);
 if (!/MODES = \[[^\]]*'home'/.test(js['app.js'])) bad('home mode not routed in app.js');
+
+// 7. home: FAQPage JSON-LD mirrors the visible FAQ exactly; one shared header; same-origin only
+const plain = (frag) => frag.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").trim();
+const faqHtml = (homeMain.match(/<section id="faq"[\s\S]*?<\/section>/) || [''])[0];
+const visibleQa = [...faqHtml.matchAll(/<h3>([\s\S]*?)<\/h3>\s*<p>([\s\S]*?)<\/p>/g)].map((m) => [plain(m[1]), plain(m[2])]);
+const faqLd = lds.find((d) => d['@type'] === 'FAQPage');
+const ldQa = (faqLd?.mainEntity || []).map((q) => [q.name, q.acceptedAnswer?.text]);
+if (!visibleQa.length) bad('home FAQ has no visible questions');
+if (JSON.stringify(visibleQa) !== JSON.stringify(ldQa)) bad(`FAQPage JSON-LD (${ldQa.length}) does not match the visible FAQ (${visibleQa.length}) exactly`);
+if ((html.match(/<header class="site-header/g) || []).length !== 1 || /class="[^"]*\bwordmark\b/.test(html)) bad('index.html must have exactly one site header (no second app top bar)');
+const header = (html.match(/<header class="site-header[\s\S]*?<\/header>/) || [''])[0];
+if (!/<a class="site-brand" href="\/">/.test(header)) bad('site-brand link missing');
+for (const href of ['/shipping-label-to-4x6', '/whatnot-labels', '/#tools/warehouse-rack-bin-label-generator', '/#tools/amazon-fba-fnsku-generator', '/guides/']) {
+  if (!header.includes('<nav class="site-nav" aria-label="Main">') || !header.includes(`<a href="${href}">`)) bad(`site-nav missing ${href}`);
+}
+for (const m of html.matchAll(/<(?:script|link|img)\b[^>]*\b(?:src|href)="(?:https?:)?\/\/[^"]*"[^>]*>/g)) {
+  if (!/rel="canonical"/.test(m[0])) bad(`external resource in index.html: ${m[0].slice(0, 100)}`);
+}
+for (const m of markup.matchAll(/<img\b[^>]*>/g)) if (!/\swidth="\d+"/.test(m[0]) || !/\sheight="\d+"/.test(m[0])) bad(`img without width/height: ${m[0].slice(0, 80)}`);
+const homeCta = (homeMain.match(/<div class="home-cta">[\s\S]*?<\/div>/) || [''])[0];
+if (!/class="btn btn--primary/.test(homeCta) || !homeCta.includes('href="/shipping-label-to-4x6"')) bad('home hero needs a primary CTA and the 4x6 converter CTA');
+const lineCount = html.split('\n').length;
+if (lineCount > 700) bad(`public/index.html is ${lineCount} lines (Rule 11 budget 700)`);
+if (!/mountViews\(\)/.test(js['app.js'])) bad('app.js must mount the app-only views');
 
 console.log(fail ? `${fail} contract failures` : `contract OK — ${queried.size} queried ids resolved, ${lnCalls.size} LN handlers wired, ${htmlIds.size} ids in page`);
 process.exit(fail ? 1 : 0);

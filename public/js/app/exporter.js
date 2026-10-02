@@ -6,6 +6,8 @@
 import { api, apiFetchBlob } from './api.js';
 import { isSignedIn } from './session.js';
 import { openAuthModal, setAfterAuth } from './auth-ui.js';
+import { toast, announce } from './toast.js';
+import { rememberOpener, restoreOpener, trapFocus } from './focus-trap.js';
 
 const idemKeys = Object.create(null);
 const dirty = Object.create(null);
@@ -118,17 +120,18 @@ export async function runExport(tool, buildBody, button) {
   try {
     body = buildBody();
   } catch (err) {
-    window.alert(err.message || 'Could not build the export.');
+    toast(err.message || 'Could not build the export.', { kind: 'error', ms: 8000 });
     return;
   }
 
   if (!isSignedIn()) {
     setPending(tool, buildBody, button);
-    openAuthModal({ mode: 'signin', intent: 'export' });
+    openAuthModal({ mode: 'auto', intent: 'export' });
     return;
   }
 
   setBusy(button, true);
+  announce('Preparing your PDF…');
   try {
     const payload = { idempotency_key: getIdempotencyKey(tool), format: 'pdf', ...body };
     const data = await api('/api/export', { method: 'POST', body: payload });
@@ -137,13 +140,14 @@ export async function runExport(tool, buildBody, button) {
     const filename = (job.output_meta && job.output_meta.filename) || `${tool}-label-ninja.pdf`;
     saveBlob(blob, filename);
     offerOpenPdf(blob, filename);
+    announce(`PDF downloaded: ${filename}. Print it at 100% scale.`);
   } catch (err) {
     if (err.status === 401) {
       setPending(tool, buildBody, button);
-      openAuthModal({ mode: 'signin', intent: 'export' });
+      openAuthModal({ mode: 'auto', intent: 'export' });
     } else {
       if (['export_expired', 'export_retry_required', 'idempotency_conflict', 'export_failed'].includes(err.code)) markDirty(tool);
-      window.alert(err.message || 'Export failed. Try again.');
+      toast(err.message || 'Export failed. Try again.', { kind: 'error', ms: 8000 });
     }
   } finally {
     setBusy(button, false);
@@ -173,7 +177,7 @@ async function redownload(jobId) {
     saveBlob(blob, `label-ninja-${jobId.slice(0, 8)}.pdf`);
     offerOpenPdf(blob, `label-ninja-${jobId.slice(0, 8)}.pdf`);
   } catch (err) {
-    window.alert(err.message || 'Download failed.');
+    toast(err.message || 'Download failed.', { kind: 'error' });
   }
 }
 
@@ -183,7 +187,7 @@ async function removeExport(jobId, row) {
     await api(`/api/export/${jobId}`, { method: 'DELETE' });
     row.remove();
   } catch (err) {
-    window.alert(err.message || 'Delete failed.');
+    toast(err.message || 'Delete failed.', { kind: 'error' });
   }
 }
 
@@ -191,7 +195,7 @@ function renderDrawer(exportsList) {
   const container = document.getElementById('exports-list');
   container.innerHTML = '';
   if (!exportsList.length) {
-    container.innerHTML = '<p class="small muted">No exports yet. Your PDFs will appear here for 7 days.</p>';
+    container.innerHTML = '<div class="empty"><p class="empty__title">No PDFs yet</p><p class="small muted">Every PDF you download shows up here, ready to re-download for 7 days.</p></div>';
     return;
   }
   for (const job of exportsList) {
@@ -221,8 +225,10 @@ function renderDrawer(exportsList) {
 export async function openExportsDrawer() {
   const drawer = document.getElementById('exports-drawer');
   if (!drawer) return;
+  rememberOpener(drawer);
   drawer.classList.remove('hidden');
   document.body.classList.add('overflow-hidden');
+  document.getElementById('exports-close').focus();
   const container = document.getElementById('exports-list');
   container.innerHTML = '<p class="small muted">Loading…</p>';
   try {
@@ -235,15 +241,17 @@ export async function openExportsDrawer() {
 
 export function closeExportsDrawer() {
   const drawer = document.getElementById('exports-drawer');
-  if (!drawer) return;
+  if (!drawer || drawer.classList.contains('hidden')) return;
   drawer.classList.add('hidden');
   document.body.classList.remove('overflow-hidden');
+  restoreOpener(drawer);
 }
 
 export function initExporter() {
   if (initialized) return;
   initialized = true;
   setAfterAuth(resumePending);
+  trapFocus(document.getElementById('exports-drawer'));
   document.getElementById('exports-close').addEventListener('click', closeExportsDrawer);
   document.getElementById('exports-drawer').addEventListener('click', (event) => {
     if (event.target === document.getElementById('exports-drawer')) closeExportsDrawer();

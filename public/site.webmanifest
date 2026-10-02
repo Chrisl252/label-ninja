@@ -1,0 +1,15 @@
+{
+  "name": "Label Ninja",
+  "short_name": "Label Ninja",
+  "description": "Free thermal label maker: 4x6 shipping labels, Whatnot labels, bin and FNSKU barcodes.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#14161c",
+  "theme_color": "#14161c",
+  "icons": [
+    { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

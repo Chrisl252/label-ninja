@@ -3,6 +3,7 @@
 import { WHATNOT_STOCKS } from './presets.js';
 import { buildWhatnotSpec } from './spec-builders.js';
 import { runExport } from './exporter.js';
+import { toast } from './toast.js';
 import { validateWhatnotSettings, whatnotSettingsFromSearch, WHATNOT_TOOL_HASH } from '../whatnot-settings.js';
 
 function readSettings() {
@@ -54,7 +55,7 @@ export function exportWhatnotBatch(button) {
   try {
     settings = validateWhatnotSettings(readSettings());
   } catch (error) {
-    window.alert(error.message);
+    toast(error.message, { kind: 'error', ms: 8000 });
     return;
   }
   runExport(

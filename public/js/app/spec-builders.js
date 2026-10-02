@@ -30,7 +30,7 @@ export function whatnotFontSizeIn(text, stock) {
   return fitWhatnotTextIn(text, stock);
 }
 
-function binBarcodeCode(binText) {
+export function binBarcodeCode(binText) {
   return binText.replace(/\s+/g, '-');
 }
 

@@ -311,80 +311,77 @@ p { margin: 0; }
 .link { background: none; border: 0; padding: 0; color: var(--color-ink-2); text-decoration: underline; text-underline-offset: 0.15em; cursor: pointer; font-size: inherit; }
 .link:hover { color: var(--color-ink); }
 
-/* ---------- masthead + the roll ---------- */
-.masthead {
-  position: sticky; top: 0; z-index: 30;
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;
-  gap: var(--space-sm) var(--space-md);
-  min-height: var(--masthead-h);
-  padding: 0 var(--space-md);
-  background: var(--color-chassis-2);
-  border-bottom: var(--rule);
+/* ---------- masthead: the shared .site-header (css/site.css) + session actions + the roll ----------
+ * One header. css/site.css owns brand + main nav; these rules add the session
+ * actions and the app's tool tabs ("the roll"). Selectors are .masthead.site-header
+ * so they hold regardless of stylesheet order. */
+.skip-link {
+  position: absolute; left: var(--space-sm); top: -4rem; z-index: 60;
+  padding: var(--space-2xs) var(--space-sm);
+  background: var(--color-stock); color: var(--color-stock-ink);
+  border-radius: var(--radius-label); font-weight: 600; text-decoration: none;
 }
-.wordmark { display: inline-flex; align-items: center; gap: var(--space-xs); text-decoration: none; color: var(--color-ink); min-width: 0; }
-.wordmark__logo { width: 34px; height: 34px; border-radius: var(--radius-label); border: var(--rule-2); object-fit: cover; flex: 0 0 auto; }
-.wordmark__name { font-family: var(--font-display); font-weight: 700; font-size: var(--text-lg); letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; white-space: nowrap; }
-.wordmark__tag { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-ink-3); line-height: 1; margin-top: 0.3rem; white-space: nowrap; }
-.wordmark__text { display: flex; flex-direction: column; min-width: 0; }
+.skip-link:focus { top: var(--space-2xs); }
+.masthead.site-header { z-index: 30; }
+.masthead__actions { display: flex; align-items: center; gap: var(--space-2xs); min-width: 0; margin-left: auto; order: 1; }
+.masthead.site-header .site-nav { order: 2; }
+.masthead__email { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-ink-2); background: none; border: 0; padding: 0.4rem 0.2rem; min-height: 2rem; max-width: 11rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.masthead__email:hover { color: var(--color-ink); }
+@media (min-width: 48rem) {
+  .masthead.site-header .site-nav { order: 0; margin-left: auto; }
+  .masthead__actions { margin-left: 0; }
+}
+
+/* the roll: the app's tool tabs. Hidden on the home view (the main nav covers it). */
 .roll {
   display: flex; align-items: center; gap: 4px;
-  justify-self: center;
   max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain;
   scrollbar-width: none;
   padding: 4px;
-  background: var(--color-chassis);
+  background: var(--color-chassis-2);
   border: var(--rule);
   border-radius: var(--radius-label);
 }
+body[data-mode="home"] .roll { display: none; }
 .roll::-webkit-scrollbar { display: none; }
 .roll__tab {
   flex: 0 0 auto;
   font-family: var(--font-display); font-weight: 600; font-size: var(--text-base);
   letter-spacing: 0.06em; text-transform: uppercase; line-height: 1; white-space: nowrap;
   color: var(--color-ink-2);
-  padding: 0.55rem 0.85rem;
+  padding: 0.55rem 0.85rem; min-height: 2.25rem;
   border: 1px dashed transparent; border-radius: 3px; background: transparent;
 }
 .roll__tab:hover { color: var(--color-ink); border-color: var(--color-rule-2); }
 .roll__tab.is-active { background: var(--color-stock); color: var(--color-stock-ink); border-color: var(--color-stock); border-style: solid; }
 .roll__tab.is-active:hover { color: var(--color-stock-ink); }
-.masthead__actions { display: flex; align-items: center; gap: var(--space-2xs); justify-self: end; min-width: 0; }
-.masthead__actions .chip { max-width: 12rem; overflow: hidden; text-overflow: ellipsis; }
-.masthead__email { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-ink-2); background: none; border: 0; padding: 0.4rem 0.2rem; max-width: 11rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.masthead__email:hover { color: var(--color-ink); }
 
+@media (min-width: 900px) {
+  .masthead.site-header { flex-wrap: wrap; }
+  .masthead.site-header .roll { order: 3; flex: 1 1 100%; justify-content: flex-start; }
+}
+/* phones and tablets: the roll is a bottom dock in the app views */
 @media (max-width: 899px) {
-  .masthead { grid-template-columns: minmax(0, 1fr) auto; min-height: 3.25rem; }
-  .wordmark__tag { display: none; }
-  .wordmark__name { font-size: var(--text-md); }
   .roll {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
-    justify-self: stretch; max-width: none;
     border-radius: 0; border: 0; border-top: var(--rule);
     padding: 6px var(--space-2xs) calc(6px + env(safe-area-inset-bottom));
-    background: var(--color-chassis-2);
     min-height: var(--dock-h);
     scroll-snap-type: x proximity;
   }
   .roll__tab { scroll-snap-align: center; font-size: var(--text-sm); padding: 0.6rem 0.75rem; }
-  body { padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom)); }
+  body:not([data-mode="home"]) { padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom)); }
   .masthead__actions .btn { padding-inline: 0.7rem; }
 }
 @media (max-width: 480px) {
-  .masthead:not(.masthead--static) { grid-template-columns: minmax(0, 1fr); gap: var(--space-2xs); padding-block: var(--space-xs); }
-  .masthead__actions { width: 100%; justify-self: stretch; justify-content: space-between; flex-wrap: wrap; }
-  .masthead__actions .masthead__email { display: inline-block; font-family: var(--font-body); font-size: var(--text-sm); }
   .masthead__actions #signout-btn { display: none; }
-  .masthead__actions .chip { max-width: 7.5rem; }
+  .masthead__actions .masthead__email { font-family: var(--font-body); font-size: var(--text-sm); }
   .roll { gap: 2px; padding-inline: 4px; }
   .roll__tab {
-    flex: 1 1 0;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 0.625rem;
-    letter-spacing: 0.025em;
-    padding-inline: 0.2rem;
+    flex: 1 1 0; min-width: 0; min-height: 2.75rem;
+    white-space: normal; text-align: center; line-height: 1.1;
+    font-size: var(--text-xs); letter-spacing: 0.02em;
+    padding: 0.3rem 0.15rem;
   }
 }
 

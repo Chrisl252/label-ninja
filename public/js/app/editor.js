@@ -6,6 +6,8 @@
 import { PRESETS } from './presets.js';
 import { buildEditorSpec } from './spec-builders.js';
 import { runExport, markDirty } from './exporter.js';
+import { renderBarcodeSvg } from './barcode-svg.js';
+import { toast } from './toast.js';
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
@@ -231,13 +233,8 @@ export function renderCanvas() {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       svg.id = `barcode-${el.id}`;
       div.appendChild(svg);
-      setTimeout(() => {
-        try {
-          window.JsBarcode(`#barcode-${el.id}`, el.text, { format: 'CODE128', width: 2, height: 50, displayValue: true, fontSize: 13, fontOptions: 'bold', margin: 0 });
-        } catch {
-          // invalid barcode text — preview left empty; export surfaces the error
-        }
-      }, 0);
+      // Same-origin vector preview; non-encodable text leaves it empty and the export surfaces the error.
+      renderBarcodeSvg(svg, el.text, { height: 50, fontSize: 13, moduleWidth: 2 });
     } else if (el.type === 'image') {
       const image = document.createElement('img');
       image.src = el.src;
@@ -369,7 +366,7 @@ export function loadTemplate(type) {
 
 export function exportEditorLabel(button) {
   if (!elements.length) {
-    window.alert('Add at least one element before exporting.');
+    toast('Add at least one element (text, barcode, badge or image) before downloading.', { kind: 'error' });
     return;
   }
   runExport('editor', () => buildEditorSpec({ elements, preset: getCurrentPreset() }), button);

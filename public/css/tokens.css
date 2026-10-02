@@ -17,7 +17,7 @@
   /* ink on chassis */
   --color-ink:        oklch(96% 0.004 250);
   --color-ink-2:      oklch(76% 0.008 250);
-  --color-ink-3:      oklch(58% 0.010 250);
+  --color-ink-3:      oklch(64% 0.010 250); /* AA on chassis-2 for small text */
 
   /* label stock — the paper */
   --color-stock:      oklch(99.2% 0 0);

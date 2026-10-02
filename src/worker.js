@@ -1,4 +1,4 @@
-// Label Ninja Worker — thin router: canonical host first, /api/* to the API, everything else to static assets.
+// Label Ninja Worker — thin router: canonical host first, /api/* to the API, everything else to static assets (src/static.js: real 404s).
 
 import { errorResponse } from './http.js';
 import { handleApi } from './auth.js';
@@ -7,6 +7,7 @@ import { handleProjectsApi } from './projects.js';
 import { guardBrowserWrite, privateApiResponse } from './security.js';
 import { canonicalRedirect, legacyPageRedirect } from './redirects.js';
 import { maintain } from './maintenance.js';
+import { serveStatic } from './static.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -35,16 +36,4 @@ async function route(request, env, ctx) {
     } catch (err) {
       return errorResponse(err);
     }
-}
-
-async function serveStatic(request, env) {
-  const assetRes = await env.ASSETS.fetch(request);
-  if (assetRes.status === 404 && request.method === 'GET') {
-    // SPA fallback: reproduce not_found_handling for paths the binding did not resolve.
-    const spaUrl = new URL(request.url);
-    spaUrl.pathname = '/index.html';
-    const spaRes = await env.ASSETS.fetch(new Request(spaUrl.toString(), request));
-    if (spaRes.status !== 404) return spaRes;
-  }
-  return assetRes;
 }

@@ -14,11 +14,13 @@ import {
 import { updateBinPrintHint, exportBinBatch } from './bin-tool.js';
 import { initWhatnotTool, updateWhatnotPrintHint, exportWhatnotBatch } from './whatnot-tool.js';
 import { exportFnskuLabel } from './fnsku-tool.js';
-import { initToast } from './toast.js';
+import { initToast, toast } from './toast.js';
 import { initProjects, saveProject } from './projects.js';
 import { refreshDashboard } from './dashboard.js';
 import { initAccount, showAccount } from './account.js';
 import { rememberWorkspace, lastWorkspaceLink } from './workspace-navigation.js';
+import { mountViews } from './views/mount.js';
+import { initLivePreviews } from './live-previews.js';
 
 const MODES = ['home', 'dashboard', 'editor', 'bin', 'whatnot', 'fnsku', 'guides', 'account'];
 const AUTH_ONLY_MODES = new Set(['dashboard', 'account']);
@@ -44,6 +46,7 @@ export function switchMode(mode) {
 
   if (!MODES.includes(mode) || (AUTH_ONLY_MODES.has(mode) && !isSignedIn())) mode = 'editor';
   rememberWorkspace(mode);
+  document.body.dataset.mode = mode; // CSS: the tool tab row shows in app modes only (desktop)
   document.getElementById(`mode-${mode}`).classList.remove('hidden');
   const activeTab = document.getElementById(`tab-${mode}`);
   if (activeTab && !activeTab.classList.contains('hidden')) {
@@ -127,7 +130,7 @@ function exportCurrentWorkspace(button) {
   else if (mode === 'bin') exportBinBatch(button);
   else if (mode === 'whatnot') exportWhatnotBatch(button);
   else if (mode === 'fnsku') exportFnskuLabel(button);
-  else window.alert('Open a tool first, then use its Download PDF button.');
+  else toast('Open a tool first, then use its Download PDF button.');
 }
 
 function runTestPrint(widthIn, heightIn, button) {
@@ -228,7 +231,22 @@ function wireSessionDefaults() {
   });
 }
 
+// Skip link: focus the visible view instead of changing the hash (a hash
+// change would route to another mode).
+function wireSkipLink() {
+  const skip = document.querySelector('.skip-link');
+  if (!skip) return;
+  skip.addEventListener('click', (event) => {
+    const visible = MODES.map((m) => document.getElementById(`mode-${m}`)).find((node) => node && !node.classList.contains('hidden'));
+    if (!visible) return;
+    event.preventDefault();
+    if (!visible.hasAttribute('tabindex')) visible.setAttribute('tabindex', '-1');
+    visible.focus();
+  });
+}
+
 function init() {
+  mountViews(); // app-only views + overlays must exist before any module queries them
   initToast();
   initEditor();
   initAuthUi();
@@ -240,6 +258,8 @@ function init() {
   wireDirtyFlags();
   updateBinPrintHint();
   initWhatnotTool();
+  initLivePreviews();
+  wireSkipLink();
   routeFromLocation();
 
   window.addEventListener('hashchange', () => {
@@ -249,9 +269,9 @@ function init() {
     if (mode === 'guides' || mode === 'home') scrollToHashSection();
   });
 
-  // The wordmark is a real link to "/" for crawlers; in-app it switches to the
+  // The brand is a real link to "/" for crawlers; in-app it switches to the
   // home mode without a reload so unsaved drafts stay in memory.
-  const wordmark = document.querySelector('.wordmark');
+  const wordmark = document.querySelector('.site-brand');
   if (wordmark) {
     wordmark.addEventListener('click', (event) => {
       if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;

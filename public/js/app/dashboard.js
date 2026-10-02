@@ -30,6 +30,23 @@ function el(id) {
   return document.getElementById(id);
 }
 
+// Empty state: what this area will hold, plus one or two ways to fill it.
+function emptyState(title, body, actions) {
+  const box = document.createElement('div');
+  box.className = 'empty';
+  box.innerHTML = `<p class="empty__title">${escapeHtml(title)}</p><p class="small muted">${escapeHtml(body)}</p><div class="empty__acts"></div>`;
+  const acts = box.querySelector('.empty__acts');
+  actions.forEach(({ label, mode }, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = i === 0 ? 'btn btn--primary btn--sm' : 'btn btn--ghost btn--sm';
+    btn.textContent = label;
+    btn.addEventListener('click', () => window.LN.switchMode(mode));
+    acts.appendChild(btn);
+  });
+  return box;
+}
+
 // Saved projects are white label stock — the design, printed. Buttons on stock are black print.
 function projectCard(p) {
   const card = document.createElement('div');
@@ -59,7 +76,10 @@ function renderProjects(projects) {
   const saved = projects.filter((p) => !p.is_template).slice(0, 6);
   grid.innerHTML = '';
   if (!saved.length) {
-    grid.innerHTML = '<p class="small muted">No saved projects yet — create a label and hit Save.</p>';
+    grid.appendChild(emptyState('No saved projects yet', 'Design a label or set up a batch, then press Save. Your projects appear here so you can reprint them later.', [
+      { label: 'Design a label', mode: 'editor' },
+      { label: 'Bin labels', mode: 'bin' },
+    ]));
     return;
   }
   for (const p of saved) grid.appendChild(projectCard(p));
@@ -124,7 +144,10 @@ function renderExports(exports) {
   const grid = el('dash-exports');
   grid.innerHTML = '';
   if (!exports.length) {
-    grid.innerHTML = '<p class="small muted">No exports yet — your PDFs will appear here for 7 days.</p>';
+    grid.appendChild(emptyState('No PDFs yet', 'Every PDF you download shows up here, ready to re-download for 7 days.', [
+      { label: 'Whatnot numbers', mode: 'whatnot' },
+      { label: 'FNSKU label', mode: 'fnsku' },
+    ]));
     return;
   }
   for (const job of exports.slice(0, 6)) grid.appendChild(exportCard(job));

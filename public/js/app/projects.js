@@ -10,10 +10,12 @@
 import { api } from './api.js';
 import { isSignedIn } from './session.js';
 import { openAuthModal, addAfterAuth } from './auth-ui.js';
+import { rememberOpener, restoreOpener, trapFocus } from './focus-trap.js';
 import { onToolDirty } from './exporter.js';
 import { applyProjectState, getElements } from './editor.js';
 import { updateBinPrintHint } from './bin-tool.js';
 import { updateWhatnotPrintHint } from './whatnot-tool.js';
+import { updateBinPreview, updateFnskuPreview } from './live-previews.js';
 import { toast } from './toast.js';
 
 const TOOLS = {
@@ -71,8 +73,9 @@ function applyValues(tool, values) {
     if (input.type === 'checkbox') input.checked = !!values[id];
     else input.value = values[id];
   }
-  if (tool === 'bin') updateBinPrintHint();
+  if (tool === 'bin') { updateBinPrintHint(); updateBinPreview(); }
   if (tool === 'whatnot') updateWhatnotPrintHint();
+  if (tool === 'fnsku') updateFnskuPreview();
 }
 
 export function applyProject(project) {
@@ -136,7 +139,7 @@ async function patchProject(tool, button) {
 export function saveProject(tool, button) {
   if (!isSignedIn()) {
     addAfterAuth(() => saveProject(tool, button));
-    openAuthModal({ mode: 'signin', intent: 'save' });
+    openAuthModal({ mode: 'auto', intent: 'save' });
     return;
   }
   if (current[tool] && current[tool].id) {
@@ -147,6 +150,7 @@ export function saveProject(tool, button) {
   saveTarget = tool;
   el('save-name').value = defaultName(tool);
   el('save-template-check').checked = false;
+  rememberOpener(el('save-modal'));
   el('save-modal').classList.remove('hidden');
   el('save-name').focus();
   el('save-name').select();
@@ -160,8 +164,10 @@ function defaultName(tool) {
 }
 
 function closeSaveModal() {
+  const wasOpen = !el('save-modal').classList.contains('hidden');
   el('save-modal').classList.add('hidden');
   saveTarget = null;
+  if (wasOpen) restoreOpener(el('save-modal'));
 }
 
 // ---- open / duplicate / delete ----
@@ -237,6 +243,7 @@ export function initProjects() {
     }
   });
 
+  trapFocus(el('save-modal'));
   el('save-close').addEventListener('click', closeSaveModal);
   el('save-cancel').addEventListener('click', closeSaveModal);
   el('save-modal').addEventListener('click', (event) => {

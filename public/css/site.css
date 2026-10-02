@@ -1,0 +1,93 @@
+/* Shared site shell: .site-header (brand + main nav), .breadcrumb, and the 404 page.
+ * Mobile-first. Tokens only (public/css/tokens.css) — no colour literals. */
+
+/* ---------- header ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: var(--space-2xs) var(--space-md);
+  width: 100%; max-width: 100%; min-width: 0;
+  padding: var(--space-2xs) var(--space-sm);
+  background: var(--color-chassis);
+  border-bottom: var(--rule);
+}
+.site-brand {
+  display: inline-flex; align-items: center; gap: var(--space-2xs);
+  min-height: 2.75rem; flex: 0 0 auto;
+  font-family: var(--font-display); font-weight: 700; font-size: var(--text-lg);
+  letter-spacing: var(--track-display); text-transform: uppercase; line-height: 1;
+  color: var(--color-ink); text-decoration: none; white-space: nowrap;
+  border-radius: var(--radius-label);
+}
+.site-brand img { width: 28px; height: 28px; border-radius: var(--radius-label); flex: 0 0 auto; display: block; }
+.site-brand:hover { color: var(--color-ink); }
+
+/* Phones: nav is its own full-width row that scrolls sideways inside itself,
+ * so the page never scrolls horizontally at 375px. */
+.site-nav {
+  display: flex; align-items: center; gap: var(--space-3xs);
+  flex: 1 1 100%; min-width: 0; max-width: 100%;
+  overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  margin-inline: calc(var(--space-3xs) * -1);
+  padding: var(--space-3xs);
+  mask-image: linear-gradient(to right, var(--color-chassis) calc(100% - var(--space-md)), transparent);
+  -webkit-mask-image: linear-gradient(to right, var(--color-chassis) calc(100% - var(--space-md)), transparent);
+}
+.site-nav::-webkit-scrollbar { display: none; }
+.site-nav a {
+  flex: 0 0 auto; scroll-snap-align: start;
+  display: inline-flex; align-items: center; min-height: 2.5rem;
+  padding: 0.4rem 0.7rem;
+  font-family: var(--font-display); font-weight: 600; font-size: var(--text-base);
+  letter-spacing: var(--track-label); text-transform: uppercase; white-space: nowrap;
+  color: var(--color-ink-2); text-decoration: none;
+  border: 1px solid transparent; border-radius: var(--radius-label);
+  transition: color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+}
+.site-nav a:hover { color: var(--color-ink); background: var(--color-chassis-3); }
+.site-nav a[aria-current="page"] { color: var(--color-ink); border-color: var(--color-accent-line); background: var(--color-accent-dim); }
+.site-brand:focus-visible,
+.site-nav a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.site-nav a:last-child { margin-right: var(--space-md); }
+
+@media (min-width: 48rem) {
+  .site-header { flex-wrap: nowrap; padding-inline: var(--space-md); min-height: var(--masthead-h); }
+  .site-nav {
+    flex: 0 1 auto; justify-content: flex-end; flex-wrap: wrap; overflow: visible;
+    margin-inline: 0; mask-image: none; -webkit-mask-image: none;
+  }
+  .site-nav a:last-child { margin-right: 0; }
+}
+
+/* ---------- breadcrumb ---------- */
+/* <nav class="breadcrumb" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li>…<li aria-current="page">Here</li></ol></nav> */
+.breadcrumb { min-width: 0; font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--track-mono); color: var(--color-ink-3); }
+.breadcrumb ol { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3xs) 0; margin: 0; padding: 0; list-style: none; }
+.breadcrumb li { display: inline-flex; align-items: center; min-width: 0; overflow-wrap: anywhere; }
+.breadcrumb li + li::before { content: "/"; padding-inline: var(--space-2xs); color: var(--color-rule-2); }
+.breadcrumb a { color: var(--color-ink-2); text-decoration: none; border-radius: var(--radius-label); padding-block: var(--space-3xs); }
+.breadcrumb a:hover { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-rule-2); }
+.breadcrumb a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.breadcrumb [aria-current="page"] { color: var(--color-ink); }
+
+/* ---------- 404 page ---------- */
+.nf { display: flex; flex-direction: column; gap: var(--space-lg); width: 100%; max-width: 52rem; margin-inline: auto; padding: var(--space-xl) var(--space-sm) var(--space-2xl); min-width: 0; }
+.nf__code { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--color-attn); }
+.nf h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: var(--text-display); line-height: var(--leading-tight); letter-spacing: var(--track-display); text-transform: uppercase; color: var(--color-ink); }
+.nf__lede { margin: 0; max-width: 60ch; color: var(--color-ink-2); font-size: var(--text-md); line-height: var(--leading-body); }
+.nf__path { font-family: var(--font-mono); color: var(--color-ink); overflow-wrap: anywhere; }
+.nf__group { display: flex; flex-direction: column; gap: var(--space-xs); min-width: 0; }
+.nf__group h2 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: var(--text-lg); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--color-ink-2); }
+.nf__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2xs); margin: 0; padding: 0; list-style: none; }
+.nf__grid a {
+  display: flex; flex-direction: column; gap: var(--space-3xs); height: 100%;
+  padding: var(--space-sm); border: var(--rule); border-radius: var(--radius-card);
+  background: var(--color-chassis-2); color: var(--color-ink); text-decoration: none;
+  transition: border-color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+}
+.nf__grid a:hover { border-color: var(--color-accent-line); background: var(--color-chassis-3); }
+.nf__grid a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.nf__grid strong { font-family: var(--font-display); font-weight: 700; font-size: var(--text-md); letter-spacing: var(--track-label); text-transform: uppercase; }
+.nf__grid span { color: var(--color-ink-3); font-size: var(--text-sm); line-height: var(--leading-snug); }
+@media (min-width: 40rem) { .nf__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

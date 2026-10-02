@@ -11,11 +11,14 @@
   <meta property="og:title" content="Free thermal label maker for 4x6 and small label printers">
   <meta property="og:description" content="Make exact-size PDF labels for Rollo, Zebra, Munbyn and Dymo printers: 4x6 bin labels, Whatnot numbers, Amazon FNSKU and custom designs. Free.">
   <meta property="og:url" content="https://label-ninja.com/">
-  <meta property="og:image" content="https://label-ninja.com/assets/logo.jpg">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://label-ninja.com/assets/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Label Ninja - free thermal label maker">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Free thermal label maker for 4x6 and small label printers">
   <meta name="twitter:description" content="Make exact-size PDF labels for Rollo, Zebra, Munbyn and Dymo printers: 4x6 bin labels, Whatnot numbers, Amazon FNSKU and custom designs. Free.">
-  <meta name="twitter:image" content="https://label-ninja.com/assets/logo.jpg">
+  <meta name="twitter:image" content="https://label-ninja.com/assets/og-default.png">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -30,38 +33,52 @@
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type": "Question", "name": "Is Label Ninja free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every tool and every PDF download is free. There is no paid plan and no card to enter."}},
+      {"@type": "Question", "name": "Do I need an account?", "acceptedAnswer": {"@type": "Answer", "text": "You can design and preview labels without one. Downloading a PDF and saving projects need a free account (email and password), so your PDFs and projects stay with you."}},
+      {"@type": "Question", "name": "Does the 4x6 shipping label converter upload my label?", "acceptedAnswer": {"@type": "Answer", "text": "No. The shipping label converter runs in your browser, needs no account, and your label file never leaves your device."}},
+      {"@type": "Question", "name": "Which printers work?", "acceptedAnswer": {"@type": "Answer", "text": "Any printer that can print a PDF at the label's real size. That includes 4-inch direct thermal printers such as Rollo, Zebra, and Munbyn for 4x6 labels, and Dymo LabelWriter-style printers for small rolls."}},
+      {"@type": "Question", "name": "Why is my label printing too small or cut off?", "acceptedAnswer": {"@type": "Answer", "text": "The print dialog is usually scaling the page. Pick the paper size that matches your label, set scale to 100% or Actual size, and set margins to none. The too-small printing guide walks through it."}},
+      {"@type": "Question", "name": "Does Label Ninja create FNSKUs or buy postage?", "acceptedAnswer": {"@type": "Answer", "text": "No. The FNSKU tool prints identifiers you already have from Seller Central, and Label Ninja does not sell shipping postage."}},
+      {"@type": "Question", "name": "How long are my PDFs kept?", "acceptedAnswer": {"@type": "Answer", "text": "A downloaded PDF is yours to keep and reprint. Copies in My Exports can be downloaded again for 7 days."}}
+    ]
+  }
+  </script>
   <meta name="theme-color" content="#14161c">
-  <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-  <!-- Print Bench design system — DESIGN.md is the contract; tokens.css is the one home for values -->
+  <!-- Print Bench design system — DESIGN.md is the contract; tokens.css is the one home for values. All same-origin. -->
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/css/editor.css">
-  <link rel="stylesheet" href="/css/tools.css">
-  <link rel="stylesheet" href="/css/guides.css">
+  <link rel="stylesheet" href="/css/site.css">
   <link rel="stylesheet" href="/css/account.css">
-
-  <!-- JsBarcode (client-side barcode previews) · PapaParse (CSV batch, B7) -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <link rel="stylesheet" href="/css/tools.css">
+  <link rel="stylesheet" href="/css/editor.css">
+  <link rel="stylesheet" href="/css/guides.css">
+  <script src="/js/site-nav.js" defer></script>
+  <script type="module" src="/js/app/app.js"></script>
 </head>
-<body>
+<body data-mode="home">
+  <a class="skip-link" href="#main-content">Skip to content</a>
 
-  <!-- Masthead: wordmark · the roll (label-tab nav) · session actions -->
-  <header class="masthead no-print">
-    <a class="wordmark" href="/" aria-label="Label Ninja home">
-      <img class="wordmark__logo" src="/assets/logo.jpg" alt="">
-      <span class="wordmark__text">
-        <span class="wordmark__name">Label Ninja</span>
-        <span class="wordmark__tag">Thermal label studio</span>
-      </span>
-    </a>
-
-    <nav class="roll" aria-label="Tools">
+  <!-- Site header: brand · main nav (shared shell) · session actions · the app's tool tabs -->
+  <header class="site-header masthead no-print">
+    <a class="site-brand" href="/"><img src="/assets/icon-192.png" alt="" width="28" height="28"> Label Ninja</a>
+    <nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/">Guides</a></nav>
+    <div class="masthead__actions">
+      <button type="button" id="my-exports-btn" class="btn btn--ghost btn--sm hidden" onclick="LN.openExportsDrawer()">My Exports</button>
+      <button type="button" id="user-email" class="masthead__email hidden" onclick="LN.switchMode('account')" title="Open account"></button>
+      <button type="button" id="signout-btn" class="btn btn--quiet btn--sm hidden" onclick="LN.authSignOut()">Sign out</button>
+      <button type="button" id="signin-btn" class="btn btn--ghost btn--sm" onclick="LN.openAuthSignIn()">Sign in</button>
+    </div>
+    <nav class="roll" aria-label="Label tools">
       <button type="button" id="tab-dashboard" class="roll__tab hidden" onclick="LN.switchMode('dashboard')">Dashboard</button>
       <button type="button" id="tab-home" class="roll__tab is-active" onclick="LN.switchMode('home')">Home</button>
       <button type="button" id="tab-editor" class="roll__tab" onclick="LN.switchMode('editor')">Editor</button>
@@ -70,71 +87,81 @@
       <button type="button" id="tab-fnsku" class="roll__tab" onclick="LN.switchMode('fnsku')">FNSKU</button>
       <button type="button" id="tab-guides" class="roll__tab" onclick="LN.switchMode('guides')">Guides</button>
     </nav>
-
-    <div class="masthead__actions">
-      <button type="button" id="my-exports-btn" class="btn btn--ghost btn--sm hidden" onclick="LN.openExportsDrawer()">My Exports</button>
-      <button type="button" id="user-email" class="masthead__email hidden" onclick="LN.switchMode('account')" title="Open account"></button>
-      <button type="button" id="signout-btn" class="btn btn--quiet btn--sm hidden" onclick="LN.authSignOut()">Sign out</button>
-      <button type="button" id="signin-btn" class="btn btn--ghost btn--sm" onclick="LN.openAuthSignIn()">Sign in</button>
-    </div>
   </header>
+  <span id="main-content" tabindex="-1"></span>
 
-  <!-- MODE: Home (public landing; default for a bare "/") -->
+  <!-- MODE: Home (public landing; default for a bare "/"). App-only views render from js/app/views/. -->
   <main id="mode-home" class="mode mode--wide home no-print">
     <section class="home-hero" aria-labelledby="home-title">
-      <div class="stack">
-        <p class="label">Free label maker · PDF at true size</p>
+      <div class="home-hero__copy stack">
+        <p class="label">Free · no card · PDFs at true size</p>
         <h1 id="home-title">Free thermal label maker for 4x6 and small label printers</h1>
-        <p class="lede">Label Ninja makes exact-size PDF labels for direct thermal printers such as Rollo, Zebra, Munbyn, and Dymo. Build warehouse bin labels, Whatnot show numbers, Amazon FNSKU labels, or your own design, then print the PDF at 100% scale.</p>
-        <p class="lede">It is free to use: no paid plan, no card, and no limit on how many PDFs you download. A free account is only needed to download PDFs and save projects.</p>
-        <ul class="home-facts" aria-label="What you get">
-          <li class="chip chip--ready">Unlimited PDFs</li>
-          <li class="chip">Exact physical size</li>
-          <li class="chip">CODE128 barcodes</li>
-          <li class="chip">Saved projects</li>
-        </ul>
+        <p class="lede">Make warehouse bin labels, Whatnot show numbers, Amazon FNSKU labels and your own designs as PDFs at the label's real size. Print at 100% scale on Rollo, Zebra, Munbyn, Dymo and other direct thermal printers.</p>
         <div class="home-cta">
-          <a href="#editor" class="btn btn--primary btn--lg">Start a custom label</a>
-          <a href="#free-tools" class="btn btn--ghost btn--lg">See the free tools</a>
+          <a href="/whatnot-labels" class="btn btn--primary btn--lg">Make Whatnot labels</a>
+          <a href="/shipping-label-to-4x6" class="btn btn--ghost btn--lg">Convert a shipping label to 4x6</a>
           <a id="home-resume" href="#editor" class="btn btn--ghost btn--lg hidden">Back to your label</a>
         </div>
+        <ul class="home-facts" aria-label="What you get">
+          <li>No paid plan, no card</li>
+          <li>No limit on PDFs</li>
+          <li>CODE128 barcodes</li>
+          <li>Saved projects</li>
+        </ul>
       </div>
-      <aside class="panel home-stock" aria-label="Supported label sizes">
-        <p class="label">Label sizes ready to print</p>
-        <div class="home-stock__row"><span>4" x 6"</span><span>Shipping, bin labels · Rollo, Zebra, Munbyn</span></div>
-        <div class="home-stock__row"><span>4" x 3"</span><span>Carton and box inventory</span></div>
-        <div class="home-stock__row"><span>3" x 2"</span><span>Whatnot show numbers</span></div>
-        <div class="home-stock__row"><span>2" x 1"</span><span>Amazon FNSKU · Dymo 30334</span></div>
-        <div class="home-stock__row"><span>2.25" x 1.25"</span><span>Dymo 30336 multipurpose</span></div>
-        <div class="home-stock__row"><span>1" x 0.5"</span><span>Tiny 25 x 13 mm stock</span></div>
-      </aside>
+      <div class="home-hero__art" aria-hidden="true">
+        <div class="liner home-liner">
+          <span class="stock home-label home-label--bin"><img src="/assets/home-bin.svg" alt="" width="120" height="180" fetchpriority="high"></span>
+          <span class="stack stack--sm">
+            <span class="stock home-label home-label--wn"><img src="/assets/home-whatnot.svg" alt="" width="150" height="100"></span>
+            <span class="stock home-label home-label--fnsku"><img src="/assets/home-fnsku.svg" alt="" width="200" height="100"></span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-works" aria-labelledby="works-title">
+      <h2 id="works-title" class="label">Works with</h2>
+      <ul class="home-works__list">
+        <li>Rollo</li><li>Zebra</li><li>Munbyn</li><li>Dymo 4XL</li><li>Brother</li><li>Any printer that prints a PDF at 100%</li>
+      </ul>
     </section>
 
     <section id="free-tools" class="home-section" aria-labelledby="free-tools-title">
       <h2 id="free-tools-title">Free label tools</h2>
       <p>Every tool exports a PDF at the label's real size, so the printer does not have to guess. Pick the job you have.</p>
-      <ul class="grid grid--3 home-tools">
-        <li class="panel home-tool">
-          <h3><a href="/shipping-label-to-4x6">Shipping label to 4x6</a></h3>
-          <p>Turn a full-page shipping label PDF into a 4x6 label for a thermal printer.</p>
-        </li>
-        <li class="panel home-tool">
+      <ul class="home-tools">
+        <li class="home-tool">
+          <div class="home-tool__art"><span class="stock"><img src="/assets/home-whatnot.svg" alt="" width="150" height="100" loading="lazy" decoding="async"></span></div>
           <h3><a href="/whatnot-labels">Whatnot show number labels</a></h3>
           <p>Sequential lot numbers for Whatnot live shows, sized for small thermal stock.</p>
+          <p class="home-tool__sizes">1" x 0.5" · 2" x 1" · 3" x 2"</p>
         </li>
-        <li class="panel home-tool">
+        <li class="home-tool">
+          <div class="home-tool__art"><span class="stock"><img src="/assets/home-shipping.svg" alt="" width="120" height="180" loading="lazy" decoding="async"></span></div>
+          <h3><a href="/shipping-label-to-4x6">Shipping label to 4x6</a></h3>
+          <p>Turn a full-page shipping label PDF into a 4x6 label for a thermal printer. Runs in your browser; no account needed.</p>
+          <p class="home-tool__sizes">8.5" x 11" → 4" x 6"</p>
+        </li>
+        <li class="home-tool">
+          <div class="home-tool__art"><span class="stock"><img src="/assets/home-bin.svg" alt="" width="120" height="180" loading="lazy" decoding="async"></span></div>
           <h3><a href="/#tools/warehouse-rack-bin-label-generator">Warehouse bin labels</a></h3>
           <p>One 4x6 label per bin: the bin number on top and its CODE128 barcode underneath.</p>
+          <p class="home-tool__sizes">4" x 6" · 6" x 4"</p>
         </li>
-        <li class="panel home-tool">
+        <li class="home-tool">
+          <div class="home-tool__art"><span class="stock"><img src="/assets/home-fnsku.svg" alt="" width="200" height="100" loading="lazy" decoding="async"></span></div>
           <h3><a href="/#tools/amazon-fba-fnsku-generator">Amazon FNSKU labels</a></h3>
           <p>Print an FNSKU you already have from Seller Central on a 2x1 label with title and condition.</p>
+          <p class="home-tool__sizes">2" x 1"</p>
         </li>
-        <li class="panel home-tool">
+      </ul>
+      <ul class="home-more">
+        <li class="panel panel--tight home-tool home-tool--text">
           <h3><a href="/#editor">Custom label editor</a></h3>
           <p>Add text, barcodes, borders, and images to any preset size, then export an exact-size PDF.</p>
         </li>
-        <li class="panel home-tool">
+        <li class="panel panel--tight home-tool home-tool--text">
           <h3><a href="/guides/whatnot-labels-printing-too-small">Fix labels printing too small</a></h3>
           <p>Paper size, scale, and margin settings that stop a label from shrinking in the print dialog.</p>
         </li>
@@ -146,9 +173,21 @@
       <ol class="home-steps">
         <li><strong>Pick a tool and label size.</strong> Match the size to the roll in your printer.</li>
         <li><strong>Fill in your labels.</strong> The preview updates as you type; no account needed yet.</li>
-        <li><strong>Download the PDF.</strong> Sign in or create a free account the first time.</li>
+        <li><strong>Download the PDF.</strong> Create a free account the first time (email and password, no card).</li>
         <li><strong>Print at 100% scale.</strong> Choose the matching paper size, set margins to none, and print one test label before the full run. See the <a href="#printer-setup-checklist" class="link">printer setup checklist</a>.</li>
       </ol>
+    </section>
+
+    <section class="home-section" aria-labelledby="sizes-title">
+      <h2 id="sizes-title">Label sizes ready to print</h2>
+      <dl class="home-sizes">
+        <div><dt>4" x 6"</dt><dd>Shipping and bin labels · Rollo, Zebra, Munbyn</dd></div>
+        <div><dt>4" x 3"</dt><dd>Carton and box inventory</dd></div>
+        <div><dt>3" x 2"</dt><dd>Whatnot show numbers</dd></div>
+        <div><dt>2" x 1"</dt><dd>Amazon FNSKU · Dymo 30334</dd></div>
+        <div><dt>2.25" x 1.25"</dt><dd>Dymo 30336 multipurpose</dd></div>
+        <div><dt>1" x 0.5"</dt><dd>Tiny 25 x 13 mm stock</dd></div>
+      </dl>
     </section>
 
     <section id="faq" class="home-section" aria-labelledby="faq-title">
@@ -161,6 +200,10 @@
         <article>
           <h3>Do I need an account?</h3>
           <p>You can design and preview labels without one. Downloading a PDF and saving projects need a free account (email and password), so your PDFs and projects stay with you.</p>
+        </article>
+        <article>
+          <h3>Does the 4x6 shipping label converter upload my label?</h3>
+          <p>No. The shipping label converter runs in your browser, needs no account, and your label file never leaves your device.</p>
         </article>
         <article>
           <h3>Which printers work?</h3>
@@ -178,194 +221,6 @@
           <h3>How long are my PDFs kept?</h3>
           <p>A downloaded PDF is yours to keep and reprint. Copies in My Exports can be downloaded again for 7 days.</p>
         </article>
-      </div>
-    </section>
-  </main>
-  <!-- MODE 0: Dashboard (signed-in account home) -->
-  <main id="mode-dashboard" class="mode mode--wide hidden no-print">
-    <div class="grid grid--2">
-      <section class="panel dash-start">
-        <h1>What are we printing today?</h1>
-        <p class="lede">Design a custom label or run a numbered batch.</p>
-        <div class="row">
-          <button type="button" class="btn btn--primary btn--lg" onclick="LN.switchMode('editor')">New label</button>
-        </div>
-      </section>
-      <section class="panel dash-usage">
-        <p class="label led led--ready">Free account</p>
-        <p class="small">Every tool, unlimited PDF downloads, saved projects, and 7-day re-downloads in My Exports.</p>
-      </section>
-    </div>
-
-    <div id="dash-uploader" class="dropzone" role="button" tabindex="0" aria-label="Upload artwork to the label editor">
-      <span class="bars dropzone__bars" aria-hidden="true"></span>
-      <p class="dropzone__title">Add artwork to a label</p>
-      <p class="dropzone__hint">PNG, JPG, or WebP · uploaded when you export or save</p>
-      <input id="dash-uploader-input" type="file" accept="image/png,image/jpeg,image/webp" class="sr-only">
-    </div>
-
-    <section class="stack">
-      <h2 class="dash-h">Recent projects</h2>
-      <div id="dash-projects" class="grid grid--3"></div>
-    </section>
-
-    <section class="stack hidden">
-      <h2 class="dash-h">Your templates</h2>
-      <div id="dash-templates" class="grid grid--3"></div>
-    </section>
-
-    <section class="stack">
-      <h2 class="dash-h">Recent exports</h2>
-      <div id="dash-exports" class="grid grid--3"></div>
-    </section>
-
-    <section class="stack">
-      <h2 class="dash-h">Quick tools</h2>
-      <div id="dash-quick-tools" class="grid grid--4"></div>
-    </section>
-
-    <section class="stack">
-      <h2 class="dash-h">Common sizes</h2>
-      <div id="dash-common-sizes" class="grid grid--4 grid--sizes"></div>
-    </section>
-  </main>
-  <!-- MODE: Custom visual editor — the Workbench: controls rail + label stage -->
-  <main id="mode-editor" class="bench hidden no-print" aria-label="Custom label editor">
-
-    <aside class="bench__rail" aria-label="Editor controls">
-      <section class="rail__group">
-        <h3 class="rail__title">Media preset</h3>
-        <div class="field">
-          <label class="sr-only" for="preset-size">Thermal media preset</label>
-          <select id="preset-size" class="select input--mono" onchange="LN.changeCanvasSize()">
-            <optgroup label="Amazon FBA & Dymo Rolls">
-              <option value="fnsku">2" x 1" (Dymo 30334 FNSKU)</option>
-              <option value="standard" selected>2.25" x 1.25" (Dymo 30336 Multipurpose)</option>
-              <option value="address">1.125" x 3.5" (Dymo 30252 Address / Bin)</option>
-              <option value="small_sq">1" x 1" (Dymo 30332 Small Square)</option>
-              <option value="small_bc">2" x 0.75" (Dymo 30330 Barcode)</option>
-              <option value="tiny">1" x 0.5" (25 x 13 mm Tiny)</option>
-              <option value="large_multi">2.3125" x 4" (Dymo 30256 Large Multi)</option>
-            </optgroup>
-            <optgroup label="Rollo, Zebra & Munbyn 4x6">
-              <option value="shipping">4" x 6" (Rollo / Zebra Box Shipping)</option>
-              <option value="box_3">4" x 3" (Carton Box Inventory)</option>
-              <option value="product_3x2">3" x 2" (Whatnot Live Show Number)</option>
-              <option value="polybag">2" x 2" (Square Polybag Warning)</option>
-              <option value="polybag_large">2.25" x 4" (Polybag Suffocation Warning)</option>
-            </optgroup>
-          </select>
-          <p class="field__hint">Every preset exports at its true physical size.</p>
-        </div>
-      </section>
-
-      <section class="rail__group">
-        <h3 class="rail__title">Image &amp; artwork</h3>
-        <label for="image-upload" class="dropzone">
-          <span class="bars bars--sm dropzone__bars" aria-hidden="true"></span>
-          <span class="dropzone__cta">Upload images</span>
-          <span class="dropzone__hint">PNG, JPEG, or WebP · up to 8 MB each · uploaded when you export or save</span>
-          <input id="image-upload" type="file" accept="image/png,image/jpeg,image/webp" multiple class="sr-only" onchange="LN.handleImageUpload(this.files); this.value = ''">
-        </label>
-        <p id="image-upload-status" class="rail__status" role="status" aria-live="polite">Choose files or drop them onto the label.</p>
-      </section>
-
-      <section class="rail__group">
-        <h3 class="rail__title">Add to label</h3>
-        <div class="grid grid--2 rail__grid">
-          <button type="button" class="btn btn--ghost" onclick="LN.addElement('text')">Text</button>
-          <button type="button" class="btn btn--ghost" onclick="LN.addElement('barcode')">Barcode</button>
-          <button type="button" class="btn btn--ghost" onclick="LN.addElement('badge')">Price badge</button>
-          <button type="button" class="btn btn--ghost" onclick="LN.addElement('box')">Border box</button>
-        </div>
-      </section>
-
-      <section class="rail__group">
-        <h3 class="rail__title">One-click templates</h3>
-        <div class="tpl-list">
-          <button type="button" class="tpl" onclick="LN.loadTemplate('fnsku')">
-            <span class="tpl__name">Amazon FNSKU label</span>
-            <span class="tpl__size">2×1</span>
-          </button>
-          <button type="button" class="tpl" onclick="LN.loadTemplate('shipping_4x6')">
-            <span class="tpl__name">4" × 6" thermal shipping label</span>
-            <span class="tpl__size">4×6</span>
-          </button>
-          <button type="button" class="tpl" onclick="LN.loadTemplate('suffocation')">
-            <span class="tpl__name">Polybag suffocation warning</span>
-            <span class="tpl__size">2×2</span>
-          </button>
-          <button type="button" class="tpl" onclick="LN.loadTemplate('suffocation_large')">
-            <span class="tpl__name">Large suffocation warning</span>
-            <span class="tpl__size">2.25×4</span>
-          </button>
-          <button type="button" class="tpl" onclick="LN.loadTemplate('sold_set')">
-            <span class="tpl__name">Sold as set – do not separate</span>
-            <span class="tpl__size">2.25×1.25</span>
-          </button>
-          <button type="button" class="tpl" onclick="LN.loadTemplate('fragile')">
-            <span class="tpl__name">Fragile – handle with care</span>
-            <span class="tpl__size">2.25×1.25</span>
-          </button>
-          <button type="button" class="tpl" onclick="LN.loadTemplate('single_bin')">
-            <span class="tpl__name">Warehouse bin label</span>
-            <span class="tpl__size">BIN 1A</span>
-          </button>
-        </div>
-      </section>
-    </aside>
-
-    <section class="bench__stage" aria-label="Label stage">
-      <div id="formatting-bar" class="inspector panel panel--tight panel--flat" role="toolbar" aria-label="Inspector">
-        <span class="inspector__label">Inspector</span>
-
-        <div id="text-size-controls" class="inspector__ctl">
-          <label class="field__label" for="inspector-size">Size</label>
-          <input type="range" id="inspector-size" class="range inspector__range" min="10" max="60" value="28" oninput="LN.updateSelectedElement()">
-          <span id="size-val" class="inspector__val">28px</span>
-        </div>
-
-        <div id="image-size-controls" class="inspector__ctl hidden">
-          <label class="field__label" for="inspector-width">Width</label>
-          <input type="range" id="inspector-width" class="range inspector__range inspector__range--wide" min="24" max="600" value="120" oninput="LN.updateSelectedElement()">
-          <span id="width-val" class="inspector__val">120px</span>
-        </div>
-
-        <div class="inspector__text">
-          <input type="text" id="inspector-text" class="input input--mono input--sm" aria-label="Selected element content" oninput="LN.updateSelectedElement()" placeholder="Select an element to edit">
-        </div>
-
-        <button type="button" class="btn btn--danger btn--sm" onclick="LN.deleteSelectedElement()">Delete</button>
-      </div>
-
-      <p class="stage__hint">Drop PNG, JPEG, or WebP artwork onto the label, then drag it into place and resize it in the inspector.</p>
-
-      <div class="stage__bed">
-        <div id="label-canvas-container" class="liner bed">
-          <div class="bed__plate">
-            <span class="ruler-x" aria-hidden="true"></span>
-            <span class="ruler-y" aria-hidden="true"></span>
-            <div id="label-canvas" class="stock canvas" style="width: 360px; height: 200px;">
-              <!-- Canvas elements are rendered by editor.js -->
-            </div>
-          </div>
-        </div>
-        <p id="canvas-size-readout" class="bed__readout" aria-live="polite"></p>
-      </div>
-
-      <div class="stage__project">
-        <span class="field__label">Project</span>
-        <span id="project-name-editor" class="project-name">Unsaved</span>
-        <span id="project-dirty-editor" class="project-dirty hidden" title="Unsaved changes" aria-label="Unsaved changes"></span>
-        <button type="button" class="btn btn--ghost btn--sm" onclick="LN.saveProject('editor', this)">Save project</button>
-      </div>
-
-      <div class="stage__export">
-        <button type="button" class="btn btn--primary btn--lg" onclick="LN.exportEditorLabel(this)">
-          <span class="bars" aria-hidden="true"></span>
-          <span>Download PDF</span>
-        </button>
-        <p class="stage__export-hint">Exact physical size · print the downloaded file at 100% scale, margins none.</p>
       </div>
     </section>
   </main>
@@ -388,20 +243,23 @@
         <section class="panel tool__form" aria-label="Bin label settings">
           <div class="grid grid--4">
             <div class="field">
-              <label class="field__label" for="bin-prefix">Bin prefix</label>
-              <input type="text" id="bin-prefix" value="BIN " class="input input--mono">
+              <label class="field__label" for="bin-prefix">Prefix</label>
+              <input type="text" id="bin-prefix" value="BIN " maxlength="12" class="input input--mono" aria-describedby="bin-prefix-hint">
+              <span id="bin-prefix-hint" class="field__hint">Printed before the number</span>
             </div>
             <div class="field">
-              <label class="field__label" for="bin-shelf">Shelf letter</label>
-              <input type="text" id="bin-shelf" value="A" class="input input--mono upper">
+              <label class="field__label" for="bin-shelf">Shelf / suffix</label>
+              <input type="text" id="bin-shelf" value="A" maxlength="6" class="input input--mono upper" aria-describedby="bin-shelf-hint">
+              <span id="bin-shelf-hint" class="field__hint">Added after the number</span>
             </div>
             <div class="field">
               <label class="field__label" for="bin-start">Start #</label>
-              <input type="number" id="bin-start" value="1" min="1" max="500" class="input input--mono">
+              <input type="number" id="bin-start" value="1" min="1" max="500" inputmode="numeric" class="input input--mono">
             </div>
             <div class="field">
               <label class="field__label" for="bin-end">End #</label>
-              <input type="number" id="bin-end" value="20" min="1" max="500" class="input input--mono">
+              <input type="number" id="bin-end" value="20" min="1" max="500" inputmode="numeric" class="input input--mono">
+              <span class="field__hint">Up to 200 labels per PDF</span>
             </div>
           </div>
 
@@ -424,8 +282,9 @@
               <span class="field__hint">inches</span>
             </div>
             <div class="field">
-              <label class="field__label" for="bin-barcode-width">Line width</label>
+              <label class="field__label" for="bin-barcode-width">Bar width</label>
               <input type="number" id="bin-barcode-width" value="3" min="1" max="5" step="0.25" class="input input--mono">
+              <span class="field__hint">1 thin – 5 bold</span>
             </div>
             <div class="field">
               <label class="field__label" for="bin-padding">Padding</label>
@@ -448,16 +307,15 @@
         </section>
 
         <aside class="tool__stage" aria-label="Bin label preview and download">
+          <p class="tool__stage-title">Preview · first label</p>
           <div class="liner">
-            <div class="stock sample sample--bin" aria-hidden="true">
-              <span class="sample__title">BIN A1</span>
-              <span class="bars"></span>
-              <span class="sample__value">BIN-A1</span>
+            <div id="bin-preview" class="stock sample sample--bin" aria-hidden="true">
+              <span id="bin-preview-title" class="sample__title">BIN 1A</span>
+              <svg id="bin-preview-barcode" class="sample__barcode"></svg>
             </div>
           </div>
           <div class="tool__caption">
-            <span class="tiny muted">Sample · 4 x 6 in portrait</span>
-            <span class="tiny mono muted">203 dpi ready</span>
+            <span id="bin-preview-caption" class="tiny muted" aria-live="polite">BIN 1A to BIN 20A · 20 labels · 4" x 6" portrait</span>
           </div>
 
           <div id="bin-print-hint" class="note note--attn" role="status">
@@ -475,7 +333,7 @@
     <div class="tool">
       <div class="tool__head">
         <div class="stack stack--xs">
-          <h1 class="tool__title">The Whatnot Labels</h1>
+          <h1 class="tool__title">Whatnot show number labels</h1>
           <p class="lede">Numbered item labels for your next show. Choose a range and stock, then download one PDF. No Whatnot account connection or shipping postage.</p>
           <p class="small"><a href="/whatnot-labels">Whatnot labels setup and sizes</a> · <a href="/guides/whatnot-labels-printing-too-small">Fix tiny or cropped prints</a></p>
         </div>
@@ -492,14 +350,16 @@
             <div class="field">
               <label class="field__label" for="wn-prefix">Number prefix</label>
               <input type="text" id="wn-prefix" value="#" maxlength="12" class="input input--mono">
+              <span class="field__hint">Printed before each number</span>
             </div>
             <div class="field">
               <label class="field__label" for="wn-start">Start #</label>
-              <input type="number" id="wn-start" value="1" min="1" max="999" class="input input--mono">
+              <input type="number" id="wn-start" value="1" min="1" max="999" inputmode="numeric" class="input input--mono">
             </div>
             <div class="field">
               <label class="field__label" for="wn-end">End #</label>
-              <input type="number" id="wn-end" value="50" min="1" max="999" class="input input--mono">
+              <input type="number" id="wn-end" value="50" min="1" max="999" inputmode="numeric" class="input input--mono">
+              <span class="field__hint">Up to 200 labels per PDF</span>
             </div>
             <div class="field">
               <label class="field__label" for="wn-stock">Label stock</label>
@@ -520,6 +380,7 @@
         </section>
 
         <aside class="tool__stage" aria-label="Show number preview and download">
+          <p class="tool__stage-title">Preview · first label</p>
           <div class="liner">
             <div id="wn-preview" class="stock sample sample--wn" aria-hidden="true">
               <span id="wn-preview-number" class="sample__title">#1</span>
@@ -533,7 +394,7 @@
           <div id="wn-print-hint" class="note note--attn" role="status"></div>
 
           <button type="button" onclick="LN.generateWhatnotBatch(this)" class="btn btn--primary btn--lg tool__cta">Download Whatnot labels (PDF)</button>
-          <p class="tool__fine">Free, with no limit on PDFs. Up to 200 labels in each PDF. The preview works without an account; downloading needs a free one.</p>
+          <p class="tool__fine">Free, with no limit on PDFs. Up to 200 labels in each PDF. The preview works without an account; downloading needs a free one (no card).</p>
         </aside>
       </div>
     </div>
@@ -558,19 +419,20 @@
           <div class="grid grid--3">
             <div class="field">
               <label class="field__label" for="fnsku-val">Barcode / FNSKU</label>
-              <input type="text" id="fnsku-val" value="X001ABC123" class="input input--mono">
+              <input type="text" id="fnsku-val" value="X001ABC123" maxlength="40" autocomplete="off" spellcheck="false" class="input input--mono" aria-describedby="fnsku-val-hint">
+              <span id="fnsku-val-hint" class="field__hint">Copy it from Seller Central (FNSKUs start with X00). UPCs work too.</span>
             </div>
             <div class="field">
               <label class="field__label" for="fnsku-title">Item title</label>
-              <input type="text" id="fnsku-title" value="Wireless Bluetooth Earbuds" class="input">
+              <input type="text" id="fnsku-title" value="Wireless Bluetooth Earbuds" maxlength="80" class="input">
+              <span class="field__hint">Short is best on 2" x 1"</span>
             </div>
             <div class="field">
               <label class="field__label" for="fnsku-cond">Condition</label>
-              <input type="text" id="fnsku-cond" value="New" class="input">
+              <input type="text" id="fnsku-cond" value="New" maxlength="24" list="fnsku-cond-list" class="input">
+              <datalist id="fnsku-cond-list"><option value="New"><option value="Used - Like New"><option value="Used - Very Good"><option value="Used - Good"><option value="Used - Acceptable"></datalist>
             </div>
           </div>
-
-          <p class="small muted">CSV manifest batches — one label per row from an InventoryLab or Seller Central export — are the next tool on this bench.</p>
 
           <div class="tool__save">
             <span>Settings:</span>
@@ -581,16 +443,16 @@
         </section>
 
         <aside class="tool__stage" aria-label="FNSKU label preview and download">
+          <p class="tool__stage-title">Preview</p>
           <div class="liner">
             <div class="stock sample sample--fnsku" aria-hidden="true">
-              <span class="sample__title">Wireless Bluetooth Earbuds</span>
-              <span class="bars"></span>
-              <span class="sample__value">X001ABC123</span>
-              <span class="sample__meta">Condition: New</span>
+              <span id="fnsku-preview-title" class="sample__title">Wireless Bluetooth Earbuds</span>
+              <svg id="fnsku-preview-barcode" class="sample__barcode"></svg>
+              <span id="fnsku-preview-cond" class="sample__meta">Condition: New</span>
             </div>
           </div>
           <div class="tool__caption">
-            <span class="tiny muted">Sample · 2 x 1 in</span>
+            <span id="fnsku-preview-caption" class="tiny muted" aria-live="polite">Sample · 2 x 1 in</span>
             <span class="tiny mono muted">Dymo 30334</span>
           </div>
 
@@ -798,14 +660,6 @@
       </section>
     </article>
   </main>
-  <!-- MODE: Account (authed) -->
-  <main id="mode-account" class="mode hidden no-print">
-    <header class="page-head">
-      <h1>Account</h1>
-      <p class="lede small">Your sign-in details and account help.</p>
-    </header>
-    <div id="account-mount" class="stack"><p class="small muted">Loading…</p></div>
-  </main>
   <footer class="foot no-print">
     <span class="bars foot__bars" aria-hidden="true"></span>
     <div class="foot__row">
@@ -818,6 +672,7 @@
         <a href="/shipping-label-to-4x6">Shipping label to 4x6</a>
         <a href="/whatnot-labels">Whatnot labels</a>
         <a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a>
+        <a href="/guides/">Guides</a>
         <a href="#best-label-printers" onclick="LN.switchMode('guides')">Best printers</a>
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
@@ -826,127 +681,5 @@
       </nav>
     </div>
   </footer>
-
-  <!-- Auth Modal -->
-  <div id="auth-modal" class="scrim hidden no-print" role="dialog" aria-modal="true" aria-label="Account">
-    <div class="modal">
-      <div class="modal__head">
-        <h3 class="modal__title">Your account</h3>
-        <button id="auth-close" type="button" class="btn btn--quiet btn--sm btn--icon modal__close x" aria-label="Close">✕</button>
-      </div>
-
-      <p id="auth-msg" class="note note--accent hidden"></p>
-
-      <div id="auth-tabs" class="tabs">
-        <button id="auth-tab-signin" type="button" class="tabs__btn is-active">Sign in</button>
-        <button id="auth-tab-register" type="button" class="tabs__btn">Create account</button>
-      </div>
-
-      <p id="auth-error" class="note note--danger hidden" role="alert"></p>
-
-      <form id="auth-form-signin" data-panel="signin" class="stack stack--sm" novalidate>
-        <div class="field">
-          <label for="auth-signin-email" class="field__label">Email</label>
-          <input id="auth-signin-email" name="email" type="email" autocomplete="email" required class="input">
-        </div>
-        <div class="field">
-          <label for="auth-signin-password" class="field__label">Password</label>
-          <input id="auth-signin-password" name="password" type="password" autocomplete="current-password" required class="input">
-        </div>
-        <button type="submit" class="btn btn--primary btn--block">Sign in</button>
-        <div class="row spread tiny">
-          <a href="#" id="auth-to-reset" class="link">Forgot password?</a>
-          <a href="#" id="auth-to-register" class="link">Create a free account</a>
-        </div>
-      </form>
-
-      <form id="auth-form-register" data-panel="register" class="hidden stack stack--sm" novalidate>
-        <div class="field">
-          <label for="auth-register-email" class="field__label">Email</label>
-          <input id="auth-register-email" name="email" type="email" autocomplete="email" required class="input">
-        </div>
-        <div class="field">
-          <label for="auth-register-password" class="field__label">Password (10+ characters)</label>
-          <input id="auth-register-password" name="password" type="password" autocomplete="new-password" required class="input">
-        </div>
-        <div class="field">
-          <label for="auth-register-confirm" class="field__label">Confirm password</label>
-          <input id="auth-register-confirm" name="confirm" type="password" autocomplete="new-password" required class="input">
-        </div>
-        <button type="submit" class="btn btn--primary btn--block">Create free account</button>
-        <p class="tiny muted center">Free · no card · unlimited PDFs · designs upload when you export or save</p>
-        <p class="tiny center">By creating an account, you agree to the <a href="/terms" target="_blank" rel="noopener" class="link">Service terms</a>. Read our <a href="/privacy" target="_blank" rel="noopener" class="link">Privacy policy</a>.</p>
-        <p class="tiny center"><a href="#" id="auth-to-signin" class="link">Already have an account? Sign in</a></p>
-      </form>
-
-      <form id="auth-form-reset-request" data-panel="reset-request" class="hidden stack stack--sm" novalidate>
-        <div class="field">
-          <label for="auth-reset-email" class="field__label">Account email</label>
-          <input id="auth-reset-email" name="email" type="email" autocomplete="email" required class="input">
-        </div>
-        <button type="submit" class="btn btn--primary btn--block">Send reset link</button>
-        <p id="auth-reset-sent" class="note note--ready hidden">If an account exists for that email, a reset link is on its way. Check your inbox — the link expires in 1 hour.</p>
-        <a href="#" id="auth-reset-back" class="link tiny">Back to sign in</a>
-      </form>
-
-      <form id="auth-form-reset-confirm" data-panel="reset-confirm" class="hidden stack stack--sm" novalidate>
-        <input type="hidden" name="token" id="auth-reset-confirm-token" value="">
-        <div class="field">
-          <label for="auth-reset-new-password" class="field__label">New password (10+ characters)</label>
-          <input id="auth-reset-new-password" name="password" type="password" autocomplete="new-password" required class="input">
-        </div>
-        <button type="submit" class="btn btn--primary btn--block">Set new password</button>
-      </form>
-
-      <button id="auth-cancel" type="button" class="btn btn--quiet btn--sm btn--block">Cancel</button>
-    </div>
-  </div>
-
-  <!-- My Exports Drawer -->
-  <div id="exports-drawer" class="scrim scrim--right hidden no-print" role="dialog" aria-modal="true" aria-label="My exports">
-    <div class="drawer">
-      <div class="drawer__head">
-        <h3 class="modal__title">My Exports</h3>
-        <button id="exports-close" type="button" class="btn btn--quiet btn--sm btn--icon x" aria-label="Close">✕</button>
-      </div>
-      <div id="exports-list" class="drawer__body"></div>
-      <div class="drawer__foot">
-        PDF files are kept for 7 days after export. Re-download or delete anytime.
-      </div>
-    </div>
-  </div>
-
-  <!-- Save-project mini-form modal (inline name prompt — never window.prompt) -->
-  <div id="save-modal" class="scrim hidden no-print" role="dialog" aria-modal="true" aria-label="Save project">
-    <div class="modal">
-      <div class="modal__head">
-        <h3 class="modal__title">Save project</h3>
-        <button id="save-close" type="button" class="btn btn--quiet btn--sm btn--icon modal__close x" aria-label="Close">✕</button>
-      </div>
-      <form id="save-form" class="stack stack--sm" novalidate>
-        <div class="field">
-          <label for="save-name" class="field__label">Project name</label>
-          <input id="save-name" name="name" type="text" maxlength="80" autocomplete="off" class="input">
-        </div>
-        <label class="check">
-          <input id="save-template-check" type="checkbox">
-          Save as template (reusable starting point)
-        </label>
-        <button id="save-submit" type="submit" class="btn btn--primary btn--block">Save</button>
-      </form>
-      <button id="save-cancel" type="button" class="btn btn--quiet btn--sm btn--block">Cancel</button>
-    </div>
-  </div>
-
-  <!-- Downloaded-PDF toast (white label stock, black print) -->
-  <div id="open-pdf-toast" class="toast hidden no-print">
-    <div class="grow">
-      <p class="toast__title">PDF downloaded</p>
-      <p id="open-pdf-name" class="mono tiny muted truncate"></p>
-    </div>
-    <button id="open-pdf-btn" type="button" class="btn btn--sm">Open PDF</button>
-    <button id="open-pdf-close" type="button" class="btn btn--quiet btn--sm btn--icon x" aria-label="Dismiss">✕</button>
-  </div>
-  <script type="module" src="/js/app/app.js"></script>
 </body>
 </html>

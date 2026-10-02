@@ -4,6 +4,7 @@
 import { BIN_LAYOUTS, clampNumber } from './presets.js';
 import { buildBinSpec } from './spec-builders.js';
 import { runExport } from './exporter.js';
+import { toast } from './toast.js';
 
 const MAX_EXPORT_PAGES = 200; // server cap: one page per label
 
@@ -31,11 +32,11 @@ export function exportBinBatch(button) {
   const end = parseInt(document.getElementById('bin-end').value || 20, 10);
 
   if (!Number.isInteger(start) || !Number.isInteger(end) || start < 1 || end > 500 || end < start) {
-    window.alert('Choose a valid bin range from 1 to 500.');
+    toast('Choose a bin range from 1 to 500, with the end number at or after the start.', { kind: 'error', ms: 8000 });
     return;
   }
   if (end - start + 1 > MAX_EXPORT_PAGES) {
-    window.alert(`Server PDF exports max out at ${MAX_EXPORT_PAGES} pages per batch. Split your range (1–${start + MAX_EXPORT_PAGES - 1}, then continue) and export twice.`);
+    toast(`Server PDF exports max out at ${MAX_EXPORT_PAGES} pages per batch. Split your range (1–${start + MAX_EXPORT_PAGES - 1}, then continue) and export twice.`, { kind: 'error', ms: 10000 });
     return;
   }
 

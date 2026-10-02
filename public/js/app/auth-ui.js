@@ -4,11 +4,44 @@
 
 import { api } from './api.js';
 import { getUser, isSignedIn, onSessionChange, applyUser, refreshSession } from './session.js';
-import { toast } from './toast.js';
+import { toast, announce } from './toast.js';
+import { rememberOpener, restoreOpener, trapFocus } from './focus-trap.js';
 
 let afterAuthBaseline = null; // persistent: exporter's pending-export resume (setAfterAuth)
 const afterAuthOnce = []; // one-shot continuations: pending save…
 let initialized = false;
+const RETURNING_KEY = 'ln-has-account'; // per-browser hint: open "Sign in" first for returning users
+
+// Copy per intent: one modal, the free/no-card promise up front, and the
+// submit buttons say what happens next.
+const INTENT_COPY = {
+  export: {
+    title: 'Download your PDF',
+    msg: 'Downloading needs a free account so your PDFs and projects stay with you. Your download starts as soon as you are in.',
+    register: 'Create free account and download',
+    signin: 'Sign in and download',
+  },
+  save: {
+    title: 'Save your project',
+    msg: 'Saved projects live in a free account. Your project saves as soon as you are in.',
+    register: 'Create free account and save',
+    signin: 'Sign in and save',
+  },
+  default: {
+    title: 'Your account',
+    msg: 'Sign in to download PDFs and keep your saved projects.',
+    register: 'Create free account',
+    signin: 'Sign in',
+  },
+};
+
+function isReturningVisitor() {
+  try { return window.localStorage.getItem(RETURNING_KEY) === '1'; } catch { return false; }
+}
+
+function markReturningVisitor() {
+  try { window.localStorage.setItem(RETURNING_KEY, '1'); } catch { /* storage blocked: harmless */ }
+}
 
 export function setAfterAuth(fn) {
   afterAuthBaseline = typeof fn === 'function' ? fn : null;
@@ -71,35 +104,38 @@ function showPanel(mode) {
   if (firstInput) firstInput.focus();
 }
 
+// mode 'auto' opens "Create free account" for new visitors and "Sign in"
+// for browsers that have signed in before.
 export function openAuthModal({ mode = 'signin', intent = null, token = null } = {}) {
   const modal = el('auth-modal');
   if (!modal) return;
+  if (mode === 'auto') mode = isReturningVisitor() ? 'signin' : 'register';
   el('auth-error').classList.add('hidden');
   el('auth-error').textContent = '';
-  const msg = el('auth-msg');
-  if (intent === 'export') {
-    msg.textContent = 'Sign in or create a free account to download your PDF. No card, no export limit.';
-    msg.classList.remove('hidden');
-  } else if (intent === 'save') {
-    msg.textContent = 'Create a free account to save your project right here.';
-    msg.classList.remove('hidden');
-  } else {
-    msg.classList.add('hidden');
-  }
+  const copy = INTENT_COPY[intent] || INTENT_COPY.default;
+  el('auth-title').textContent = copy.title;
+  el('auth-msg').textContent = copy.msg;
+  el('auth-register-submit').textContent = copy.register;
+  el('auth-signin-submit').textContent = copy.signin;
   if (mode === 'reset-confirm' && token) {
     el('auth-reset-confirm-token').value = token;
   }
+  if (modal.classList.contains('hidden')) rememberOpener(modal);
   modal.classList.remove('hidden');
   document.body.classList.add('overflow-hidden');
   showPanel(mode);
+  if (intent === 'export') announce(`${copy.title}: ${copy.msg}`);
 }
 
 export function closeAuthModal() {
   const modal = el('auth-modal');
   if (!modal) return;
+  const wasOpen = !modal.classList.contains('hidden');
   modal.classList.add('hidden');
   document.body.classList.remove('overflow-hidden');
   for (const form of modal.querySelectorAll('form')) form.reset();
+  el('auth-register-password').type = 'password';
+  if (wasOpen) restoreOpener(modal);
 }
 
 function authError(message) {
@@ -110,6 +146,7 @@ function authError(message) {
 
 async function handleAuthSuccess() {
   await refreshSession(); // /me is the authoritative session shape
+  markReturningVisitor();
   closeAuthModal();
   if (typeof afterAuthBaseline === 'function') {
     try {
@@ -166,6 +203,10 @@ export function initAuthUi() {
   onSessionChange(renderHeaderAuth);
   renderHeaderAuth();
 
+  trapFocus(el('auth-modal'));
+  el('auth-register-show').addEventListener('change', (event) => {
+    el('auth-register-password').type = event.target.checked ? 'text' : 'password';
+  });
   el('auth-close').addEventListener('click', closeAuthModal);
   el('auth-cancel').addEventListener('click', closeAuthModal);
   el('auth-modal').addEventListener('click', (event) => {
@@ -206,8 +247,7 @@ export function initAuthUi() {
 
   wireForm('auth-form-register', async (form) => {
     const password = form.elements.password.value;
-    const confirm = form.elements.confirm.value;
-    if (password !== confirm) throw new Error('Passwords do not match.');
+    if (!form.elements.email.value.includes('@')) throw new Error('Enter the email address you want to sign in with.');
     if (password.length < 10) throw new Error('Password must be at least 10 characters.');
     const data = await api('/api/auth/register', {
       method: 'POST',
@@ -234,6 +274,5 @@ export function initAuthUi() {
     showPanel('signin');
     const msg = el('auth-msg');
     msg.textContent = 'Password updated — sign in with your new password.';
-    msg.classList.remove('hidden');
   });
 }

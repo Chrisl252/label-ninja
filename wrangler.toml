@@ -12,9 +12,11 @@ routes = [
 binding = "ASSETS"
 directory = "./public"
 html_handling = "auto-trailing-slash"
-not_found_handling = "single-page-application"
+not_found_handling = "404-page"
 # The Worker must see every request so it can 301 www/http to https://label-ninja.com
-# and retire /pricing; serveStatic() then hands the request to ASSETS.
+# and retire /pricing; src/static.js serves /account + /reset as the SPA and
+# everything else through ASSETS. "404-page" (not SPA) = unknown paths get
+# public/404.html with a real 404 status instead of a soft-404 home page.
 run_worker_first = true
 
 [[d1_databases]]

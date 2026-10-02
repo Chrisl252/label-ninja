@@ -90,3 +90,20 @@
 .more-tools li { min-width: 0; color: var(--color-ink-2); font-size: var(--text-sm); }
 .more-tools li a { font-weight: 600; font-size: var(--text-base); }
 .seller-tldr { border-left: 3px solid var(--color-accent-3); padding-left: var(--space-md); }
+
+/* ── /whatnot-labels v2 (2026-10-01): hero, fact list, static preview, visible FAQ.
+ * New wn-* selectors only; nothing above changes for the /shipping-label-to-4x6 page. */
+.wn-hero { display: grid; gap: var(--space-lg); align-items: center; }
+.wn-hero__copy { display: grid; gap: var(--space-sm); min-width: 0; }
+.wn-hero__art { margin: 0; min-width: 0; }
+.wn-facts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-xs); }
+.wn-facts li { border: var(--rule); border-radius: var(--radius-label); background: var(--color-chassis-2); padding: var(--space-xs) var(--space-sm); display: grid; gap: var(--space-3xs); min-width: 0; }
+.wn-facts strong { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500; letter-spacing: var(--track-label); text-transform: uppercase; color: var(--color-ink-3); }
+.wn-facts span { color: var(--color-ink); font-size: var(--text-base); }
+.wn-cta { display: flex; flex-wrap: wrap; gap: var(--space-xs); padding-top: var(--space-2xs); }
+.wn-cta .btn { min-height: 48px; text-decoration: none; }
+.wn-faq-item { border-bottom: var(--rule); padding-block: var(--space-sm); }
+.wn-faq-item h3 { font-size: var(--text-lg); margin-bottom: var(--space-3xs); }
+.wn-faq-item p { color: var(--color-ink-2); max-width: 70ch; }
+@media (min-width: 900px) { .wn-hero { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
+@media (max-width: 414px) { .wn-facts { grid-template-columns: minmax(0, 1fr); } .wn-cta .btn { width: 100%; justify-content: center; } }

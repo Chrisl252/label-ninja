@@ -4,22 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terms of Use | Label Ninja</title>
-  <meta name="description" content="Label Ninja's terms: free label tools with no paid plan, optional accounts, ads, fair-use safeguards and your responsibility for what you print.">
+  <meta name="description" content="Label Ninja's terms: free label tools with no paid plan, optional accounts, possible ads, fair-use limits and your responsibility for what you print.">
   <link rel="canonical" href="https://label-ninja.com/terms">
   <meta name="robots" content="index,follow">
   <meta property="og:site_name" content="Label Ninja">
   <meta property="og:title" content="Label Ninja Terms of Use">
-  <meta property="og:description" content="Free label tools, optional accounts, ads, and your responsibility for what you print.">
+  <meta property="og:description" content="Free label tools, optional accounts, possible ads, and your responsibility for what you print.">
   <meta property="og:url" content="https://label-ninja.com/terms">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://label-ninja.com/assets/logo.jpg">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://label-ninja.com/assets/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Label Ninja - free thermal label maker">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Label Ninja Terms of Use">
-  <meta name="twitter:description" content="Free label tools, optional accounts, ads, and your responsibility for what you print.">
-  <meta name="twitter:image" content="https://label-ninja.com/assets/logo.jpg">
-  <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
+  <meta name="twitter:description" content="Free label tools, optional accounts, possible ads, and your responsibility for what you print.">
+  <meta name="twitter:image" content="https://label-ninja.com/assets/og-default.png">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#14161c">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/site.css">
+  <script src="/js/site-nav.js" defer></script>
   <link rel="stylesheet" href="/css/guides.css">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[
@@ -29,31 +41,60 @@
   </script>
 </head>
 <body>
-  <header class="masthead masthead--static">
-    <a class="wordmark" href="/" aria-label="Label Ninja home"><img class="wordmark__logo" src="/assets/logo.jpg" alt=""><span class="wordmark__name">Label Ninja</span></a>
-    <nav class="static-nav" aria-label="Site"><a href="/">Tools</a><a href="/guides/whatnot-labels-printing-too-small">Guides</a><a href="/privacy">Privacy</a></nav>
-  </header>
+  <header class="site-header"><a class="site-brand" href="/"><img src="/assets/icon-192.png" alt="" width="28" height="28"> Label Ninja</a><nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/">Guides</a></nav></header>
   <main class="mode">
     <article class="doc">
-      <header class="doc__head"><h1>Terms of use</h1><p class="lede">Label Ninja makes printable label PDFs and resizes shipping labels for thermal printers. These short terms cover using the tools, optional accounts and what you print.</p><span class="doc__stamp">Updated <time datetime="2026-10-01">1 October 2026</time></span></header>
-      <section class="doc__section prose"><h2>Free to use</h2>
-        <p>All Label Ninja tools are free. There is no paid plan or subscription, and we never ask for card details. There is no quota on how many PDFs you make. The site is supported by ads, described in the <a href="/privacy">privacy policy</a>.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><ol><li><a href="/">Label Ninja</a></li><li aria-current="page">Terms</li></ol></nav>
+      <header class="doc__head">
+        <span class="doc__stamp">Label Ninja · Christopher Lucas</span>
+        <h1>Terms of use</h1>
+        <p class="lede">Label Ninja makes printable label PDFs and resizes shipping labels for thermal printers. These short terms cover using the tools, optional accounts and what you print.</p>
+        <span class="doc__stamp">Last updated <time datetime="2026-10-01">2026-10-01</time></span>
+      </header>
+
+      <section class="gd-summary" aria-labelledby="summary-heading">
+        <h2 id="summary-heading">The short version</h2>
+        <ul>
+          <li>Every tool is free. There is no paid plan and we never ask for card details.</li>
+          <li>Accounts are optional. Downloading PDFs from the studio needs a free account; the 4×6 converter needs none.</li>
+          <li>The site may show ads to cover its costs.</li>
+          <li>You are responsible for what you print and for testing a label before a full run.</li>
+          <li>The tools come as is, with no warranty that every printer and stock will work.</li>
+        </ul>
+        <p class="small">This summary is for convenience. The sections below are the terms.</p>
       </section>
-      <section class="doc__section prose"><h2>Optional accounts</h2>
-        <p>You may create an account to save projects and keep recent exports. Keep your password private and do not share an account to get around safeguards. You can ask us to delete your account at any time.</p>
+
+      <nav class="gd-toc" aria-labelledby="toc-heading">
+        <h2 id="toc-heading">Sections</h2>
+        <ol>
+          <li><a href="#free">Free to use</a></li>
+          <li><a href="#accounts">Optional accounts</a></li>
+          <li><a href="#fair-use">Fair use and technical limits</a></li>
+          <li><a href="#your-labels">Your labels</a></li>
+          <li><a href="#warranty">No warranty</a></li>
+          <li><a href="#support">Files and support</a></li>
+        </ol>
+      </nav>
+
+      <section id="free" class="doc__section prose"><h2>1. Free to use</h2>
+        <p>All Label Ninja tools are free. There is no paid plan or subscription, and we never ask for card details. There is no quota on how many PDFs you make. The site may show ads, as described in the <a href="/privacy#ads">privacy policy</a>.</p>
       </section>
-      <section class="doc__section prose"><h2>Fair use and technical limits</h2>
+      <section id="accounts" class="doc__section prose"><h2>2. Optional accounts</h2>
+        <p>The shipping label to 4×6 converter works without an account. Downloading PDFs from the label studio, saving projects and keeping recent exports need a free account. Keep your password private and do not share an account to get around safeguards. You can ask us to delete your account at any time.</p>
+      </section>
+      <section id="fair-use" class="doc__section prose"><h2>3. Fair use and technical limits</h2>
         <p>To keep the service working for everyone, a single PDF holds up to 200 labels, file-size and image limits apply, and requests are rate-limited. These are technical safeguards, not a paid tier. Do not use automated tools to overload the service, interfere with other users, or bypass the safeguards.</p>
       </section>
-      <section class="doc__section prose"><h2>Your labels</h2>
+      <section id="your-labels" class="doc__section prose"><h2>4. Your labels</h2>
         <p>Use content you own or have permission to print, and do not use the service for unlawful content. You are responsible for label content, marketplace requirements, printer settings and checking that barcodes scan. Print and scan a test label before a full run.</p>
         <p>Label Ninja does not sell, create or modify postage, and does not issue Amazon or other marketplace identifiers. The shipping label to 4×6 tool only crops a file you already have; you remain responsible for using each shipping label as the carrier allows.</p>
       </section>
-      <section class="doc__section prose"><h2>No warranty</h2>
+      <section id="warranty" class="doc__section prose"><h2>5. No warranty</h2>
         <p>The tools are provided as is, without warranty. We aim for accurate page sizes and readable barcodes but cannot guarantee results on every printer and stock. To the extent the law allows, Label Ninja is not liable for lost labels, postage or shipments. These terms do not remove rights you have under applicable law.</p>
       </section>
-      <section class="doc__section prose"><h2>Files and support</h2>
+      <section id="support" class="doc__section prose"><h2>6. Files and support</h2>
         <p>Exported PDFs may be kept for up to seven days for signed-in users, then deleted. Save important PDFs on your own device. For support or account deletion, email <a href="mailto:chris@bisket.com">chris@bisket.com</a>. Do not include passwords in your message.</p>
+        <p>If these terms change, the date at the top changes with it. See also the <a href="/privacy">privacy policy</a>.</p>
       </section>
     </article>
   </main>
@@ -63,12 +104,13 @@
       <li><a href="/">Label Ninja studio</a> — FNSKU, bin, barcode and custom thermal labels.</li>
       <li><a href="/shipping-label-to-4x6">Shipping label to 4×6</a> — crop a letter-size label PDF to a 4×6 page in your browser.</li>
       <li><a href="/whatnot-labels">Whatnot number labels</a> — numbered item labels for live shows.</li>
+      <li><a href="/guides/">All label printing guides</a> — shipping labels, Whatnot and printer setup.</li>
       <li><a href="/guides/whatnot-labels-printing-too-small">Fix Whatnot labels printing too small</a></li>
       <li><a href="/guides/ebay-shipping-label-not-4x6">eBay shipping label not printing 4×6</a></li>
       <li><a href="/guides/print-amazon-return-label-4x6">Print an Amazon return label on 4×6</a></li>
       <li><a href="/guides/8-5x11-shipping-label-to-4x6">Convert an 8.5×11 shipping label to 4×6</a></li>
     </ul>
   </aside>
-  <footer class="foot"><nav class="foot__links" aria-label="Footer"><a href="/">Tools</a><a href="/privacy">Privacy</a><a href="/terms" aria-current="page">Terms</a><a href="/sitemap.xml">Sitemap</a></nav></footer>
+  <footer class="foot"><nav class="foot__links" aria-label="Footer"><a href="/">Tools</a><a href="/guides/">Guides</a><a href="/privacy">Privacy</a><a href="/terms" aria-current="page">Terms</a><a href="/sitemap.xml">Sitemap</a></nav></footer>
 </body>
 </html>

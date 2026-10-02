@@ -1,0 +1,50 @@
+<!-- Source for public/assets/og-default.png (#default) and og-4x6.png (#4x6): chrome --headless=new --window-size=1200,630 --virtual-time-budget=6000 --screenshot=<out> file:///.../og-template.html#4x6 -->
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@500;600&family=IBM+Plex+Mono:wght@500&display=block" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{width:1200px;height:630px;overflow:hidden}
+body{background:radial-gradient(circle at 78% 30%,#232733 0,#14161c 60%);color:#f3f4f6;font-family:Barlow,Arial,sans-serif;position:relative}
+.bars{position:absolute;left:0;right:0;bottom:0;height:18px;background:repeating-linear-gradient(90deg,#3a3f4b 0 2px,transparent 2px 5px,#3a3f4b 5px 6px,transparent 6px 10px,#3a3f4b 10px 13px,transparent 13px 16px)}
+.left{position:absolute;left:72px;top:64px;width:600px}
+.brand{display:flex;align-items:center;gap:18px;font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:40px;letter-spacing:.06em;text-transform:uppercase}
+.brand img{width:76px;height:76px;border-radius:10px}
+h1{margin-top:56px;font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:92px;line-height:.98;text-transform:uppercase;letter-spacing:.02em}
+h1 em{font-style:normal;color:#5b8cff}
+p{margin-top:26px;font-size:28px;line-height:1.35;color:#c3c8d2;max-width:560px}
+.chips{margin-top:30px;display:flex;gap:10px;flex-wrap:wrap}
+.chips span{font-family:'IBM Plex Mono',monospace;font-size:19px;padding:7px 13px;border:1px dashed #5a6070;border-radius:6px;color:#e5e7eb;text-transform:uppercase}
+.label{position:absolute;right:96px;top:58px;width:330px;height:495px;background:#fdfdfd;color:#111;border-radius:8px;box-shadow:0 30px 60px -20px #000;transform:rotate(4deg);padding:22px 24px;font-family:'IBM Plex Mono',monospace;display:flex;flex-direction:column;gap:12px}
+.label .row{display:flex;justify-content:space-between;border-bottom:3px solid #111;padding-bottom:10px;font-weight:500;font-size:16px}
+.label .big{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:54px;line-height:1;border:4px solid #111;padding:6px 10px;width:max-content}
+.label .ln{height:11px;background:#d5d7dc;border-radius:2px}
+.label .bc{flex:1;margin-top:6px;background:repeating-linear-gradient(90deg,#111 0 3px,#fff 3px 5px,#111 5px 6px,#fff 6px 10px,#111 10px 14px,#fff 14px 16px,#111 16px 17px,#fff 17px 21px)}
+.label .num{text-align:center;font-size:17px;letter-spacing:.12em}
+.tag{position:absolute;right:70px;top:36px;background:#5b8cff;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:30px;letter-spacing:.06em;padding:6px 16px;border-radius:6px;transform:rotate(4deg);z-index:2}
+.page{position:absolute;left:660px;top:110px;width:250px;height:330px;background:#e9ebef;border-radius:6px;padding:20px;transform:rotate(-5deg);box-shadow:0 20px 40px -18px #000}
+.page .cut{width:130px;height:195px;border:3px dashed #5b8cff;background:#fff;margin:0 0 14px}
+.page .ln{height:10px;background:#c4c8d0;margin-top:10px;border-radius:2px}
+.arrow{position:absolute;left:908px;top:282px;font-size:80px;color:#5b8cff;font-family:Arial;font-weight:700;z-index:3}
+.v4 .label{right:72px;width:260px;height:390px;top:150px}
+.v4 .label .big{font-size:42px}
+.v4 .tag{top:120px;right:52px}
+.v4 .left{width:560px}
+.v4 h1{font-size:84px}
+</style></head><body>
+<div class="left">
+  <div class="brand"><img src="file:///C:/Code/label-ninja.com/lane-free-20261001/public/assets/logo.jpg" alt="">Label Ninja</div>
+  <h1 id="h"></h1><p id="p"></p><div class="chips" id="c"></div>
+</div>
+<div id="extra"></div>
+<div class="tag" id="t"></div>
+<div class="label"><div class="row"><span>FROM: YOUR SHOP</span><span>1 LB</span></div><div class="big">PRIORITY</div><div class="ln" style="width:88%"></div><div class="ln" style="width:70%"></div><div class="ln" style="width:80%"></div><div class="bc"></div><div class="num">9400 1000 0000 0000 0000 00</div></div>
+<div class="bars"></div>
+<script>
+const v = location.hash.slice(1);
+const d = v === '4x6'
+  ? { h: 'Shipping label<br><em>to 4x6</em>', p: 'Crop any 8.5x11 PDF shipping label onto a 4x6 thermal label. Free, and nothing leaves your browser.', c: ['eBay','USPS','Amazon returns','Whatnot'], t: '4" × 6"' }
+  : { h: 'Free thermal<br><em>label maker</em>', p: '4x6 shipping labels, Whatnot slips, bin and FNSKU barcodes. Free, right in your browser.', c: ['4x6','Whatnot','Bin labels','FNSKU'], t: 'FREE' };
+if (v === '4x6') { document.body.classList.add('v4'); document.getElementById('extra').innerHTML = '<div class="page"><div class="cut"></div><div class="ln"></div><div class="ln" style="width:70%"></div><div class="ln" style="width:85%"></div></div>'; }
+document.getElementById('h').innerHTML = d.h; document.getElementById('p').textContent = d.p; document.getElementById('t').textContent = d.t;
+document.getElementById('c').innerHTML = d.c.map(x => '<span>' + x + '</span>').join('');
+</script></body></html>
