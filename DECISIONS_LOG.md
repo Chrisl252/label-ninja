@@ -170,3 +170,4 @@
 - **Not done:** no commit, push, deploy, secret change or GSC submission. Next: Ready Check, approved clean release, RUNBOOKS verification and canary, GSC resubmit. Chris: delete STRIPE_* secrets and disable the Stripe webhook endpoint after deploy; decide ads.
 
 - 2026-10-01: DEPLOYED free-everything lane 03a1229 as Worker 28e897a3 on Chris's explicit "deploy it now" (no Ready Check; preview killed by low memory). Rollback eacac403. Live route/redirect checks pass.
+- 2026-10-01: DEPLOYED v2 page overhaul ab63404 as Worker 1f8eb5e4 on Chris's "deploy". Unknown paths now real 404 (not_found_handling 404-page). Rollback 28e897a3.

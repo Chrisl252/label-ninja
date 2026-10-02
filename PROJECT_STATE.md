@@ -1,19 +1,15 @@
 # Label Ninja current state
 
-## Start here (2026-10-01, LIVE)
+## Start here (2026-10-01, v2 LIVE)
 
-- LIVE 2026-10-02T00:35Z: commit 03a1229 (branch lane/free-everything-20261001, worktree C:\Code\label-ninja.com\lane-free-20261001), Worker version 28e897a3-ba6c-4cf3-a276-c1cd2f8076f9 on label-ninja.com + www. Pushed; origin/master fast-forwarded to 03a1229 (local master in the main checkout still at d354b16 with the superseded dirty tree).
-- Rollback: Worker eacac403-fbac-4484-bd6f-24398f2232cf (ceb6a67, old paywall build) via wrangler rollback.
-- Owner decision (Chris): payment system and Stripe removed; everything is free; revenue = ads only. Ads still OFF (public/js/ads-config.js enabled:false) pending his call.
-- Removed: all billing/Stripe/entitlement modules, dead src/index.js, paywall/pricing/plan frontend. Billing DB tables dormant, no migration.
-- Export: no quota; free account still required in the studio (401 without session); 30 exports/hour, 200 pages/batch kept.
-- New: free in-browser /shipping-label-to-4x6 (no upload/account); 3 new guides; rewritten home, Whatnot, privacy, terms; sitemap 9 URLs.
-- src/redirects.js: www/http -> https://label-ninja.com 301; /pricing, /billing -> / 301. run_worker_first = true.
-- Live evidence: all 9 sitemap URLs + /api/health 200; /pricing, /billing, www, http 301 to apex; /api/config/pricing 404; home has 0 stripe/9.99 hits. npm test exit 0; test-label-crop exit 0.
-- No Chrome Ready Check happened (preview killed by low memory); Chris approved deploy without it. Eyeball the live 4x6 tool with a real label.
-- GSC sitemap resubmit FAILED 403 (wgf gsc token is read-only scope). Submit/inspect in the GSC UI. Baseline 90d: ~150 impr, 13 clicks.
-- Stripe cleanup: nothing to do — wrangler secret list returns [] and no Stripe webhook was ever created. Ads: Chris said ON; blocked — ad wells need a looser CSP on SEO pages (script/frame/img https:), which needs his explicit permission. GSC check at 28/56 days.
-- Superseded $9 Stripe candidate: C:\Code\label-ninja.com\label-ninja\backups\uncommitted-9usd-candidate.bak-20261001-154856.patch. Main checkout C:\Code\label-ninja.com\label-ninja still has that dirty tree at d354b16.
+- LIVE: commit ab63404 (branch lane/pages-v2-20261001, worktree C:\Code\label-ninja.com\lane-free-20261001), Worker version 1f8eb5e4-8713-47ca-bbbd-579f3d62a450 on label-ninja.com + www. Pushed to origin/master.
+- Rollback: Worker 28e897a3 (v1 free build, 03a1229); before that eacac403 (old paywall build).
+- Product: everything free, no Stripe, no quota; studio export needs a free account (401 without session); 4x6 tool is local-only, no account. Ads OFF — enabling needs a looser CSP on SEO pages, which the permission classifier blocked; Chris must explicitly approve that trade-off.
+- v2: real 404s (not_found_handling=404-page + src/static.js SPA allowlist /account,/reset), shared site-header + breadcrumb (public/css/site.css), /guides/ hub, favicons/OG images/manifest, sitemap 10 URLs, home landing + FAQ schema, index.html 685 lines, one-modal free signup, no CDN deps, 4x6 tool 2/4-up sheets + packing slip + sample + paste + prefs.
+- Live evidence: 19 legit routes 200; /nope-xyz + /guides/nope 404 with X-Robots-Tag noindex; /pricing 301; www 301; /guides 307 -> /guides/. npm test exit 0 (launch 52, whatnot 128, routing 79, contract, spec-builders); test-label-crop 23 pass.
+- Any new real front-end path must be added to SPA_PATHS in src/static.js or it 404s.
+- GSC: submit sitemap + inspect /guides/ and /shipping-label-to-4x6 in the UI (API token read-only). Baseline 90d: ~150 impr, 13 clicks. Check at 28/56 days.
+- Next: decide ads/CSP; GSC check; main checkout C:\Code\label-ninja.com\label-ninja is stale at d354b16 with the superseded $9 Stripe dirty tree (patch in its backups\) — reset only with Chris's OK.
 
 Module map: ARCHITECTURE.md. Procedures: RUNBOOKS.md. Evidence: LAUNCH_READINESS.md. Backlog: BACKLOG.md.
 
