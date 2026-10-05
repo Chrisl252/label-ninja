@@ -1,6 +1,17 @@
 # Label Ninja handoff
 
-## October 5 approved Packing Bench — reviewed/frozen, registration and release approval pending
+## October 5 release prepared — approved, Amazon declaration pending
+
+Chris's exact “approved deploy” authorizes the unchanged Packing Bench v2 deployment and Associates website registration. Release commit f1699eccaf1f47b20a9e93343af6e92b51f7daf7 is prepared in detached backups/packing-release-20261005/release-checkout. All 121 frozen manifest hashes match (98 physical public assets). Locked npm ci installed 40 packages; isolated npm test and Worker dry-run exit 0. The dry run reads 109 asset entries, 977.15 KiB / gzip 244.57 KiB, with DB/ASSETS/APP_ORIGIN.
+
+The only pending release gate is Amazon's audience declaration for all three listed properties. Automatic approval review rejected selecting “No” because this attestation was not explicitly authorized and includes unrelated properties. The async owner question remains pending, no option was selected, and the Amazon tab is handed off. Screenshot: backups/packing-release-20261005/amazon-audience-declaration.png. The third-site registration remains unverified; config/affiliates.json is truthfully websiteListed:false.
+
+- Chris: answer the already-pending declaration question or complete that declaration in the handed-off tab. Do not infer the audience answer from deploy/site-registration approval.
+- Agent, after that answer: complete/verify the actual listing, timestamp-backup/update dated config evidence, pass check:affiliates:release, then use the approved unchanged isolated release and RUNBOOKS.md post-deploy checks. Do not ask again for approvals already received.
+- Live Worker is unchanged: 1f8eb5e4-8713-47ca-bbbd-579f3d62a450. D1 bookmark: 00000bef-00000000-000050fb-d17b0152450b718a8710492d826a3a6e; remote migration baseline has no pending migrations. No production deployment or GitHub push.
+- Prepared receipt and raw logs: backups/packing-release-20261005/. Browser/output evidence: design/redesign-20261005/QA.md. Physical print/scan acceptance remains unperformed; preserve unrelated work and the frozen public bytes.
+
+## Earlier October 5 frozen candidate review (superseded by release preparation)
 
 Chris approved Packing Bench. The active candidate at http://127.0.0.1:8797/ now applies the shared warm-paper/light-default and dark system to the home, editor/batch tools, printer decision workflow, ten canonical documents and 404. DESIGN.md is locked to the approved direction. Historical proposals remain at design/redesign-20261005/ on port 8809; they are not working exports or current release input.
 

@@ -1,21 +1,21 @@
 # Label Ninja current state
 
-## Start here (2026-10-05, Packing Bench frozen; release approval pending)
+## Start here (2026-10-05, release prepared; Amazon declaration pending)
 
-- Active source: C:\Code\label-ninja.com\lane-site-improve-20261004, branch lane/site-improve-20261004-labelninja, base 379fb71; uncommitted candidate. Preserve the other lane's unrelated dirty work.
-- Chris approved Packing Bench. Full-site warm-paper/light-default and dark design is implemented: shared fonts/nav/search, job-first home, preview-first studio, printer filtering/comparison, guides and legal/recovery pages. DESIGN.md is the approved contract.
-- Actual full-stack preview: http://127.0.0.1:8797/. Proposal board on 8809 is historical mockup review, not the working site or a cloud preview deployment.
-- Everything remains free; studio PDF export/saved projects need a free account, shipping PDF/image cropper is local/no account. Ads OFF; no new ZPL, PNG download or DPI-output control.
-- Verified locally: npm suite, 23 converter fixtures, HTTP/DB/header checks and B3 integration with a three-page 4x6 PDF. Source audit preserves ten canonical pages/404, existing controls/anchors, eleven affiliate links/config and output geometry. Only two preset display names were corrected; keys/numbers are preserved.
-- 390px DOM checks: ten canonical pages in both themes plus dark 404, no page overflow and one visible H1. Browser theme/search/comparison/editor/draft/Whatnot/account flows pass; real converter and Whatnot UI PDFs verified (288x432pt one page; 216x144pt three pages).
-- Saved mobile Lighthouse (P/A/BP/SEO): live before home99/97/92/100, converter89/100/92/100, guide91/100/92/100; local after home95/100/96/100, converter97/100/100/100, guide98/100/100/100. These are different hosting environments.
-- Final saved lab CLS: home0, converter0.000393, guide0 after all three font preloads. Final npm/cropper/dry-run exit 0. Physical printer/scan acceptance remains unperformed.
-- Chris still owns Associates website registration and final-candidate deployment approval. config/affiliates.json has websiteListed:false; release affiliate gate remains closed. No push, deploy or external account change.
-- Ready for approval: frozen 121-file candidate (98 physical public files) in backups/packing-20261005/release-candidate-v2/, matching release-candidate-v2-sha256.json. Final evidence: design/redesign-20261005/QA.md and evidence/packing-source-audit.md; earlier affiliate history retained.
-- Seven unpublished SEO briefs remain in SEO_STRATEGY.md; next content is Whatnot label stock, then native Sorting Labels troubleshooting. GSC traffic is not affiliate purchase evidence.
-- Last recorded public release: October 1 source ab63404 / Worker 1f8eb5e4-8713-47ca-bbbd-579f3d62a450. Re-read actual Cloudflare version before release. Article URLs are static HTML; only account/reset use SPA fallback.
+- Canonical source: C:\Code\label-ninja.com\lane-site-improve-20261004, branch lane/site-improve-20261004-labelninja. Preserve unrelated lane work.
+- Chris said “approved deploy” for the exact unchanged Packing Bench v2 candidate and Associates site registration; those approvals are received.
+- Release commit: f1699eccaf1f47b20a9e93343af6e92b51f7daf7. Detached release checkout: backups/packing-release-20261005/release-checkout; all 121 frozen SHA-256 entries match (98 physical public assets).
+- Isolated preparation passes: locked npm ci (40 packages), npm test exit 0, Worker dry-run exit 0; 109 asset entries, 977.15 KiB / gzip 244.57 KiB, DB/ASSETS/APP_ORIGIN bindings.
+- Only pending release gate: Amazon audience declaration for all three listed properties. The async owner question is pending; the Amazon tab is handed off and no option was selected.
+- Automatic approval review rejected selecting “No”: the attestation was not explicitly authorized and includes unrelated properties. Do not assume an answer or repeat the selection.
+- Associates registration is incomplete/unverified; config/affiliates.json truthfully remains websiteListed:false. The release affiliate gate remains closed.
+- Next: resolve the pending owner declaration, complete/verify the listing and dated config evidence, pass check:affiliates:release, then deploy the already-approved candidate and verify via RUNBOOKS.md.
+- Live Worker remains 1f8eb5e4-8713-47ca-bbbd-579f3d62a450. No production deployment or GitHub push occurred.
+- Recovery: D1 bookmark 00000bef-00000000-000050fb-d17b0152450b718a8710492d826a3a6e; remote baseline has no pending migrations. Do not replay 0003 or overwrite newer customer data.
+- Actual preview: http://127.0.0.1:8797/; historical mockups are on 8809. Everything stays free; studio export needs a free account, cropper stays local, ads OFF.
+- Local browser/output/Lighthouse evidence remains in design/redesign-20261005/QA.md. Physical print/scan acceptance is unperformed; seven SEO briefs remain unpublished.
 
-Module map: ARCHITECTURE.md. Procedures: RUNBOOKS.md. Remaining work: BACKLOG.md and HANDOFF.md.
+Module map: ARCHITECTURE.md. Release procedures: RUNBOOKS.md. Prepared receipt, logs and Amazon declaration screenshot: backups/packing-release-20261005/.
 
 ## History
 
