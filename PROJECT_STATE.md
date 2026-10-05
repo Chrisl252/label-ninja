@@ -1,21 +1,21 @@
 # Label Ninja current state
 
-## Start here (2026-10-05, release prepared; Amazon declaration pending)
+## Start here (2026-10-05, Packing Bench live; Worker tail unverified)
 
-- Canonical source: C:\Code\label-ninja.com\lane-site-improve-20261004, branch lane/site-improve-20261004-labelninja. Preserve unrelated lane work.
-- Chris said “approved deploy” for the exact unchanged Packing Bench v2 candidate and Associates site registration; those approvals are received.
-- Release commit: f1699eccaf1f47b20a9e93343af6e92b51f7daf7. Detached release checkout: backups/packing-release-20261005/release-checkout; all 121 frozen SHA-256 entries match (98 physical public assets).
-- Isolated preparation passes: locked npm ci (40 packages), npm test exit 0, Worker dry-run exit 0; 109 asset entries, 977.15 KiB / gzip 244.57 KiB, DB/ASSETS/APP_ORIGIN bindings.
-- Only pending release gate: Amazon audience declaration for all three listed properties. The async owner question is pending; the Amazon tab is handed off and no option was selected.
-- Automatic approval review rejected selecting “No”: the attestation was not explicitly authorized and includes unrelated properties. Do not assume an answer or repeat the selection.
-- Associates registration is incomplete/unverified; config/affiliates.json truthfully remains websiteListed:false. The release affiliate gate remains closed.
-- Next: resolve the pending owner declaration, complete/verify the listing and dated config evidence, pass check:affiliates:release, then deploy the already-approved candidate and verify via RUNBOOKS.md.
-- Live Worker remains 1f8eb5e4-8713-47ca-bbbd-579f3d62a450. No production deployment or GitHub push occurred.
-- Recovery: D1 bookmark 00000bef-00000000-000050fb-d17b0152450b718a8710492d826a3a6e; remote baseline has no pending migrations. Do not replay 0003 or overwrite newer customer data.
-- Actual preview: http://127.0.0.1:8797/; historical mockups are on 8809. Everything stays free; studio export needs a free account, cropper stays local, ads OFF.
-- Local browser/output/Lighthouse evidence remains in design/redesign-20261005/QA.md. Physical print/scan acceptance is unperformed; seven SEO briefs remain unpublished.
+- LIVE: Packing Bench commit 2d78018eff0890e4622b6382536296b4a251d8d8, Worker b7eb4353-a631-45b0-b0b1-b88cdea0dafc, on https://label-ninja.com and www. Approved release 2d78018 is synced to origin/lane/site-improve-20261004-labelninja (github-source-push.log); no master push/merge/PR.
+- Canonical source: C:\Code\label-ninja.com\lane-site-improve-20261004; branch lane/site-improve-20261004-labelninja. Release checkout: backups/packing-release-20261005/release-checkout (detached, clean).
+- Chris approved the exact v2 deploy/site registration and then explicitly authorized “No” for the audience declaration covering all three listed properties. Associates confirm succeeded; reloaded saved list includes all three in store discountd0247-20. Config websiteListed:true; eleven-link release gate passed.
+- Release input preserves all 120 protected frozen rows; config/affiliates.json is the sole approved metadata exception. Source and isolated release hashes match; raw frozen bytes preserved.
+- Deploy exit 0: 96 assets (83 uploaded / 13 existing), 977.15 KiB / gzip 244.57 KiB, startup 22ms; DB/ASSETS/APP_ORIGIN, existing apex/www and */15 cleanup schedule.
+- Live verification passes: 101 GET checks / 96 served asset SHA-256 matches, 15 launch checks and 31 route GET checks. Two deployment-control files are local-only hashes.
+- Production canary passes 17 checks: register/sign-in, replay, exact 3/200-page 288x432pt PDFs, synthetic project lifecycle and sign-out; no payment/email or customer-account change.
+- Synthetic footprint: ln-release+20261005225131@bisket.com; two expiring PDFs remain, its one project deleted, final sign-out. Do not expose generated credentials.
+- Live Chrome: desktop 1902 x 902 has correct versioned entry, no overflow/runtime errors; phone 390 x 844 home/editor/converter each has one H1/no overflow. Corrected stock names, fanfold filter 3/6 → reset 6 and Rollo two-printer comparison pass. live-browser-final.json records runtimeLogEntries:[]; normal viewport restored and reviewed public home left visible. Owner session/content unchanged.
+- Recovery: rollback Worker 1f8eb5e4-8713-47ca-bbbd-579f3d62a450; immediate pre-deploy D1 bookmark 00000bf1-00000000-000050fb-4443b3e89188447ff7bd7b371a8e9d1f supersedes earlier bef bookmark. No pending/applied migration for this release; preserve newer data on rollback.
+- Everything stays free; studio exports need a free account, cropper stays local, ads OFF. Physical print/scan acceptance and recovery-email/capacity checks remain unperformed product limits.
+- Worker traffic is 100% (deployments-after.log; deployment 2026-10-05T22:50:45.722Z). Tail UNVERIFIED: no event sample; correction rejected by automatic review under one-attempt boundary rule. No retry; optional follow-up requires authority. Next separate brick: SEO content; seven briefs remain unpublished.
 
-Module map: ARCHITECTURE.md. Release procedures: RUNBOOKS.md. Prepared receipt, logs and Amazon declaration screenshot: backups/packing-release-20261005/.
+Canonical receipt: DEPLOYMENT_PACKING_2D78018.md. Raw evidence: backups/packing-release-20261005/. Module map: ARCHITECTURE.md; procedures: RUNBOOKS.md.
 
 ## History
 

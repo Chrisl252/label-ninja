@@ -1,6 +1,6 @@
 # Label Ninja backlog
 
-## Approved Packing Bench implementation (2026-10-05, local only)
+## Packing Bench release (2026-10-05, deployed)
 
 - [x] Chris approved Packing Bench; locked DESIGN.md and implemented shared tokens/fonts/themes/nav/search/footer across the full site.
 - [x] Job-first home, preview-first editor/batch tools, accessible element movement/explicit stock reuse, qualified printer filtering/two-item comparison, scannable guide/legal/404 treatment.
@@ -8,16 +8,17 @@
 - [x] Local npm/HTTP/B3 integration checks and 23 converter fixtures; 390px DOM checks on every canonical in both themes, plus dark 404. Comparison dialog/Escape and actual one-page 4x6 sample download checked.
 - [x] Saved mobile Lighthouse score targets met: local home95/100/96/100, converter97/100/100/100, guide98/100/100/100 (P/A/BP/SEO); final guide lab CLS 0 after all three fonts are preloaded.
 - [x] Final browser theme/search/comparison/editor/draft/Whatnot/account checks and real Whatnot UI PDF (three 216x144pt pages); final npm/cropper/dry-run exit 0, actual preview opened in Chrome. QA.md records bounded results.
-- [x] Freeze 121 files / 98 physical public assets under backups/packing-20261005/release-candidate-v2/; manifest and both source/frozen-copy hashes match. Preserve this exact candidate for approval.
-- [ ] Chris: final-candidate release approval and separate Associates website-registration approval. Existing affiliate gate below still applies; no push, deploy or account change.
-- [ ] Physical Rollo/tiny-stock print/scan acceptance remains unknown; retain the Chris-owned task below. Scores/local PDFs are not production or purchase evidence.
+- [x] Freeze v2; final release preserves 120 protected frozen rows with only approved config registration metadata changed. 98 physical public files include two deployment-control files; 96 actual served asset hashes pass.
+- [x] Chris approved unchanged v2 deploy/site registration and then explicitly authorized “No” for all three Associates properties. Saved listing readback and eleven-link release gate pass; deployed commit 2d78018 as Worker b7eb4353. Approved source is synced to origin/lane/site-improve-20261004-labelninja; github-source-push.log records success. No master push/merge/PR.
+- [x] Live desktop/phone home/editor/converter, corrected stock names, fanfold filter/reset and two-Rollo comparison/selection clearing pass; Worker 100% confirmed. HTTP/source/canary evidence is complete in DEPLOYMENT_PACKING_2D78018.md. Browser receipt: live-browser-final.json; reviewed public home is left visible at restored desktop viewport, owner session untouched.
+- [ ] Optional Worker event observation: tail is UNVERIFIED (no sample/connected:false). Automatic review rejected corrective pretty-mode attempt under one-attempt boundary rule; do not retry without fresh authority. This does not block the completed core deployment.
 
 ## Affiliate candidate and next content (2026-10-05)
 
 - [x] Local: tag all six existing printer shopping links; add five compatible-stock/holder links with disclosures; keep source links ordinary and tools free.
 - [x] Local: sitewide affiliate audit and release registration gate; update privacy/terms and truthful shopping copy.
-- [ ] Chris: approve adding https://label-ninja.com to the selected Amazon Associates website list and approve the exact candidate for deployment. Agent then verifies registration and publishes unchanged through RUNBOOKS.md.
-- [ ] Agent, after approval/release: verify served tags/disclosures and current Worker receipt. A tag is not purchase evidence.
+- [x] Add/verify Label Ninja in selected Associates store discountd0247-20 after explicit owner declaration authorization; saved list persisted after reload, config websiteListed:true and release audit passes.
+- [x] Live served public bytes, tags/disclosures and deployed Worker receipt verified: DEPLOYMENT_PACKING_2D78018.md and backups/packing-release-20261005/. Registration/tag presence is not purchase evidence.
 - [ ] Next content brick: Whatnot label stock buying guide; exact brief and sources in SEO_STRATEGY.md. Then native Sorting Labels not-printing guide.
 - [ ] Follow-up: label cost calculator, Rollo skipping-labels guide and fanfold-vs-roll desk guide; all demand hypotheses until measured.
 - [ ] Existing SEO discovery: inspect/link guides hub, eBay and Amazon return guides; GSC says those three are unknown, not the whole site.

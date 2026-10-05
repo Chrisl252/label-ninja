@@ -1,6 +1,20 @@
 # Label Ninja handoff
 
-## October 5 release prepared — approved, Amazon declaration pending
+## October 5 Packing Bench live — core acceptance complete, tail unverified
+
+Chris approved the exact v2 deployment/site registration, then explicitly authorized “No” for Amazon's declaration covering all three listed properties. Confirm succeeded and the reloaded saved list contains Label Ninja, Just Bargains and Seniors Assassins in store discountd0247-20. Config websiteListed:true and the eleven-link release gate passes; the prior declaration blocker is resolved.
+
+Released commit 2d78018eff0890e4622b6382536296b4a251d8d8 from clean detached backups/packing-release-20261005/release-checkout as Worker b7eb4353-a631-45b0-b0b1-b88cdea0dafc. All 120 protected frozen SHA-256 rows match; the only approved metadata exception is config/affiliates.json. Deploy exit 0: 96 assets (83 new / 13 existing), 977.15 KiB / gzip 244.57 KiB, startup 22ms, existing apex/www, */15 schedule and DB/ASSETS/APP_ORIGIN. Approved release 2d78018 is pushed to origin/lane/site-improve-20261004-labelninja with upstream tracking; github-source-push.log records success. No master push, merge or PR.
+
+Live evidence passes 101 GET checks / 96 asset hashes, 15 launch checks, 31 route GET checks and 17 production canary checks. Canary account ln-release+20261005225131@bisket.com retains two expiring PDFs (3 and 200 pages, each page 288x432pt); its one project was deleted and it ended signed out. No payment/email or customer-account mutation. Fresh desktop Chrome has no overflow/runtime errors and uses the versioned entry.
+
+- Live browser acceptance complete: desktop 1902 x 902 has versioned entry/no overflow/runtime errors; phone 390 x 844 home/editor/converter each has one visible H1/no overflow. Editor stock names are corrected; fanfold filter 3 of 6/reset 6 and two-Rollo comparison/selection clearing pass. Screenshots are saved in release backups. Physical printing/scanning remains unperformed.
+- Cloudflare readback confirms Worker b7eb4353-a631-45b0-b0b1-b88cdea0dafc at 100%, deployment created 2026-10-05T22:50:45.722Z (deployments-after.log). Worker tail remains UNVERIFIED: worker-observation-final.json has connected:false, no observations and health:null. The JSON-mode sampler did not capture a sample; a pretty-mode correction was rejected by automatic approval review under the one-attempt boundary rule. No retry; optional fresh authorization does not block the verified deployment.
+- Recovery: rollback Worker 1f8eb5e4-8713-47ca-bbbd-579f3d62a450; immediate pre-deploy D1 bookmark 00000bf1-00000000-000050fb-4443b3e89188447ff7bd7b371a8e9d1f supersedes the older bef preparation bookmark. No migration applied; retain newer customer data on rollback.
+- Canonical release receipt: DEPLOYMENT_PACKING_2D78018.md. Raw registration/deploy/HTTP/canary/browser evidence: backups/packing-release-20261005/. Local design QA remains in design/redesign-20261005/. Final browser proof: live-browser-final.json (runtimeLogEntries:[]); public-home evidence is live-home-reviewed.png, with visible H1 “What are you printing?” at restored 1902 x 902. The pre-existing owner session remains signed in; no owner label edit/export/sign-out.
+- Next separate content brick: Whatnot label stock, then native Sorting Labels troubleshooting from SEO_STRATEGY.md. No new route, affiliate purchase, ranking lift or revenue claim is made.
+
+## Earlier October 5 release preparation (superseded by deployment)
 
 Chris's exact “approved deploy” authorizes the unchanged Packing Bench v2 deployment and Associates website registration. Release commit f1699eccaf1f47b20a9e93343af6e92b51f7daf7 is prepared in detached backups/packing-release-20261005/release-checkout. All 121 frozen manifest hashes match (98 physical public assets). Locked npm ci installed 40 packages; isolated npm test and Worker dry-run exit 0. The dry run reads 109 asset entries, 977.15 KiB / gzip 244.57 KiB, with DB/ASSETS/APP_ORIGIN.
 

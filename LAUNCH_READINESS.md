@@ -1,5 +1,17 @@
 # Label Ninja launch readiness
 
+## Current release (2026-10-05): Packing Bench deployed
+
+- Live commit 2d78018eff0890e4622b6382536296b4a251d8d8, Worker b7eb4353-a631-45b0-b0b1-b88cdea0dafc, on apex/www with existing cleanup schedule and DB/ASSETS/APP_ORIGIN. Chris approved exact v2 deploy and explicitly authorized Amazon's “No” declaration for all three sites; Confirm/reloaded saved listing and websiteListed:true release gate succeeded.
+- Canonical receipt: DEPLOYMENT_PACKING_2D78018.md. 120 protected frozen source rows match; approved registration config is the only exception. Deploy exit 0; 96 assets (83 new / 13 existing), 977.15 KiB / gzip 244.57 KiB, startup 22 ms; no migration. Approved release 2d78018 is synced to origin/lane/site-improve-20261004-labelninja with upstream tracking; github-source-push.log records success. No master push/merge/PR.
+- Passed live: 101 GET/96 served asset hashes, 15 launch checks, 31 route GET checks, 17 production canary checks including exact 3/200-page 4x6 PDFs and synthetic project lifecycle. Desktop Chrome passes correct versioned entry, no overflow/runtime errors.
+- Live browser/traffic acceptance passes: desktop 1902 x 902 correct versioned entry/no overflow/runtime errors, phone 390 x 844 home/editor/converter each one H1/no overflow, corrected stock names, fanfold filter/reset and two-Rollo comparison. Worker 100% confirmed in deployments-after.log; deployment created 2026-10-05T22:50:45.722Z. Final live-browser-final.json has runtimeLogEntries:[]; live-home-reviewed.png shows public home at restored viewport. Owner session/content unchanged.
+- Worker tail UNVERIFIED: no event sample, connected:false/health:null in worker-observation-final.json. Automatic approval review rejected corrective pretty-mode attempt under one-attempt boundary rule; no retry and no healthy-log claim. Optional separately authorized observation is not a core-deployment blocker. Physical printer/scan, recovery-email and sustained/image-heavy capacity acceptance remain unperformed; local Lighthouse is not field CWV.
+- Rollback Worker 1f8eb5e4-8713-47ca-bbbd-579f3d62a450; immediate D1 bookmark 00000bf1-00000000-000050fb-4443b3e89188447ff7bd7b371a8e9d1f supersedes preparation's older bef bookmark. Preserve newer data; no migration applied.
+- Everything is free, studio export remains account-backed, ads stay OFF. Affiliate registration is verified, but orders/revenue/ranking lift are not claimed.
+
+## Historical October 1 pre-deploy snapshot (superseded)
+
 Status (2026-10-01): paid-launch gates are RETIRED. Chris removed the payment system and Stripe; everything is free and revenue is ads only (ads off pending his decision). Live production is still ceb6a67 with the old 10-batch quota and paywall. The free-everything lane (branch lane/free-everything-20261001, base d354b16) is NOT deployed and awaits a Ready Check.
 
 ## Free-everything lane (candidate, not deployed)
@@ -12,7 +24,7 @@ Status (2026-10-01): paid-launch gates are RETIRED. Chris removed the payment sy
 
 The sections below record the paid-offer era. Their Stripe/quota gates no longer apply.
 
-## Upgrade release ceb6a67 (still live, historical evidence)
+## Upgrade release ceb6a67 (historical; superseded)
 
 - Explicit deploy approval for unchanged source ceb6a67; clean isolated backups/release-upgrade-20260907. Live Worker eacac403-fbac-4484-bd6f-24398f2232cf. Prior Whatnot Worker 99bd8c27-c9e0-479d-b418-08727ff37aa3 is the rollback target.
 - Both domains match all 41 public source hashes and pass route/header/DB/offer gates. Production canary passes 17/17, including exact 3/200-page PDFs, one batch per PDF, no replay charge and saved-project lifecycle. Live browser preserves custom Whatnot settings through pricing/return; no browser warnings/errors. Sanitized health/pricing tail: two ok outcomes, zero exceptions.
