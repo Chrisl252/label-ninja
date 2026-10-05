@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="12" fill="#14161c"/>
-  <path d="M21 7 L37 5 L47 11 L50 24 L46 37 H18 L14 24 L17 12 Z" fill="#fff"/>
-  <path d="M37 5 L47 11 L50 24 L37 17 Z" fill="#14161c"/>
-  <path d="M17 22 L32 18 L47 22 L44 31 L32 34 L20 31 Z" fill="#14161c"/>
-  <path d="M21 23 L30 25.5 L26 29.5 Z M43 23 L34 25.5 L38 29.5 Z" fill="#fff"/>
-  <g fill="#fff">
+  <rect width="64" height="64" rx="12" fill="#20221d"/>
+  <path d="M21 7 L37 5 L47 11 L50 24 L46 37 H18 L14 24 L17 12 Z" fill="#fcfaf4"/>
+  <path d="M37 5 L47 11 L50 24 L37 17 Z" fill="#20221d"/>
+  <path d="M17 22 L32 18 L47 22 L44 31 L32 34 L20 31 Z" fill="#20221d"/>
+  <path d="M21 23 L30 25.5 L26 29.5 Z M43 23 L34 25.5 L38 29.5 Z" fill="#fcfaf4"/>
+  <g fill="#fcfaf4">
     <rect x="11" y="40" width="2" height="16"/><rect x="15" y="40" width="1" height="16"/><rect x="18" y="40" width="3" height="16"/>
     <rect x="23" y="40" width="1" height="16"/><rect x="26" y="40" width="2" height="16"/><rect x="30" y="40" width="1" height="16"/>
     <rect x="33" y="40" width="3" height="16"/><rect x="38" y="40" width="1" height="16"/><rect x="41" y="40" width="2" height="16"/>

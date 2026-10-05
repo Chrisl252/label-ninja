@@ -2,7 +2,7 @@
 // keeps the inline handlers working, and the init sequence. All real logic
 // lives in the sibling modules; this file only wires.
 
-import { modeFromHash, sectionIdFromHash } from './guides.js';
+import { modeFromHash, sectionIdFromHash } from './guides.js?v=packing-20261005c';
 import { startSessionWatch, onSessionChange, isSignedIn } from './session.js';
 import { initAuthUi, openAuthModal, closeAuthModal, authSignOut } from './auth-ui.js';
 import { initExporter, runExport, markDirty, openExportsDrawer, closeExportsDrawer } from './exporter.js';
@@ -19,8 +19,11 @@ import { initProjects, saveProject } from './projects.js';
 import { refreshDashboard } from './dashboard.js';
 import { initAccount, showAccount } from './account.js';
 import { rememberWorkspace, lastWorkspaceLink } from './workspace-navigation.js';
-import { mountViews } from './views/mount.js';
+import { mountViews } from './views/mount.js?v=packing-20261005c';
 import { initLivePreviews } from './live-previews.js';
+import { initPackingTools } from './packing-tools.js?v=packing-20261005c';
+import { initHomePicker } from './home-picker.js?v=packing-20261005c';
+import { initPrinterPicker } from '../printer-picker.js?v=packing-20261005c';
 
 const MODES = ['home', 'dashboard', 'editor', 'bin', 'whatnot', 'fnsku', 'guides', 'account'];
 const AUTH_ONLY_MODES = new Set(['dashboard', 'account']);
@@ -88,7 +91,7 @@ function scrollToHashSection() {
   if (!id) return;
   const target = document.getElementById(id);
   if (target) {
-    setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+    setTimeout(() => target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }), 60);
   }
 }
 
@@ -261,6 +264,9 @@ function init() {
   initLivePreviews();
   wireSkipLink();
   routeFromLocation();
+  initPackingTools();
+  initHomePicker();
+  initPrinterPicker();
 
   window.addEventListener('hashchange', () => {
     navigatedExplicitly = true;

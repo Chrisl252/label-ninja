@@ -1,5 +1,5 @@
-/* Hallmark · macrostructure: Panel list · tone: utilitarian/technical · anchor hue: electric blue (kept)
- * Label Ninja "Print Bench" — home, dashboard, account, and the overlays
+/* Hallmark · macrostructure: Panel list · tone: utilitarian/technical · identity: warm stock and thermal ink
+ * Label Ninja "Packing Bench" — home, dashboard, account, and the overlays
  * (auth / exports drawer / save / toasts). Tokens: css/tokens.css. Primitives: css/app.css. */
 
 /* body scroll-lock every overlay toggles via JS */
@@ -31,7 +31,7 @@
 .dropzone__title { font-family: var(--font-display); font-weight: 600; font-size: var(--text-lg); letter-spacing: 0.05em; text-transform: uppercase; }
 .dropzone__hint { font-size: var(--text-xs); color: var(--color-ink-3); }
 
-/* ---------- cards: projects are white stock, exports are dark records ---------- */
+/* ---------- cards: projects are white stock, exports are job records ---------- */
 .card { display: flex; flex-direction: column; gap: var(--space-2xs); padding: var(--space-sm); min-width: 0; }
 .card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2xs); }
 .card__name { font-family: var(--font-display); font-weight: 700; font-size: var(--text-lg); text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.1; min-width: 0; }
@@ -178,3 +178,39 @@
 .toast--ready { box-shadow: var(--shadow-stock), inset 4px 0 0 var(--color-ready); }
 .toast--danger { box-shadow: var(--shadow-stock), inset 4px 0 0 var(--color-danger); }
 #ln-toast { z-index: 50; }
+
+/* Packing Bench account surfaces. Existing home selectors stay compatible with the crawlable page. */
+.packing-dashboard { gap: var(--space-xl); }
+.dash-intro { align-items: stretch; }
+.dash-start { padding: var(--space-lg); border-style: dashed; }
+.dash-start h1 { font-size: var(--text-display); max-width: 18ch; }
+.dash-usage { padding: var(--space-lg); background: var(--color-chassis-3); }
+.dash-h { font-size: var(--text-xl); color: var(--color-ink); letter-spacing: var(--track-display); }
+.card { border: var(--rule); border-radius: var(--radius-label); padding: var(--space-md); gap: var(--space-sm); }
+.card__name, .tile__title, .xrow__tool, .toast__title { text-transform: none; letter-spacing: var(--track-display); }
+.card__acts { flex-wrap: wrap; }
+.card__acts .btn { min-height: 44px; }
+.card__meta { line-height: var(--leading-body); }
+.tile { min-height: 88px; padding: var(--space-md); }
+.tile__title { font-size: var(--text-xl); }
+.tile__hint { font-size: var(--text-sm); }
+.packing-account { max-width: 52rem; }
+.packing-account .page-head { gap: var(--space-xs); padding-bottom: var(--space-lg); border-bottom-style: dashed; }
+.packing-account .page-head h1 { font-size: var(--text-display); }
+.packing-dialog { border: var(--rule); background: var(--color-chassis-2); }
+.auth__mark { color: var(--color-stock-ink); margin-bottom: var(--space-xs); }
+.auth__intent { font-size: var(--text-base); }
+.auth__perks { padding-block: var(--space-sm); border-block: var(--rule-cut); }
+.auth .tabs__btn, .auth .btn, .packing-dialog .btn, .packing-drawer .btn { min-height: 44px; }
+.auth .input, .packing-dialog .input { font-size: 1rem; min-height: 48px; }
+.xrow { padding: var(--space-sm); background: var(--color-chassis-2); }
+.xrow__acts { flex-wrap: wrap; }
+.xrow__exp { line-height: var(--leading-body); }
+@media (max-width: 639px) {
+  .dash-start { padding: var(--space-md); }
+  .dash-start h1 { font-size: var(--text-2xl); }
+  .dash-usage { padding: var(--space-md); }
+  .card__head, .xrow__head { flex-wrap: wrap; }
+  .auth__perks { gap: var(--space-2xs); }
+  .auth .row.spread { align-items: flex-start; gap: var(--space-sm); }
+}

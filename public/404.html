@@ -6,36 +6,52 @@
   <title>Page not found | Label Ninja</title>
   <meta name="description" content="That page does not exist. Jump to Label Ninja's free 4x6 shipping label converter, Whatnot labels, bin labels, FNSKU labels or printing guides.">
   <meta name="robots" content="noindex,follow">
-  <meta name="theme-color" content="#14161c">
+  <meta name="theme-color" content="#F5F1E8">
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="/css/tokens.css">
-  <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="/css/tokens.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/app.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/site.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/guides.css?v=packing-20261005c">
+  <link rel="preload" href="/assets/fonts/barlow-condensed.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
 </head>
-<body>
+<body class="packing-page recovery-page">
 
-  <header class="site-header"><a class="site-brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"> Label Ninja</a><nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/">Guides</a></nav></header>
+  <a class="seller-skip btn btn--primary" href="#main">Skip to free tools</a>
+  <header class="site-header">
+    <a class="site-brand" href="/"><span class="brand__mark" aria-hidden="true"></span>Label Ninja</a>
+    <nav class="site-nav" aria-label="Main">
+      <details class="nav-group"><summary>Tools</summary><div class="nav-group__menu">
+        <a href="/shipping-label-to-4x6">Shipping label to 4×6</a>
+        <a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a>
+        <a href="/#tools/whatnot-live-show-number-generator">Whatnot numbers</a>
+        <a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a>
+        <a href="/#editor">Custom label editor</a>
+      </div></details>
+      <a href="/#label-sizes">Labels &amp; sizes</a>
+      <a href="/#best-label-printers">Printers</a>
+      <a href="/guides/">Guides</a>
+    </nav>
+    <div class="site-controls"><button type="button" class="site-control" data-site-search aria-label="Find a tool or guide" disabled>Find</button><button type="button" class="site-control" data-site-theme aria-label="Switch to dark theme" disabled>Dark</button></div>
+
+  </header>
 
   <main class="nf" id="main">
     <p class="nf__code">Error 404 &middot; label not found</p>
     <h1>This page didn't print</h1>
-    <p class="nf__lede">Nothing lives at <span class="nf__path" id="nf-path">this address</span>. It may have moved, or the link has a typo. Every Label Ninja tool is free and runs in your browser. Pick one below.</p>
+    <p class="nf__lede">Nothing lives at <span class="nf__path" id="nf-path">this address</span>. It may have moved, or the link has a typo. The tools are free. The shipping converter needs no account; studio PDF downloads use a free account. Pick the job you need below.</p>
 
     <section class="nf__group" aria-labelledby="nf-tools">
       <h2 id="nf-tools">Free label tools</h2>
       <ul class="nf__grid">
         <li><a href="/shipping-label-to-4x6"><strong>4x6 label converter</strong><span>Crop an 8.5x11 PDF shipping label to a 4x6 thermal label.</span></a></li>
-        <li><a href="/whatnot-labels"><strong>Whatnot labels</strong><span>Fix tiny Whatnot packing slips and labels for 4x6 printers.</span></a></li>
+        <li><a href="/whatnot-labels"><strong>Whatnot labels</strong><span>Make numbered item labels for your next live show.</span></a></li>
         <li><a href="/#tools/warehouse-rack-bin-label-generator"><strong>Bin labels</strong><span>Rack, shelf and bin location labels with barcodes.</span></a></li>
-        <li><a href="/#tools/amazon-fba-fnsku-generator"><strong>FNSKU labels</strong><span>Amazon FBA FNSKU barcode labels for any label stock.</span></a></li>
+        <li><a href="/#tools/amazon-fba-fnsku-generator"><strong>FNSKU labels</strong><span>Print an existing FNSKU as a 2 × 1 inch barcode label.</span></a></li>
       </ul>
     </section>
 
@@ -70,6 +86,6 @@
   <script>
     (function () { var el = document.getElementById('nf-path'); if (el) el.textContent = location.pathname; })();
   </script>
-  <script src="/js/site-nav.js" defer></script>
+  <script src="/js/site-nav.js?v=packing-20261005c" defer></script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 
 ## Local verification
 
-Run from C:\Code\label-ninja.com\label-ninja (or the lane worktree):
+Run from the active source worktree in WORKSPACE-MAP.md:
 
 - npm ci
 - npx wrangler d1 migrations apply label-ninja-db --local
@@ -26,6 +26,8 @@ To run scheduled cleanup locally, GET http://127.0.0.1:8787/cdn-cgi/local/schedu
 Payments are gone (2026-10-01), so there is no provider acceptance gate. Remaining operator checks: recovery email delivered to an owner-controlled inbox (Resend + verified sender), representative 200-page and image-heavy jobs on production capacity, and owner review of the public operator/contact language. Ads stay off until Chris decides; turning them on is its own Ready Check.
 
 ## Release gate
+
+Affiliate changes also require `npm run check:affiliates:release`. Verify the site in the selected Associates store website list and update `config/affiliates.json` with dated evidence before this gate. Adding a website or new tracking ID requires owner approval; source inspection does not constitute account approval.
 
 Show the exact release candidate in Chrome at desktop and phone widths. Ask for explicit approve/deny. Do not deploy before approval or change the artifact after approval.
 

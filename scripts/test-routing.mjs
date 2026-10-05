@@ -56,7 +56,13 @@ const sitemap = readFileSync('public/sitemap.xml', 'utf8');
 const locs = [...sitemap.matchAll(/<loc>https:\/\/label-ninja\.com([^<]*)<\/loc>/g)].map((m) => m[1]);
 ok(locs.includes('/guides/') && locs.length >= 10, 'sitemap lists /guides/ and all canonical pages');
 ok(!/<loc>[^<]*(404|account|reset|api)/.test(sitemap), 'sitemap has no 404/SPA/api URLs');
-ok((sitemap.match(/<lastmod>2026-10-01<\/lastmod>/g) || []).length === locs.length, 'every sitemap URL has lastmod');
+const sitemapEntries = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => match[1]);
+ok(sitemapEntries.length === locs.length && sitemapEntries.every((entry) => {
+  const dates = [...entry.matchAll(/<lastmod>(\d{4}-\d{2}-\d{2})<\/lastmod>/g)];
+  if (dates.length !== 1) return false;
+  const date = new Date(dates[0][1]);
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === dates[0][1];
+}), 'every sitemap URL has one valid lastmod date');
 const hubBuilt = isFile('public/guides/index.html');
 for (const path of locs) {
   if (path === '/guides/' && !hubBuilt) { console.warn('skip /guides/ (public/guides/index.html not written yet)'); continue; }

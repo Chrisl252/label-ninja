@@ -1,0 +1,10 @@
+{
+  "amazon": {
+    "tag": "discountd0247-20",
+    "tagVerifiedOn": "2026-10-05",
+    "site": "https://label-ninja.com",
+    "websiteListed": false,
+    "websiteListCheckedOn": "2026-10-05",
+    "evidence": "Read-only Chrome inspection of the selected Associates store: tag visible; website list contains just-bargains.com and seniorsassassins.com, but not label-ninja.com. Registration and publication require owner approval."
+  }
+}

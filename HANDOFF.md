@@ -1,5 +1,40 @@
 # Label Ninja handoff
 
+## October 5 approved Packing Bench — reviewed/frozen, registration and release approval pending
+
+Chris approved Packing Bench. The active candidate at http://127.0.0.1:8797/ now applies the shared warm-paper/light-default and dark system to the home, editor/batch tools, printer decision workflow, ten canonical documents and 404. DESIGN.md is locked to the approved direction. Historical proposals remain at design/redesign-20261005/ on port 8809; they are not working exports or current release input.
+
+Local verification: npm suite, 23 converter fixtures, HTTP/local DB/header checks and B3 three-page 4x6 PDF integration pass. The source audit preserves existing SEO/control/anchor contracts, all eleven affiliate destinations/config and output geometry. Two preset display names were corrected; numeric sizes and keys remain intact. 390px DOM checks cover all ten canonical pages in both themes, plus dark 404: no document overflow and one visible H1. Printer comparison selection/dialog/Escape focus restore and actual converter sample PDF download (one 288x432pt page) were checked. Final browser checks also cover theme persistence, search/Escape/focus, editor movement/draft preservation, Whatnot validation/transfer, signed-in account and sign-out. The real Whatnot UI PDF is three 216x144pt pages. Physical printing/scanning remains unperformed.
+
+Saved mobile Lighthouse P/A/BP/SEO: before (live) home99/97/92/100, converter89/100/92/100, guide91/100/92/100; after (local) home95/100/96/100, converter97/100/100/100, guide98/100/100/100. Final lab CLS is home0, converter0.000393 and guide0; preloading all three fonts resolved the guide breadcrumb-wrap shift. Evidence and exact limitations: design/redesign-20261005/QA.md, README.md and evidence/packing-source-audit.md. Final npm/cropper/dry-run exit 0; the dry run reports 109 asset entries. The frozen review/release input is backups/packing-20261005/release-candidate-v2/ (121 files, 98 physical public files), with release-candidate-v2-sha256.json. Independent source and frozen-copy hashes both match all 121 entries.
+
+- Agent: preserve the reviewed frozen candidate while Chris decides; any visible/source change repeats relevant checks and exact-candidate approval. The actual local preview is open in Chrome. Preserve the 700-line root HTML boundary and physical output geometry.
+- Chris: approve or amend the final candidate; separately authorize adding https://label-ninja.com to the selected Associates website list. websiteListed:false still closes the release gate. No external account change, deployment or push has occurred.
+- Agent, after explicit approvals: verify listing, timestamp-backup/update its config evidence, pass check:affiliates:release, then follow RUNBOOKS.md for an unchanged isolated release and public verification. Physical Rollo/tiny-stock print/scan acceptance remains Chris's task.
+- Next content after this brick: Whatnot label stock guide, then native Sorting Labels troubleshooting. All seven SEO_STRATEGY.md proposals remain unpublished; do not add fictitious capabilities or sitemap URLs.
+
+## Earlier October 5 direction-review stage (superseded)
+
+The latest owner request is a full tool-first redesign. His attachment says to present 2–3 directions, then stop for approval. Completed this stage: actual stack/routes/features inventory, ten live baseline screenshots (1440 desktop / 390 mobile), ten-document SEO source baseline, three isolated mockups with 24 homepage/tool screenshots across light/dark and desktop/mobile. Review: http://127.0.0.1:8809/index.html; source/evidence: design/redesign-20261005/. Packing Bench recommended; Cut Line and Dispatch Desk are alternatives. Current DESIGN.md has not been replaced.
+
+Chris owns the direction decision. Agent owns the ensuing tokens/components → home → tools → comparisons → content → acceptance slices. No ZPL implementation exists; current converter is PDF/image-to-PDF. Keep the comprehensive editor, vector-PDF dimensions and existing presets intact; treat new outputs/DPI/ZPL as separate scope. No performance or physical-print claims from mockups.
+
+All 87 public asset hashes still match the frozen local affiliate candidate. Affiliate configuration and shopping behavior are preserved; 11-link audit passes. Direction artifacts live outside public/ and cannot enter Wrangler's static-assets release. Preview server is loopback 8809, exec session 43426; working tool preview remains 8797. Presence :5200 refused once; no retry/restart. Details and bounded QA limits: design/redesign-20261005/README.md. Existing affiliate registration and deployment approvals below remain pending.
+
+## Earlier October 5 affiliate preparation (registration/release gates still pending)
+
+Chris requested affiliate links where appropriate and ideas for new pages. Prepared 11 tagged links (six existing printer searches, five supply/holder links) with same-section disclosures, compatibility checks and privacy/terms wording. All tools remain free and ads remain off. Source is lane-site-improve-20261004 on base 379fb71; changes uncommitted, no push/deploy or external account mutation.
+
+Verified selected tag discountd0247-20 in Chrome. Its website list contains the other two sites but omits Label Ninja. Owner action: approve adding https://label-ninja.com and approve the exact visible candidate. Agent action after approval: add/verify the website, back up and update config/affiliates.json dated evidence, run npm run check:affiliates:release, deploy unchanged through RUNBOOKS.md and verify public bytes/tags. Website listing is not a guarantee of account approval or commission. If copy changes after review, repeat Ready Check.
+
+Validation: npm test passes, including the 11-link affiliate audit; 23 cropper checks; local HTTP DB/header/route checks; Worker dry run. Chrome desktop/phone shopping copy and hash destination checked. Old Terms heading, reset-view HTML marker and fixed sitemap date assumptions in the check scripts were corrected; no API/auth/PDF behavior changed. Release gate correctly fails while websiteListed=false. Evidence/rollback backups: backups/affiliate-20261005/.
+
+Preview remains loopback http://127.0.0.1:8797/#best-label-printers, local Wrangler PID 2704, project-local registry, local D1 only. Review screenshot: backups/affiliate-20261005/affiliate-preview-desktop.jpg. No physical printer certification or public conversion claim.
+
+Seven research briefs in SEO_STRATEGY.md; build Whatnot label stock first, then native Sorting Labels troubleshooting. Neither is created/published. GSC baseline and existing unindexed/discovery targets are documented there. Preserve the other lane's dirty PROJECT_STATE.md.
+
+## Earlier handoff history (superseded by the free product and current snapshot)
+
 Current release: Chris explicitly said deploy approved. Shipped unchanged upgrade candidate ceb6a67 from clean backups/release-upgrade-20260907 as Worker eacac403-fbac-4484-bd6f-24398f2232cf, preserving Whatnot 79842db. Both domains match all 41 public hashes and pass HTTP/DB/offer gates; live account/PDF/project canary passes 17/17. Live browser confirms custom Whatnot settings survive pricing and return, without owner-account changes; sanitized Worker checks report two ok outcomes and zero exceptions. DEPLOYMENT_UPGRADE_CEB6A67.md is the full receipt. Prior 99bd8c27-c9e0-479d-b418-08727ff37aa3 is the rollback target.
 
 No further release approval is pending for this brick. Next revenue work is secure Stripe test provisioning and real checkout/webhook/portal acceptance, with recovery email still required. Production pricing remains configured:false, mode:test; paid-launch gate intentionally exits 1. No payment/email, migration, provider secret, hosting-plan change or GitHub push. Synthetic account ln-release+20260907053132@bisket.com retains two expiring PDFs and 8 batches; its only project was removed. Preserve unrelated files and earlier release evidence.
@@ -29,3 +64,5 @@ Chris answered the credential-location question: he only has the test keys alrea
 After the approved Whatnot release, the paid-service blocker remains secure Stripe and recovery-email configuration. Do not repeat the completed compatibility audit. Keep the local preview available. Configure the correct origin before sending a real reset link. Full paid launch also needs provider acceptance, image-heavy/load, operational and physical checks; do not call a mock checkout a paid launch.
 
 Do not manually reapply migration 0003. Preserve unrelated scratch artifacts; public/_preview-tools.html is excluded from assets. No GitHub push or paid-provider configuration mutation occurred. Retain backups/release-20260906-portable and the isolated probes. New synthetic account ln-release+20260907003637@bisket.com has two expiring PDFs and 8 batches left; its one project was deleted. Only the previous synthetic account's hash was upgraded; no existing customer record was modified. Chrome retained the owner's existing authenticated session; no sign-out or account replacement was performed.
+
+Session-record limitation: final departure POST to http://127.0.0.1:5200/api/presence returned connection refused. No departure recorded, no retry or service restart attempted; the repository handoff remains saved.

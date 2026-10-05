@@ -24,36 +24,51 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#14161c">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="/css/tokens.css">
-  <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/css/site.css">
-  <script src="/js/site-nav.js" defer></script>
-  <link rel="stylesheet" href="/css/guides.css">
+  <meta name="theme-color" content="#F5F1E8">
+  <link rel="stylesheet" href="/css/tokens.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/app.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/site.css?v=packing-20261005c">
+  <script src="/js/site-nav.js?v=packing-20261005c" defer></script>
+  <link rel="stylesheet" href="/css/guides.css?v=packing-20261005c">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[
-    {"@type":"WebPage","@id":"https://label-ninja.com/privacy","url":"https://label-ninja.com/privacy","name":"Label Ninja Privacy Policy","inLanguage":"en","dateModified":"2026-10-01","publisher":{"@type":"Organization","name":"Label Ninja","url":"https://label-ninja.com/"}},
+    {"@type":"WebPage","@id":"https://label-ninja.com/privacy","url":"https://label-ninja.com/privacy","name":"Label Ninja Privacy Policy","inLanguage":"en","dateModified":"2026-10-05","publisher":{"@type":"Organization","name":"Label Ninja","url":"https://label-ninja.com/"}},
     {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Label Ninja","item":"https://label-ninja.com/"},{"@type":"ListItem","position":2,"name":"Privacy","item":"https://label-ninja.com/privacy"}]}
   ]}
   </script>
+  <link rel="preload" href="/assets/fonts/barlow-condensed.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
 </head>
-<body>
+<body class="packing-page policy-page">
 
-  <header class="site-header"><a class="site-brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"> Label Ninja</a><nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/">Guides</a></nav></header>
+  <a class="seller-skip btn btn--primary" href="#policy-main">Skip to policy</a>
+  <header class="site-header">
+    <a class="site-brand" href="/"><span class="brand__mark" aria-hidden="true"></span>Label Ninja</a>
+    <nav class="site-nav" aria-label="Main">
+      <details class="nav-group"><summary>Tools</summary><div class="nav-group__menu">
+        <a href="/shipping-label-to-4x6">Shipping label to 4×6</a>
+        <a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a>
+        <a href="/#tools/whatnot-live-show-number-generator">Whatnot numbers</a>
+        <a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a>
+        <a href="/#editor">Custom label editor</a>
+      </div></details>
+      <a href="/#label-sizes">Labels &amp; sizes</a>
+      <a href="/#best-label-printers">Printers</a>
+      <a href="/guides/">Guides</a>
+    </nav>
+    <div class="site-controls"><button type="button" class="site-control" data-site-search aria-label="Find a tool or guide" disabled>Find</button><button type="button" class="site-control" data-site-theme aria-label="Switch to dark theme" disabled>Dark</button></div>
 
-  <main class="mode">
-    <article class="doc">
+  </header>
+
+  <main class="mode" id="policy-main">
+    <article class="doc doc--policy">
       <nav class="breadcrumb" aria-label="Breadcrumb"><ol><li><a href="/">Label Ninja</a></li><li aria-current="page">Privacy</li></ol></nav>
       <header class="doc__head">
         <span class="doc__stamp">Label Ninja · Christopher Lucas</span>
         <h1>Privacy policy</h1>
         <p class="lede">Label Ninja is a free, browser-based thermal label studio for Amazon FNSKU labels, warehouse bins, Whatnot show numbers, custom barcode labels and resizing shipping labels to 4 × 6. There is nothing to buy and we take no payments. This page says what we store, what stays on your device, and who else is involved.</p>
-        <span class="doc__stamp">Last updated <time datetime="2026-10-01">2026-10-01</time></span>
+        <span class="doc__stamp">Last updated <time datetime="2026-10-05">2026-10-05</time></span>
       </header>
 
       <section class="gd-summary" aria-labelledby="summary-heading">
@@ -63,7 +78,7 @@
           <li>The shipping label to 4×6 converter works in your browser. The label file you load is not uploaded to us.</li>
           <li>Accounts are optional. The studio needs a free account to download PDFs; we store your email and a hashed password.</li>
           <li>Studio PDFs are rendered on our server. The label details are not kept after rendering; signed-in users' PDFs are kept up to 7 days.</li>
-          <li>The site may show ads. Our ad partners, used or applied for, are Adsterra and Google AdSense.</li>
+          <li>Shopping links may earn us a commission. The site may also show ads; our ad partners, used or applied for, are Adsterra and Google AdSense.</li>
           <li>Email <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20privacy">chris@bisket.com</a> to delete your account.</li>
         </ul>
         <p class="small">This summary is for convenience. The sections below are the policy.</p>
@@ -77,6 +92,7 @@
           <li><a href="#exports">PDF exports from the studio</a></li>
           <li><a href="#projects">Saved projects</a></li>
           <li><a href="#ads">Advertising</a></li>
+          <li><a href="#shopping-links">Shopping and affiliate links</a></li>
           <li><a href="#logs">Abuse protection and logs</a></li>
           <li><a href="#services">Other services</a></li>
           <li><a href="#children">Children</a></li>
@@ -112,16 +128,23 @@
         <p>You can limit ad personalisation through your browser's cookie settings and, for Google, through <a href="https://adssettings.google.com/">Google's ad settings</a>.</p>
       </section>
 
+      <section id="shopping-links" class="doc__section prose">
+        <h2>6. Shopping and affiliate links</h2>
+        <p>Some printer and label supply links are Amazon affiliate links. As an Amazon Associate I earn from qualifying purchases. Shopping sections disclose these links before you click them.</p>
+        <p>These are ordinary links, not embedded Amazon tracking scripts. Opening one takes you to Amazon with our public referral tag. Amazon receives your visit and may use cookies under its <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ">privacy notice</a>. We do not add your label text, uploaded files or account details to shopping links.</p>
+        <p>You buy from the retailer, not from Label Ninja. Prices, stock and compatibility must be checked on the listing. Purchases are optional; all Label Ninja tools remain free.</p>
+      </section>
+
       <section id="logs" class="doc__section prose">
-        <h2>6. Abuse protection and logs</h2>
+        <h2>7. Abuse protection and logs</h2>
         <p>Sign-up, sign-in, password-reset and export requests are rate-limited to keep the free service available. Server logs record request outcomes and error codes, not the content of your labels.</p>
       </section>
 
       <section id="services" class="doc__section prose">
-        <h2>7. Other services</h2>
+        <h2>8. Other services</h2>
         <ul>
           <li><strong>Cloudflare</strong> hosts the site, the API and the database, and sees requests the way any host does.</li>
-          <li><strong>Google Fonts</strong> serves the typefaces.</li>
+          <li><strong>Fonts</strong> are served from Label Ninja with the rest of the page assets.</li>
           <li><strong>jsDelivr</strong> serves open-source libraries the tools load in your browser.</li>
           <li><strong>Resend</strong> delivers password-reset emails. It receives your email address and the reset link.</li>
           <li>The ad partners listed above.</li>
@@ -130,12 +153,12 @@
       </section>
 
       <section id="children" class="doc__section prose">
-        <h2>8. Children</h2>
+        <h2>9. Children</h2>
         <p>Label Ninja is built for sellers and warehouse work. It is not directed at children under 13, and we do not knowingly collect personal information from children.</p>
       </section>
 
       <section id="contact" class="doc__section prose">
-        <h2>9. Changes and contact</h2>
+        <h2>10. Changes and contact</h2>
         <p>If this policy changes, the date at the top changes with it. Label Ninja is operated by Christopher Lucas. For privacy questions or account deletion, email <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20privacy">chris@bisket.com</a>.</p>
       </section>
     </article>

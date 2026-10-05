@@ -26,16 +26,13 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#14161c">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/tokens.css">
-  <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/css/site.css">
-  <script src="/js/site-nav.js" defer></script>
-  <link rel="stylesheet" href="/css/guides.css">
-  <link rel="stylesheet" href="/css/whatnot-labels.css">
+  <meta name="theme-color" content="#F5F1E8">
+  <link rel="stylesheet" href="/css/tokens.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/app.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/site.css?v=packing-20261005c">
+  <script src="/js/site-nav.js?v=packing-20261005c" defer></script>
+  <link rel="stylesheet" href="/css/guides.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/whatnot-labels.css?v=packing-20261005c">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[
     {"@type":"Article","headline":"eBay shipping label not 4x6? How to fix the 8.5x11 format","description":"Why eBay shipping labels print on a letter-size page and how to get a 4 x 6 label for a thermal printer.","datePublished":"2026-10-01","dateModified":"2026-10-01","inLanguage":"en","author":{"@type":"Organization","name":"Label Ninja team","url":"https://label-ninja.com/"},"publisher":{"@type":"Organization","name":"Label Ninja","url":"https://label-ninja.com/","logo":{"@type":"ImageObject","url":"https://label-ninja.com/assets/logo.jpg"}},"mainEntityOfPage":"https://label-ninja.com/guides/ebay-shipping-label-not-4x6","image":"https://label-ninja.com/assets/logo.jpg"},
@@ -43,25 +40,44 @@
     {"@type":"HowTo","name":"How to change the eBay label format to 4 x 6","step":[{"@type":"HowToStep","position":1,"name":"Use a desktop browser","text":"Open the order and go to the create-label page in a desktop browser. Community answers say the format option does not appear in the eBay mobile app."},{"@type":"HowToStep","position":2,"name":"Find the label format","text":"Find the current label format, shown near the purchase summary. If it is hidden, look for Show more; on older layouts, switching to the advanced shipping view shows it."},{"@type":"HowToStep","position":3,"name":"Choose 4 x 6","text":"Choose Change and select the 4 × 6 label-printer format. The choice is normally remembered for later labels."},{"@type":"HowToStep","position":4,"name":"Older pages: printer preferences","text":"Some older eBay shipping pages instead had a Printer and receipt preferences link where you pick a 4 × 6 thermal printer type."}]}
   ]}
   </script>
+  <link rel="preload" href="/assets/fonts/barlow-condensed.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
 </head>
-<body class="seller-page">
+<body class="seller-page packing-page guide-page">
   <a class="seller-skip btn btn--primary" href="#main">Skip to guide</a>
-  <header class="site-header"><a class="site-brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"> Label Ninja</a><nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/">Guides</a></nav></header>
+  <header class="site-header">
+    <a class="site-brand" href="/"><span class="brand__mark" aria-hidden="true"></span>Label Ninja</a>
+    <nav class="site-nav" aria-label="Main">
+      <details class="nav-group"><summary>Tools</summary><div class="nav-group__menu">
+        <a href="/shipping-label-to-4x6">Shipping label to 4×6</a>
+        <a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a>
+        <a href="/#tools/whatnot-live-show-number-generator">Whatnot numbers</a>
+        <a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a>
+        <a href="/#editor">Custom label editor</a>
+      </div></details>
+      <a href="/#label-sizes">Labels &amp; sizes</a>
+      <a href="/#best-label-printers">Printers</a>
+      <a href="/guides/">Guides</a>
+    </nav>
+    <div class="site-controls"><button type="button" class="site-control" data-site-search aria-label="Find a tool or guide" disabled>Find</button><button type="button" class="site-control" data-site-theme aria-label="Switch to dark theme" disabled>Dark</button></div>
+
+  </header>
   <nav class="breadcrumb gd-crumbs gd-crumbs--article" aria-label="Breadcrumb"><ol><li><a href="/">Label Ninja</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">eBay shipping label not 4×6</li></ol></nav>
   <main id="main" class="seller-main seller-article">
-    <article>
+    <article class="guide-layout">
       <header class="seller-intro">
         <p class="seller-kicker">Guide / eBay</p>
         <h1>eBay shipping label not printing 4×6?</h1>
         <p class="lede">If your eBay label fills a whole 8.5 × 11 page, or comes out shrunk on a 4 × 6 thermal label, eBay is giving you its standard-paper format. Switch the label format before you buy the next label, and crop the ones you already have.</p>
         <div class="gd-answer" role="note" aria-labelledby="quick-answer">
-          <p class="gd-answer__label" id="quick-answer">Quick answer</p>
+          <p class="gd-answer__label" id="quick-answer">Try this first</p>
           <p>eBay labels print on a full 8.5 × 11 page when your account's label format is set to standard paper. On the desktop create-label page, find the label format, choose <em>Change</em> and pick 4 × 6. For a label you already bought, crop the PDF with the free <a href="/shipping-label-to-4x6">4×6 converter</a> and print at 100%.</p>
         </div>
         <p class="seller-meta">By the Label Ninja team · Published 2026-10-01 · Last updated <time datetime="2026-10-01">2026-10-01</time></p>
       </header>
       <nav class="gd-toc" aria-labelledby="toc-heading">
-        <h2 id="toc-heading">On this page</h2>
+        <h2 id="toc-heading">Work through the fix</h2>
         <ol>
           <li><a href="#why">Why eBay labels come out 8.5 × 11</a></li>
           <li><a href="#change-format">How to change eBay's label format to 4 × 6</a></li>
@@ -71,7 +87,7 @@
         </ol>
       </nav>
       <section id="why" class="seller-section">
-        <h2><span>01 / The cause</span>Why eBay labels come out 8.5 × 11</h2>
+        <h2><span>The cause</span>Why eBay labels come out 8.5 × 11</h2>
         <div class="prose">
           <p>eBay can produce a shipping label as a letter-size page meant for an ordinary printer, or as a 4 × 6 page meant for a label printer. Which one you get depends on the label format saved on your account. Sellers on eBay's community boards regularly report that new accounts start on standard paper, so the first thermal print often comes out small or sideways.</p>
           <p>When a thermal printer receives a letter-size page, the driver usually shrinks the whole page to fit the 4 × 6 label. The label part of the page then ends up a fraction of its real size, with blank space or a receipt beside it. Scanners at the carrier may struggle with a shrunk barcode, so it is worth fixing rather than shipping as is.</p>
@@ -82,7 +98,7 @@
         </div>
       </section>
       <section id="change-format" class="seller-section">
-        <h2><span>02 / Fix future labels</span>How to change eBay's label format to 4 × 6</h2>
+        <h2><span>Fix future labels</span>How to change eBay's label format to 4 × 6</h2>
         <div class="prose">
           <ol>
             <li>Open the order and go to the create-label page in a desktop browser. Community answers say the format option does not appear in the eBay mobile app.</li>
@@ -94,7 +110,7 @@
         </div>
       </section>
       <section id="already-bought" class="seller-section">
-        <h2><span>03 / Fix this label</span>Already bought an 8.5 × 11 label?</h2>
+        <h2><span>Fix this label</span>Already bought an 8.5 × 11 label?</h2>
         <div class="prose">
           <p>You do not need to void a paid label just because it is the wrong page size. You have three options:</p>
           <figure class="gd-figure">
@@ -110,7 +126,7 @@
         </div>
       </section>
       <section id="printer" class="seller-section">
-        <h2><span>04 / The other half</span>Printer settings that still shrink a 4 × 6 label</h2>
+        <h2><span>The other half</span>Printer settings that still shrink a 4 × 6 label</h2>
         <div class="prose">
           <p>A correct 4 × 6 PDF can still print small if the printer side is wrong. Check:</p>
           <ul>
@@ -123,7 +139,7 @@
         </div>
       </section>
       <section id="checks" class="seller-section">
-        <h2><span>05 / Before it leaves</span>Check the label before you ship</h2>
+        <h2><span>Before it leaves</span>Check the label before you ship</h2>
         <div class="prose">
           <ul>
             <li>The whole barcode and tracking number are on the label, with nothing cut off at the edges.</li>
@@ -157,6 +173,6 @@
       <li><a href="/guides/8-5x11-shipping-label-to-4x6">Convert an 8.5×11 shipping label to 4×6</a></li>
     </ul>
   </aside>
-  <footer class="seller-footer"><span>Label Ninja · Independent of eBay</span><nav aria-label="Footer"><a href="/guides/">Guides</a><a href="/shipping-label-to-4x6">Label to 4×6</a><a href="/whatnot-labels">Whatnot Labels</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav></footer>
+  <footer class="seller-footer"><span>© 2026 Christopher Lucas · Label Ninja · Independent of eBay</span><nav aria-label="Footer"><a href="/guides/">Guides</a><a href="/shipping-label-to-4x6">Label to 4×6</a><a href="/whatnot-labels">Whatnot Labels</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav></footer>
 </body>
 </html>

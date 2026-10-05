@@ -21,16 +21,14 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#14161c">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/tokens.css">
-  <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/css/whatnot-labels.css">
-  <link rel="stylesheet" href="/css/site.css">
-  <link rel="stylesheet" href="/css/label-crop.css">
-  <script src="/js/site-nav.js" defer></script>
+  <meta name="theme-color" content="#F5F1E8">
+  <link rel="stylesheet" href="/css/tokens.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/app.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/whatnot-labels.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/guides.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/site.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/label-crop.css?v=packing-20261005c">
+  <script src="/js/site-nav.js?v=packing-20261005c" defer></script>
   <script type="module" src="/js/label-crop/app.js"></script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[{"@type":"WebApplication","@id":"https://label-ninja.com/shipping-label-to-4x6#app","name":"Shipping Label to 4x6 Converter","url":"https://label-ninja.com/shipping-label-to-4x6","description":"Crop and resize letter-size or A4 shipping label PDFs and images to 4x6 inch or 100x150 mm pages for thermal label printers. Splits pages with 2 or 4 labels and can keep or drop the packing slip. Runs in the browser; files are not uploaded.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Label Ninja","url":"https://label-ninja.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://label-ninja.com/"},{"@type":"ListItem","position":2,"name":"Shipping Label to 4x6","item":"https://label-ninja.com/shipping-label-to-4x6"}]},{"@type":"FAQPage","mainEntity":[
@@ -40,25 +38,44 @@
     {"@type":"Question","name":"Why will my PDF not open?","acceptedAnswer":{"@type":"Answer","text":"If the PDF needs a password to open, the browser cannot read it. Open it in your PDF viewer, save or print it to a new PDF without the password, and add that copy. A file that was only partly downloaded will not open either; download it again. PDFs that open normally but are locked against editing still work: those pages are copied as 300 dpi images."}},
     {"@type":"Question","name":"Will the converted label scan?","acceptedAnswer":{"@type":"Answer","text":"Labels from PDF files keep their original quality because the page content is reused rather than redrawn as a picture. Make sure the crop includes the whole barcode, print at 100%, and test-scan one label if your carrier is strict."}},
     {"@type":"Question","name":"Is it free? Are there limits?","acceptedAnswer":{"@type":"Answer","text":"Yes, it is free with no account and no batch limit. The practical limit is your device's memory; very large batches may be slow on older phones."}},
-    {"@type":"Question","name":"Does Label Ninja buy postage or connect to eBay or Amazon?","acceptedAnswer":{"@type":"Answer","text":"No. This tool only reshapes labels you already have. Label Ninja is independent and is not affiliated with or endorsed by eBay, Amazon, USPS, UPS, FedEx, Pirate Ship or any printer brand."}}
+    {"@type":"Question","name":"Does Label Ninja buy postage or connect to eBay or Amazon?","acceptedAnswer":{"@type":"Answer","text":"No. This tool only reshapes labels you already have. It does not buy postage or connect to your marketplace account. Optional Amazon shopping links are disclosed in the supply section and privacy policy."}}
   ]}]}
   </script>
+  <link rel="preload" href="/assets/fonts/barlow-condensed.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
 </head>
-<body class="seller-page">
+<body class="seller-page packing-page converter-page">
   <a class="seller-skip btn btn--primary" href="#converter">Skip to converter</a>
-  <header class="site-header"><a class="site-brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"> Label Ninja</a><nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6" aria-current="page">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/">Guides</a></nav></header>
+  <header class="site-header">
+    <a class="site-brand" href="/"><span class="brand__mark" aria-hidden="true"></span>Label Ninja</a>
+    <nav class="site-nav" aria-label="Main">
+      <details class="nav-group"><summary>Tools</summary><div class="nav-group__menu">
+        <a href="/shipping-label-to-4x6">Shipping label to 4×6</a>
+        <a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a>
+        <a href="/#tools/whatnot-live-show-number-generator">Whatnot numbers</a>
+        <a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a>
+        <a href="/#editor">Custom label editor</a>
+      </div></details>
+      <a href="/#label-sizes">Labels &amp; sizes</a>
+      <a href="/#best-label-printers">Printers</a>
+      <a href="/guides/">Guides</a>
+    </nav>
+    <div class="site-controls"><button type="button" class="site-control" data-site-search aria-label="Find a tool or guide" disabled>Find</button><button type="button" class="site-control" data-site-theme aria-label="Switch to dark theme" disabled>Dark</button></div>
+
+  </header>
   <main class="seller-main" id="main">
     <nav class="breadcrumb" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li aria-current="page">Shipping Label to 4x6</li></ol></nav>
     <header class="seller-intro lc-intro">
       <p class="seller-kicker">Free tool · no account · no upload</p>
       <h1>Shipping Label to 4x6 Converter</h1>
-      <p class="lede">Turn a letter-size or A4 shipping label PDF into a 4 × 6 in page your thermal printer prints at full size.</p>
+      <p class="lede">Crop a shipping label from a letter-size PDF, image or screenshot. Download an exact-size 4 × 6 PDF, ready to print at Actual size.</p>
       <ol class="lc-steps" aria-label="How it works">
         <li><span class="lc-steps__n" aria-hidden="true">1</span><span><strong>Drop</strong> <span class="lc-steps__more">your label PDF, image or screenshot</span></span></li>
         <li><span class="lc-steps__n" aria-hidden="true">2</span><span><strong>Check crop</strong> <span class="lc-steps__more">so the box covers the whole label</span></span></li>
         <li><span class="lc-steps__n" aria-hidden="true">3</span><span><strong>Download 4x6</strong> <span class="lc-steps__more">as one PDF, one label per page</span></span></li>
       </ol>
-      <p class="lc-private">Your file never leaves your device. The conversion runs in this browser tab; nothing is uploaded, stored or logged.</p>
+      <p class="lc-private">Your label file stays on this device. Only layout and output settings are remembered in this browser.</p>
     </header>
 
     <section id="converter" class="lc" aria-labelledby="converter-heading">
@@ -154,7 +171,7 @@
     </nav>
 
     <section id="how" class="seller-section">
-      <h2><span>01 / How it works</span>How to convert a shipping label to 4x6</h2>
+      <h2><span>How it works</span>How to convert a shipping label to 4x6</h2>
       <div class="lc-how">
         <figure class="lc-fig">
           <svg viewBox="0 0 520 280" role="img" aria-labelledby="lc-fig-title lc-fig-desc" class="lc-fig__svg">
@@ -199,7 +216,7 @@
     </section>
 
     <section id="layouts" class="seller-section">
-      <h2><span>02 / Supported layouts</span>Which label files work</h2>
+      <h2><span>Supported layouts</span>Which label files work</h2>
       <div class="prose"><p>Every service changes its layouts over time and by account settings, so treat this table as general guidance and always check the preview before printing. If a service can produce 4 × 6 labels directly, that setting is usually the simplest fix for future labels.</p></div>
       <div class="lc-table-wrap">
         <table class="seller-table">
@@ -219,7 +236,7 @@
     </section>
 
     <section id="ebay" class="seller-section">
-      <h2><span>03 / eBay</span>eBay shipping label not 4x6?</h2>
+      <h2><span>eBay</span>eBay shipping label not 4x6?</h2>
       <div class="prose">
         <p>When eBay gives you a label on a full 8.5 × 11 page, a 4 × 6 thermal printer shrinks the whole page, so the label prints small, or the printer cuts most of it off. Drop the PDF into the converter: auto-detect looks for the label's border. If the page also has a packing slip, choose whether to drop it or keep it as its own 4 × 6 page.</p>
         <p>To get 4 × 6 labels from eBay next time, check the label format or printer setting in eBay's shipping label flow before you print. More in <a href="/guides/ebay-shipping-label-not-4x6">why an eBay label is not 4x6</a>.</p>
@@ -227,7 +244,7 @@
     </section>
 
     <section id="usps" class="seller-section">
-      <h2><span>04 / Letter-size labels</span>USPS, Pirate Ship and other 8.5x11 labels to 4x6</h2>
+      <h2><span>Letter-size labels</span>USPS, Pirate Ship and other 8.5x11 labels to 4x6</h2>
       <div class="prose">
         <p>Many shipping services produce letter-size PDFs for home printers, often with one label in the top half and instructions below, or two labels per sheet. Set <strong>Labels per page</strong> to match: each label becomes its own 4 × 6 page, and empty spots on a partly used sheet are skipped.</p>
         <p>If you already downloaded the letter-size file, converting it here is quicker than buying the label again. There is a longer walk-through in <a href="/guides/8-5x11-shipping-label-to-4x6">8.5x11 shipping label to 4x6</a>.</p>
@@ -235,14 +252,14 @@
     </section>
 
     <section id="amazon" class="seller-section">
-      <h2><span>05 / Returns</span>Convert an Amazon return label to 4x6</h2>
+      <h2><span>Returns</span>Convert an Amazon return label to 4x6</h2>
       <div class="prose">
         <p>Amazon return labels are usually a letter-size PDF with the carrier label and return instructions on one page. Choose “Amazon return label (letter)” or keep auto-detect, check that the label and its barcodes are inside the box, then make the PDF. Some returns offer a QR code for drop-off instead of a printed label; then there is nothing to convert. See also <a href="/guides/print-amazon-return-label-4x6">printing an Amazon return label on 4x6</a>.</p>
       </div>
     </section>
 
     <section id="printers" class="seller-section">
-      <h2><span>06 / Printer settings</span>Printing 4x6 labels on Rollo, Zebra, Munbyn and DYMO 4XL</h2>
+      <h2><span>Printer settings</span>Printing 4x6 labels on Rollo, Zebra, Munbyn and DYMO 4XL</h2>
       <div class="prose">
         <p>The converted PDF is exactly 4 × 6 in (288 × 432 points) or 100 × 150 mm per page. Most sizing problems come from the print dialog, not the file: choose the label printer, set the paper size to 4 × 6 in or 100 × 150 mm, print at 100% or Actual size, and print one page first to check.</p>
       </div>
@@ -261,15 +278,24 @@
       <div class="prose"><p>If the label still prints tiny or rotated, the viewer is probably fitting the page to a different paper size. Re-open the PDF, confirm the paper size is 4 × 6, and switch off any “fit” or “shrink” option. The <a href="/guides/whatnot-labels-printing-too-small">label printing troubleshooting guide</a> covers more cases.</p></div>
     </section>
 
+    <section id="label-stock" class="seller-section">
+      <h2>Need 4x6 label stock?</h2>
+      <div class="prose">
+        <p>Use the labels you already have if they match your printer. If you need replacements, check the exact size, direct thermal material and feed type. Generic fanfold stock is not a universal fit: DYMO 5XL requires DYMO-branded LabelWriter labels, and Brother QL models use compatible DK rolls.</p>
+        <p data-affiliate-disclosure="amazon"><strong>Affiliate links:</strong> As an Amazon Associate I earn from qualifying purchases. <a href="/privacy#shopping-links">About shopping links</a>.</p>
+        <p><a data-affiliate="amazon" href="https://www.amazon.com/s?k=4x6+direct+thermal+fanfold+shipping+labels&amp;tag=discountd0247-20" rel="sponsored noopener" target="_blank">Compare 4x6 labels on Amazon</a> for printers that support generic direct thermal stock. Our <a href="/#label-supplies">label stock checklist</a> links to manufacturer requirements and explains what to check before ordering.</p>
+      </div>
+    </section>
+
     <section id="questions" class="seller-section seller-faq">
-      <h2><span>07 / Questions</span>Common questions</h2>
+      <h2><span>Questions</span>Common questions</h2>
       <details open><summary>Are my labels uploaded anywhere?</summary><p>No. The page loads the converter code once, then your browser reads, crops and builds the PDF on your own device. Label files are not sent to Label Ninja or any other server. Only your settings, such as the output size, are remembered in this browser.</p></details>
       <details><summary>My PDF has two or four labels on one page. Can I split them?</summary><p>Yes. Set Labels per page to match the sheet. Each label is found inside its part of the page and becomes its own 4 × 6 page. Empty spots on a partly used sheet are skipped.</p></details>
       <details><summary>What happens to the packing slip?</summary><p>By default it is left out and only the label is kept. Choose “Add it as its own 4 × 6 page” under Packing slip to get the slip as a separate page right after its label.</p></details>
       <details><summary>Why will my PDF not open?</summary><p>If the PDF needs a password to open, the browser cannot read it. Open it in your PDF viewer, save or print it to a new PDF without the password, and add that copy. A file that was only partly downloaded will not open either; download it again. PDFs that open normally but are locked against editing still work: those pages are copied as 300 dpi images.</p></details>
       <details><summary>Will the converted label scan?</summary><p>Labels from PDF files keep their original quality because the page content is reused rather than redrawn as a picture. Make sure the crop includes the whole barcode, print at 100%, and test-scan one label if your carrier is strict.</p></details>
       <details><summary>Is it free? Are there limits?</summary><p>Yes, it is free with no account and no batch limit. The practical limit is your device's memory; very large batches may be slow on older phones.</p></details>
-      <details><summary>Does Label Ninja buy postage or connect to eBay or Amazon?</summary><p>No. This tool only reshapes labels you already have. Label Ninja is independent and is not affiliated with or endorsed by eBay, Amazon, USPS, UPS, FedEx, Pirate Ship or any printer brand.</p></details>
+      <details><summary>Does Label Ninja buy postage or connect to eBay or Amazon?</summary><p>No. This tool only reshapes labels you already have. It does not buy postage or connect to your marketplace account. Optional Amazon shopping links are disclosed in the supply section and privacy policy.</p></details>
     </section>
 
     <div class="seller-next">
@@ -277,7 +303,7 @@
       <p>Design product, barcode and item labels in the <a href="/">Label Ninja studio</a>, or make numbered show labels with <a href="/whatnot-labels">Whatnot Labels</a>.</p>
       <a class="btn btn--primary" href="#converter">Convert a label</a>
     </div>
-    <p class="seller-meta">Prepared by the Label Ninja team. Updated <time datetime="2026-10-01">October 1, 2026</time>. Runs on pdf.js and pdf-lib, both open source.</p>
+    <p class="seller-meta">Prepared by the Label Ninja team. Updated <time datetime="2026-10-05">October 5, 2026</time>. Runs on pdf.js and pdf-lib, both open source.</p>
   </main>
   <aside class="more-tools" aria-labelledby="more-tools-heading">
     <h2 id="more-tools-heading">More free tools</h2>

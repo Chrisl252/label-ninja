@@ -24,16 +24,13 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#14161c">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/tokens.css">
-  <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/css/site.css">
-  <script src="/js/site-nav.js" defer></script>
-  <link rel="stylesheet" href="/css/guides.css">
-  <link rel="stylesheet" href="/css/whatnot-labels.css">
+  <meta name="theme-color" content="#F5F1E8">
+  <link rel="stylesheet" href="/css/tokens.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/app.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/site.css?v=packing-20261005c">
+  <script src="/js/site-nav.js?v=packing-20261005c" defer></script>
+  <link rel="stylesheet" href="/css/guides.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/whatnot-labels.css?v=packing-20261005c">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[
     {"@type":"CollectionPage","@id":"https://label-ninja.com/guides/","url":"https://label-ninja.com/guides/","name":"Thermal label printing guides","description":"How-to guides for printing shipping labels on 4 x 6 thermal printers, fixing Whatnot labels that print too small and setting printer paper size and scale.","inLanguage":"en","dateModified":"2026-10-01","isPartOf":{"@type":"WebSite","name":"Label Ninja","url":"https://label-ninja.com/"},"publisher":{"@type":"Organization","name":"Label Ninja","url":"https://label-ninja.com/"},
@@ -45,19 +42,47 @@
     {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Label Ninja","item":"https://label-ninja.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://label-ninja.com/guides/"}]}
   ]}
   </script>
+  <link rel="preload" href="/assets/fonts/barlow-condensed.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
 </head>
-<body class="seller-page">
+<body class="seller-page packing-page guide-page">
   <a class="seller-skip btn btn--primary" href="#main">Skip to guides</a>
-  <header class="site-header"><a class="site-brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"> Label Ninja</a><nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/" aria-current="page">Guides</a></nav></header>
+  <header class="site-header">
+    <a class="site-brand" href="/"><span class="brand__mark" aria-hidden="true"></span>Label Ninja</a>
+    <nav class="site-nav" aria-label="Main">
+      <details class="nav-group"><summary>Tools</summary><div class="nav-group__menu">
+        <a href="/shipping-label-to-4x6">Shipping label to 4×6</a>
+        <a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a>
+        <a href="/#tools/whatnot-live-show-number-generator">Whatnot numbers</a>
+        <a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a>
+        <a href="/#editor">Custom label editor</a>
+      </div></details>
+      <a href="/#label-sizes">Labels &amp; sizes</a>
+      <a href="/#best-label-printers">Printers</a>
+      <a href="/guides/" aria-current="page">Guides</a>
+    </nav>
+    <div class="site-controls"><button type="button" class="site-control" data-site-search aria-label="Find a tool or guide" disabled>Find</button><button type="button" class="site-control" data-site-theme aria-label="Switch to dark theme" disabled>Dark</button></div>
+
+  </header>
   <nav class="breadcrumb gd-crumbs gd-crumbs--article" aria-label="Breadcrumb"><ol><li><a href="/">Label Ninja</a></li><li aria-current="page">Guides</li></ol></nav>
-  <main id="main" class="seller-main seller-article">
+  <main id="main" class="seller-main guide-hub">
     <header class="seller-intro">
-      <p class="seller-kicker">Guides / thermal label printing</p>
+      <p class="seller-kicker">Help from the packing bench</p>
       <h1>Label printing guides</h1>
       <p class="lede">Short, practical fixes for the labels sellers print every day: shipping labels that arrive as a full letter page, Whatnot labels that come out tiny, and the printer settings behind both. Each guide says what we checked ourselves and what is general guidance.</p>
       <p class="seller-meta">Last updated <time datetime="2026-10-01">2026-10-01</time></p>
     </header>
-    <nav class="gd-toc" aria-labelledby="toc-heading">
+      <nav class="gd-symptoms" aria-labelledby="symptom-heading">
+        <h2 id="symptom-heading">What came out of your printer?</h2>
+        <ul>
+          <li><a href="/guides/whatnot-labels-printing-too-small"><strong>A tiny label in the corner</strong><span>Check page size and print scale <span aria-hidden="true">↗</span></span></a></li>
+          <li><a href="/guides/8-5x11-shipping-label-to-4x6"><strong>A whole letter-size page</strong><span>Crop the label to 4 × 6 <span aria-hidden="true">↗</span></span></a></li>
+          <li><a href="/guides/whatnot-labels-printing-too-small#symptoms"><strong>A blank, cut-off or sideways label</strong><span>Follow the symptom checklist <span aria-hidden="true">↗</span></span></a></li>
+          <li><a href="/guides/ebay-shipping-label-not-4x6"><strong>An eBay label in the wrong format</strong><span>Fix this file and future labels <span aria-hidden="true">↗</span></span></a></li>
+        </ul>
+      </nav>
+    <nav class="gd-toc gd-toc--hub" aria-labelledby="toc-heading">
       <h2 id="toc-heading">Jump to a topic</h2>
       <ol>
         <li><a href="#shipping-labels">Shipping labels</a></li>
@@ -103,6 +128,6 @@
       <li><a href="/guides/">All label printing guides</a> — shipping labels, Whatnot and printer setup.</li>
     </ul>
   </aside>
-  <footer class="seller-footer"><span>Label Ninja · Independent tool</span><nav aria-label="Footer"><a href="/guides/">Guides</a><a href="/shipping-label-to-4x6">Label to 4×6</a><a href="/whatnot-labels">Whatnot Labels</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav></footer>
+  <footer class="seller-footer"><span>© 2026 Christopher Lucas · Label Ninja · Independent tool</span><nav aria-label="Footer"><a href="/guides/">Guides</a><a href="/shipping-label-to-4x6">Label to 4×6</a><a href="/whatnot-labels">Whatnot Labels</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav></footer>
 </body>
 </html>

@@ -26,16 +26,13 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#14161c">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/tokens.css">
-  <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/css/site.css">
-  <script src="/js/site-nav.js" defer></script>
-  <link rel="stylesheet" href="/css/guides.css">
-  <link rel="stylesheet" href="/css/whatnot-labels.css">
+  <meta name="theme-color" content="#F5F1E8">
+  <link rel="stylesheet" href="/css/tokens.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/app.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/site.css?v=packing-20261005c">
+  <script src="/js/site-nav.js?v=packing-20261005c" defer></script>
+  <link rel="stylesheet" href="/css/guides.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/whatnot-labels.css?v=packing-20261005c">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[
     {"@type":"Article","headline":"How to print an Amazon return label on a 4x6 thermal printer","description":"Print an Amazon return label on 4 x 6 thermal stock by cropping the full-page PDF, or skip printing with a QR code drop-off when offered.","datePublished":"2026-10-01","dateModified":"2026-10-01","inLanguage":"en","author":{"@type":"Organization","name":"Label Ninja team","url":"https://label-ninja.com/"},"publisher":{"@type":"Organization","name":"Label Ninja","url":"https://label-ninja.com/","logo":{"@type":"ImageObject","url":"https://label-ninja.com/assets/logo.jpg"}},"mainEntityOfPage":"https://label-ninja.com/guides/print-amazon-return-label-4x6","image":"https://label-ninja.com/assets/logo.jpg"},
@@ -43,25 +40,44 @@
     {"@type":"HowTo","name":"Print an Amazon return label on a 4 x 6 thermal printer","step":[{"@type":"HowToStep","position":1,"name":"Start the return","text":"Start the return. In Your Orders, choose the item, start the return and pick a method that uses a printed label."},{"@type":"HowToStep","position":2,"name":"Save the label as a PDF","text":"Save the label as a PDF. When the label opens, download it or use your browser's print dialog with Save as PDF as the destination. Don't print it to the thermal printer yet."},{"@type":"HowToStep","position":3,"name":"Crop it to 4 x 6","text":"Crop it to 4 × 6. Open the PDF in the shipping label to 4×6 tool. It crops the carrier label onto a 4 × 6 page in your browser; the file is not uploaded to us."},{"@type":"HowToStep","position":4,"name":"Check the result","text":"Check the result. The whole barcode, tracking number and address block should be on the page, with a little white space around the edges."},{"@type":"HowToStep","position":5,"name":"Print at actual size","text":"Print at actual size. Choose your thermal printer, set the paper size to 4 × 6 in, select 100% or Actual size, and print one copy."}]}
   ]}
   </script>
+  <link rel="preload" href="/assets/fonts/barlow-condensed.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
 </head>
-<body class="seller-page">
+<body class="seller-page packing-page guide-page">
   <a class="seller-skip btn btn--primary" href="#main">Skip to guide</a>
-  <header class="site-header"><a class="site-brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"> Label Ninja</a><nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/">Guides</a></nav></header>
+  <header class="site-header">
+    <a class="site-brand" href="/"><span class="brand__mark" aria-hidden="true"></span>Label Ninja</a>
+    <nav class="site-nav" aria-label="Main">
+      <details class="nav-group"><summary>Tools</summary><div class="nav-group__menu">
+        <a href="/shipping-label-to-4x6">Shipping label to 4×6</a>
+        <a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a>
+        <a href="/#tools/whatnot-live-show-number-generator">Whatnot numbers</a>
+        <a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a>
+        <a href="/#editor">Custom label editor</a>
+      </div></details>
+      <a href="/#label-sizes">Labels &amp; sizes</a>
+      <a href="/#best-label-printers">Printers</a>
+      <a href="/guides/">Guides</a>
+    </nav>
+    <div class="site-controls"><button type="button" class="site-control" data-site-search aria-label="Find a tool or guide" disabled>Find</button><button type="button" class="site-control" data-site-theme aria-label="Switch to dark theme" disabled>Dark</button></div>
+
+  </header>
   <nav class="breadcrumb gd-crumbs gd-crumbs--article" aria-label="Breadcrumb"><ol><li><a href="/">Label Ninja</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">Amazon return label on 4×6</li></ol></nav>
   <main id="main" class="seller-main seller-article">
-    <article>
+    <article class="guide-layout">
       <header class="seller-intro">
         <p class="seller-kicker">Guide / Amazon returns</p>
         <h1>How to print an Amazon return label on 4×6</h1>
         <p class="lede">Amazon return labels are usually laid out for an ordinary printer: one full page with the carrier label on part of it and return instructions on the rest. Sent straight to a 4 × 6 thermal printer, that page shrinks. Crop the label first and it prints at full size.</p>
         <div class="gd-answer" role="note" aria-labelledby="quick-answer">
-          <p class="gd-answer__label" id="quick-answer">Quick answer</p>
+          <p class="gd-answer__label" id="quick-answer">Try this first</p>
           <p>Amazon return labels usually download as a full letter page, so a 4 × 6 thermal printer shrinks them. Save the label as a PDF, crop it onto a 4 × 6 page with the free <a href="/shipping-label-to-4x6">4×6 converter</a>, then print at 100% with paper size 4 × 6. Some returns offer a QR code drop-off instead.</p>
         </div>
         <p class="seller-meta">By the Label Ninja team · Published 2026-10-01 · Last updated <time datetime="2026-10-01">2026-10-01</time></p>
       </header>
       <nav class="gd-toc" aria-labelledby="toc-heading">
-        <h2 id="toc-heading">On this page</h2>
+        <h2 id="toc-heading">Work through the fix</h2>
         <ol>
           <li><a href="#no-print">Do you need to print a label at all?</a></li>
           <li><a href="#steps">Print the return label on a 4 × 6 thermal printer</a></li>
@@ -70,14 +86,14 @@
         </ol>
       </nav>
       <section id="no-print" class="seller-section">
-        <h2><span>01 / Check first</span>Do you need to print a label at all?</h2>
+        <h2><span>Check first</span>Do you need to print a label at all?</h2>
         <div class="prose">
           <p>For many returns, Amazon offers drop-off options with a QR code instead of a printed label. You show the code on your phone at the drop-off location and the staff there print or handle the label. Which options you see depends on the item, the seller and your address, so check the return methods Amazon lists before you print.</p>
           <p>If a printed label is the only option, or you just prefer to label the box yourself, carry on below.</p>
         </div>
       </section>
       <section id="steps" class="seller-section">
-        <h2><span>02 / Step by step</span>Print the return label on a 4 × 6 thermal printer</h2>
+        <h2><span>Step by step</span>Print the return label on a 4 × 6 thermal printer</h2>
         <div class="prose">
           <ol>
             <li><strong>Start the return.</strong> In Your Orders, choose the item, start the return and pick a method that uses a printed label.</li>
@@ -94,7 +110,7 @@
         </div>
       </section>
       <section id="crop" class="seller-section">
-        <h2><span>03 / Get it right</span>Cropping tips for return labels</h2>
+        <h2><span>Get it right</span>Cropping tips for return labels</h2>
         <div class="prose">
           <ul>
             <li><strong>Never crop into the barcode.</strong> If the label area is close to the page edge, leave a margin rather than trimming tight.</li>
@@ -105,7 +121,7 @@
         </div>
       </section>
       <section id="problems" class="seller-section">
-        <h2><span>04 / If it still goes wrong</span>Common problems</h2>
+        <h2><span>If it still goes wrong</span>Common problems</h2>
         <div class="prose">
           <h3>The label prints tiny in one corner</h3>
           <p>The printer is still receiving a letter-size page, or the scale is set to Fit. Crop first, then print at 100%. Our <a href="/guides/whatnot-labels-printing-too-small">printing-too-small guide</a> shows where Rollo, Zebra and Munbyn drivers keep the paper size.</p>
@@ -144,6 +160,6 @@
       <li><a href="/guides/8-5x11-shipping-label-to-4x6">Convert an 8.5×11 shipping label to 4×6</a></li>
     </ul>
   </aside>
-  <footer class="seller-footer"><span>Label Ninja · Independent of Amazon</span><nav aria-label="Footer"><a href="/guides/">Guides</a><a href="/shipping-label-to-4x6">Label to 4×6</a><a href="/whatnot-labels">Whatnot Labels</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav></footer>
+  <footer class="seller-footer"><span>© 2026 Christopher Lucas · Label Ninja · Independent of Amazon</span><nav aria-label="Footer"><a href="/guides/">Guides</a><a href="/shipping-label-to-4x6">Label to 4×6</a><a href="/whatnot-labels">Whatnot Labels</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav></footer>
 </body>
 </html>

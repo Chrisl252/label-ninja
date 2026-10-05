@@ -1,5 +1,5 @@
 /* Shipping label to 4x6 converter. Reuses the seller-page layout from whatnot-labels.css and
- * the Print Bench tokens; this file only styles the tool (drop zone, crop stage, tiles). */
+ * the Packing Bench tokens; this file only styles the tool (drop zone, crop stage, tiles). */
 .lc [hidden] { display: none !important; }
 .lc { border-block: var(--rule-2); padding-block: var(--space-md); display: grid; gap: var(--space-md); }
 .lc h2 { font-size: var(--text-2xl); }
@@ -127,3 +127,31 @@
   .lc-pages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media print { .lc { display: none; } }
+
+/* Packing Bench converter: a useful upload entry and readable stock/crop controls. */
+.lc { padding-block: var(--space-lg); gap: var(--space-lg); border-block-style: dashed; }
+.lc-drop { padding: var(--space-xl) var(--space-lg); background: var(--color-chassis-2); border-style: dashed; }
+.lc-drop__title { font-size: var(--text-2xl); text-transform: none; letter-spacing: var(--track-display); }
+.lc-drop__hint { font-size: var(--text-base); line-height: var(--leading-body); }
+.lc-controls { padding: var(--space-md); background: var(--color-chassis-2); border: var(--rule); border-radius: var(--radius-card); }
+.lc-radio { min-height: 44px; }
+.lc-stage { background: var(--color-chassis-3); border-style: dashed; min-height: 280px; }
+.lc-stage__empty { max-width: 40ch; }
+.lc-crop__handle { width: 28px; height: 28px; margin: -14px 0 0 -14px; }
+.lc-editor__actions { gap: var(--space-xs); }
+.lc-editor__actions .btn { min-height: 44px; }
+.lc-tile__pick { padding: var(--space-2xs); }
+.lc-tile__cap { font-size: var(--text-sm); }
+.lc-tile__remove { min-height: 44px; padding-block: var(--space-2xs); }
+.lc-status[data-tone="error"] { color: var(--color-danger); }
+.lc-make { padding: var(--space-lg); background: var(--color-chassis-2); border: var(--rule); border-radius: var(--radius-card); }
+.lc-make .btn--lg { min-height: 48px; }
+@media (max-width: 639px) {
+  .lc-drop { padding: var(--space-lg) var(--space-sm); }
+  .lc-drop__actions { width: 100%; }
+  .lc-drop__actions .btn { width: 100%; }
+  .lc-controls { padding: var(--space-sm); }
+  .lc-stage { padding: var(--space-2xs); }
+  .lc-make { padding: var(--space-md); }
+  .lc-make .btn--lg { width: 100%; justify-self: stretch; }
+}

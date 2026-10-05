@@ -4,13 +4,15 @@
   "description": "Browser-based thermal label studio for reseller workflows",
   "private": true,
   "scripts": {
-    "test": "node scripts/test-spec-builders.mjs && node scripts/test-redesign-contract.mjs && node scripts/test-launch.mjs && node scripts/test-whatnot-feature.mjs && node scripts/test-routing.mjs",
+    "test": "node scripts/test-spec-builders.mjs && node scripts/test-redesign-contract.mjs && node scripts/test-launch.mjs && node scripts/test-whatnot-feature.mjs && node scripts/test-routing.mjs && node scripts/check-affiliates.mjs",
     "test:integration": "node scripts/test-b3-integration.mjs",
     "test:projects": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\\test-b5-projects-local.ps1",
     "test:runtime": "node scripts/test-password-runtime.mjs",
     "check:launch": "node scripts/check-launch.mjs",
+    "check:affiliates": "node scripts/check-affiliates.mjs",
+    "check:affiliates:release": "node scripts/check-affiliates.mjs --release",
     "dev": "wrangler dev --ip 127.0.0.1 --port 8787 --local-upstream localhost:8787",
-    "deploy": "wrangler deploy"
+    "deploy": "npm run check:affiliates:release && wrangler deploy"
   },
   "repository": {
     "type": "git",

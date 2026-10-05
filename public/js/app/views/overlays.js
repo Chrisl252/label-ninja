@@ -5,13 +5,14 @@
 
 export const OVERLAYS_VIEW = `
   <div id="auth-modal" class="scrim hidden no-print" role="dialog" aria-modal="true" aria-labelledby="auth-title" aria-describedby="auth-msg">
-    <div class="modal auth">
+    <div class="modal auth packing-dialog">
       <div class="modal__head">
         <div class="stack stack--xs">
+          <span class="bars bars--sm auth__mark" aria-hidden="true"></span>
           <h2 id="auth-title" class="modal__title">Your account</h2>
           <p id="auth-msg" class="auth__intent">Sign in to download PDFs and keep your saved projects.</p>
         </div>
-        <button id="auth-close" type="button" class="btn btn--quiet btn--sm btn--icon modal__close x" aria-label="Close">✕</button>
+        <button id="auth-close" type="button" class="btn btn--quiet btn--sm btn--icon modal__close x" aria-label="Close dialog">✕</button>
       </div>
 
       <ul class="auth__perks" aria-label="What a free account includes">
@@ -56,7 +57,7 @@ export const OVERLAYS_VIEW = `
         </div>
         <label class="check"><input id="auth-register-show" type="checkbox"> Show password</label>
         <button id="auth-register-submit" type="submit" class="btn btn--primary btn--block btn--lg">Create free account</button>
-        <p class="tiny muted center">By creating an account, you agree to the <a href="/terms" target="_blank" rel="noopener" class="link">Service terms</a> and <a href="/privacy" target="_blank" rel="noopener" class="link">Privacy policy</a>.</p>
+        <p class="tiny muted center">By creating an account, you agree to the <a href="/terms" target="_blank" rel="noopener" class="link">Terms of use</a> and <a href="/privacy" target="_blank" rel="noopener" class="link">Privacy policy</a>.</p>
         <p class="small center"><a href="#" id="auth-to-signin" class="link">Already have an account? Sign in</a></p>
       </form>
 
@@ -84,7 +85,7 @@ export const OVERLAYS_VIEW = `
   </div>
 
   <div id="exports-drawer" class="scrim scrim--right hidden no-print" role="dialog" aria-modal="true" aria-labelledby="exports-title">
-    <div class="drawer">
+    <div class="drawer packing-drawer">
       <div class="drawer__head">
         <h2 id="exports-title" class="modal__title">My Exports</h2>
         <button id="exports-close" type="button" class="btn btn--quiet btn--sm btn--icon x" aria-label="Close">✕</button>
@@ -95,7 +96,7 @@ export const OVERLAYS_VIEW = `
   </div>
 
   <div id="save-modal" class="scrim hidden no-print" role="dialog" aria-modal="true" aria-labelledby="save-title">
-    <div class="modal">
+    <div class="modal packing-dialog">
       <div class="modal__head">
         <h2 id="save-title" class="modal__title">Save project</h2>
         <button id="save-close" type="button" class="btn btn--quiet btn--sm btn--icon modal__close x" aria-label="Close">✕</button>
@@ -106,7 +107,7 @@ export const OVERLAYS_VIEW = `
           <input id="save-name" name="name" type="text" maxlength="80" autocomplete="off" class="input">
         </div>
         <label class="check"><input id="save-template-check" type="checkbox"> Save as template (reusable starting point)</label>
-        <button id="save-submit" type="submit" class="btn btn--primary btn--block">Save</button>
+        <button id="save-submit" type="submit" class="btn btn--primary btn--block">Save project</button>
       </form>
       <button id="save-cancel" type="button" class="btn btn--quiet btn--sm btn--block">Cancel</button>
     </div>

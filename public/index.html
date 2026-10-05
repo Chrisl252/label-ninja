@@ -48,30 +48,41 @@
     ]
   }
   </script>
-  <meta name="theme-color" content="#14161c">
+  <meta name="theme-color" content="#F5F1E8">
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-
-  <!-- Print Bench design system — DESIGN.md is the contract; tokens.css is the one home for values. All same-origin. -->
-  <link rel="stylesheet" href="/css/tokens.css">
-  <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/css/site.css">
-  <link rel="stylesheet" href="/css/account.css">
-  <link rel="stylesheet" href="/css/tools.css">
-  <link rel="stylesheet" href="/css/editor.css">
-  <link rel="stylesheet" href="/css/guides.css">
-  <script src="/js/site-nav.js" defer></script>
-  <script type="module" src="/js/app/app.js"></script>
+  <!-- Packing Bench — DESIGN.md is the contract; shared tokens and self-hosted fonts. -->
+  <link rel="stylesheet" href="/css/tokens.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/app.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/site.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/account.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/tools.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/editor.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/guides.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/home.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/printers.css?v=packing-20261005c">
+  <script src="/js/site-nav.js?v=packing-20261005c" defer></script>
+  <script type="module" src="/js/app/app.js?v=packing-20261005c"></script>
+  <link rel="preload" href="/assets/fonts/barlow-condensed.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body data-mode="home">
   <a class="skip-link" href="#main-content">Skip to content</a>
-
   <!-- Site header: brand · main nav (shared shell) · session actions · the app's tool tabs -->
   <header class="site-header masthead no-print">
-    <a class="site-brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"> Label Ninja</a>
-    <nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/">Guides</a></nav>
+    <a class="site-brand" href="/"><span class="brand__mark" aria-hidden="true"></span>Label Ninja</a>
+    <nav class="site-nav" aria-label="Main">
+      <details class="nav-group"><summary>Tools</summary><div class="nav-group__menu">
+        <a href="/shipping-label-to-4x6">Shipping label to 4x6</a><a href="/#tools/warehouse-rack-bin-label-generator">Warehouse bin labels</a>
+        <a href="/#tools/whatnot-live-show-number-generator">Whatnot show numbers</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/#editor">Custom label editor</a>
+      </div></details>
+      <a href="/#label-sizes">Labels &amp; sizes</a><a href="/#best-label-printers">Printers</a><a href="/guides/">Guides</a>
+    </nav>
+    <div class="site-controls"><button type="button" class="site-control" data-site-search aria-label="Find a tool or guide" disabled>Find</button><button type="button" class="site-control" data-site-theme aria-label="Switch to dark theme" disabled>Dark</button></div>
+
     <div class="masthead__actions">
       <button type="button" id="my-exports-btn" class="btn btn--ghost btn--sm hidden" onclick="LN.openExportsDrawer()">My Exports</button>
       <button type="button" id="user-email" class="masthead__email hidden" onclick="LN.switchMode('account')" title="Open account"></button>
@@ -89,47 +100,43 @@
     </nav>
   </header>
   <span id="main-content" tabindex="-1"></span>
-
   <!-- MODE: Home (public landing; default for a bare "/"). App-only views render from js/app/views/. -->
   <main id="mode-home" class="mode mode--wide home no-print">
     <section class="home-hero" aria-labelledby="home-title">
       <div class="home-hero__copy stack">
-        <p class="label">Free · no card · PDFs at true size</p>
-        <h1 id="home-title">Free thermal label maker for 4x6 and small label printers</h1>
-        <p class="lede">Make warehouse bin labels, Whatnot show numbers, Amazon FNSKU labels and your own designs as PDFs at the label's real size. Print at 100% scale on Rollo, Zebra, Munbyn, Dymo and other direct thermal printers.</p>
+        <p class="label">Free thermal label tools</p>
+        <h1 id="home-title">What are you printing?</h1>
+        <p class="home-intro">The next parcel, shelf bin, or live show. Pick a job and make a PDF that matches the stock in your printer.</p>
+        <nav class="home-jobs" aria-label="Choose a printing job">
+          <a href="/shipping-label-to-4x6" class="home-job is-selected" data-home-job="shipping"><span><strong>Shipping label to 4x6</strong><small>PDF or image → 4 × 6 in</small></span><span aria-hidden="true">↗</span></a>
+          <a href="/#tools/warehouse-rack-bin-label-generator" class="home-job" data-home-job="bin"><span><strong>Warehouse bin labels</strong><small>Bin number + barcode · 4 × 6 in</small></span><span aria-hidden="true">↗</span></a>
+          <a href="/whatnot-labels" class="home-job" data-home-job="whatnot"><span><strong>Whatnot show numbers</strong><small>Numbered labels · three stock sizes</small></span><span aria-hidden="true">↗</span></a>
+          <a href="/#tools/amazon-fba-fnsku-generator" class="home-job" data-home-job="fnsku"><span><strong>Product / FNSKU labels</strong><small>Your existing identifier · 2 × 1 in</small></span><span aria-hidden="true">↗</span></a>
+        </nav>
         <div class="home-cta">
-          <a href="/whatnot-labels" class="btn btn--primary btn--lg">Make Whatnot labels</a>
-          <a href="/shipping-label-to-4x6" class="btn btn--ghost btn--lg">Convert a shipping label to 4x6</a>
+          <a href="/shipping-label-to-4x6" class="btn btn--primary btn--lg">Convert a shipping label</a>
+          <a href="/#editor" class="home-editor-link">Open the custom editor ↗</a>
           <a id="home-resume" href="#editor" class="btn btn--ghost btn--lg hidden">Back to your label</a>
         </div>
-        <ul class="home-facts" aria-label="What you get">
-          <li>No paid plan, no card</li>
-          <li>No limit on PDFs</li>
-          <li>CODE128 barcodes</li>
-          <li>Saved projects</li>
-        </ul>
+        <p class="home-account-note">The shipping converter stays in your browser. Studio PDF downloads use our server and a free account.</p>
       </div>
-      <div class="home-hero__art" aria-hidden="true">
-        <div class="liner home-liner">
-          <span class="stock home-label home-label--bin"><img src="/assets/home-bin.svg" alt="" width="120" height="180" fetchpriority="high"></span>
-          <span class="stack stack--sm">
-            <span class="stock home-label home-label--wn"><img src="/assets/home-whatnot.svg" alt="" width="150" height="100"></span>
-            <span class="stock home-label home-label--fnsku"><img src="/assets/home-fnsku.svg" alt="" width="200" height="100"></span>
-          </span>
+      <figure class="home-station" aria-label="Example label at the selected aspect ratio">
+        <div class="home-station__head"><strong data-home-preview-title>Shipping label</strong><span class="mono" data-home-preview-size>4 × 6 in</span></div>
+        <div class="home-station__bed" data-home-preview-kind="shipping">
+          <div class="home-station__stock"><img data-home-preview-image src="/assets/home-shipping.svg" alt="Illustrative 4 by 6 inch shipping label; not valid postage" width="120" height="180" fetchpriority="high"></div>
+          <span class="home-dimension home-dimension--x" data-home-preview-width>4.00 in</span><span class="home-dimension home-dimension--y" data-home-preview-height>6.00 in</span>
         </div>
-      </div>
+        <figcaption>Example artwork. Actual aspect ratio; screen size is illustrative.</figcaption>
+      </figure>
     </section>
-
-    <section class="home-works" aria-labelledby="works-title">
-      <h2 id="works-title" class="label">Works with</h2>
-      <ul class="home-works__list">
-        <li>Rollo</li><li>Zebra</li><li>Munbyn</li><li>Dymo 4XL</li><li>Brother</li><li>Any printer that prints a PDF at 100%</li>
-      </ul>
+    <section class="home-bench-note" aria-labelledby="works-title">
+      <h2 id="works-title">Built at a real packing table.</h2>
+      <p>I'm Chris, a multichannel reseller who prints thousands of labels. These are the tools and print checks I want within reach.</p>
+      <p class="mono">Free tools · Actual-size PDFs · Print at 100%</p>
     </section>
-
     <section id="free-tools" class="home-section" aria-labelledby="free-tools-title">
-      <h2 id="free-tools-title">Free label tools</h2>
-      <p>Every tool exports a PDF at the label's real size, so the printer does not have to guess. Pick the job you have.</p>
+      <h2 id="free-tools-title">A tool for each job.</h2>
+      <p>Free thermal label makers for 4x6 and small labels. Choose your stock, check the preview, then print at Actual size.</p>
       <ul class="home-tools">
         <li class="home-tool">
           <div class="home-tool__art"><span class="stock"><img src="/assets/home-whatnot.svg" alt="" width="150" height="100" loading="lazy" decoding="async"></span></div>
@@ -167,69 +174,47 @@
         </li>
       </ul>
     </section>
-
     <section class="home-section" aria-labelledby="how-title">
-      <h2 id="how-title">How it works</h2>
+      <h2 id="how-title">From screen to stock.</h2>
       <ol class="home-steps">
         <li><strong>Pick a tool and label size.</strong> Match the size to the roll in your printer.</li>
         <li><strong>Fill in your labels.</strong> The preview updates as you type; no account needed yet.</li>
-        <li><strong>Download the PDF.</strong> Create a free account the first time (email and password, no card).</li>
+        <li><strong>Download the PDF.</strong> Studio tools need a free account (email and password, no card). The shipping converter needs no account.</li>
         <li><strong>Print at 100% scale.</strong> Choose the matching paper size, set margins to none, and print one test label before the full run. See the <a href="#printer-setup-checklist" class="link">printer setup checklist</a>.</li>
       </ol>
     </section>
-
-    <section class="home-section" aria-labelledby="sizes-title">
-      <h2 id="sizes-title">Label sizes ready to print</h2>
+    <section id="label-sizes" class="home-section" aria-labelledby="sizes-title">
+      <h2 id="sizes-title">Start with the stock on your desk.</h2>
+      <p>These sizes exist in the tools. The printer's width, feed and label system still need to match. A PDF size alone cannot prove stock compatibility.</p>
       <dl class="home-sizes">
         <div><dt>4" x 6"</dt><dd>Shipping and bin labels · Rollo, Zebra, Munbyn</dd></div>
         <div><dt>4" x 3"</dt><dd>Carton and box inventory</dd></div>
         <div><dt>3" x 2"</dt><dd>Whatnot show numbers</dd></div>
-        <div><dt>2" x 1"</dt><dd>Amazon FNSKU · Dymo 30334</dd></div>
-        <div><dt>2.25" x 1.25"</dt><dd>Dymo 30336 multipurpose</dd></div>
+        <div><dt>2" x 1"</dt><dd>Product / FNSKU labels</dd></div>
+        <div><dt>2.25" x 1.25"</dt><dd>Custom editor · DYMO 30334 multipurpose</dd></div>
         <div><dt>1" x 0.5"</dt><dd>Tiny 25 x 13 mm stock</dd></div>
       </dl>
+      <p class="home-size-next"><a href="/#editor">See all editor presets</a> · <a href="/#label-supplies">Check stock compatibility</a></p>
     </section>
-
     <section id="faq" class="home-section" aria-labelledby="faq-title">
       <h2 id="faq-title">Questions</h2>
       <div class="faq">
-        <article>
-          <h3>Is Label Ninja free?</h3>
-          <p>Yes. Every tool and every PDF download is free. There is no paid plan and no card to enter.</p>
-        </article>
-        <article>
-          <h3>Do I need an account?</h3>
-          <p>You can design and preview labels without one. Downloading a PDF and saving projects need a free account (email and password), so your PDFs and projects stay with you.</p>
-        </article>
-        <article>
-          <h3>Does the 4x6 shipping label converter upload my label?</h3>
-          <p>No. The shipping label converter runs in your browser, needs no account, and your label file never leaves your device.</p>
-        </article>
-        <article>
-          <h3>Which printers work?</h3>
-          <p>Any printer that can print a PDF at the label's real size. That includes 4-inch direct thermal printers such as Rollo, Zebra, and Munbyn for 4x6 labels, and Dymo LabelWriter-style printers for small rolls.</p>
-        </article>
-        <article>
-          <h3>Why is my label printing too small or cut off?</h3>
-          <p>The print dialog is usually scaling the page. Pick the paper size that matches your label, set scale to 100% or Actual size, and set margins to none. The <a href="/guides/whatnot-labels-printing-too-small" class="link">too-small printing guide</a> walks through it.</p>
-        </article>
-        <article>
-          <h3>Does Label Ninja create FNSKUs or buy postage?</h3>
-          <p>No. The FNSKU tool prints identifiers you already have from Seller Central, and Label Ninja does not sell shipping postage.</p>
-        </article>
-        <article>
-          <h3>How long are my PDFs kept?</h3>
-          <p>A downloaded PDF is yours to keep and reprint. Copies in My Exports can be downloaded again for 7 days.</p>
-        </article>
+        <article><h3>Is Label Ninja free?</h3><p>Yes. Every tool and every PDF download is free. There is no paid plan and no card to enter.</p></article>
+        <article><h3>Do I need an account?</h3><p>You can design and preview labels without one. Downloading a PDF and saving projects need a free account (email and password), so your PDFs and projects stay with you.</p></article>
+        <article><h3>Does the 4x6 shipping label converter upload my label?</h3><p>No. The shipping label converter runs in your browser, needs no account, and your label file never leaves your device.</p></article>
+        <article><h3>Which printers work?</h3><p>Any printer that can print a PDF at the label's real size. That includes 4-inch direct thermal printers such as Rollo, Zebra, and Munbyn for 4x6 labels, and Dymo LabelWriter-style printers for small rolls.</p></article>
+        <article><h3>Why is my label printing too small or cut off?</h3><p>The print dialog is usually scaling the page. Pick the paper size that matches your label, set scale to 100% or Actual size, and set margins to none. The <a href="/guides/whatnot-labels-printing-too-small" class="link">too-small printing guide</a> walks through it.</p></article>
+        <article><h3>Does Label Ninja create FNSKUs or buy postage?</h3><p>No. The FNSKU tool prints identifiers you already have from Seller Central, and Label Ninja does not sell shipping postage.</p></article>
+        <article><h3>How long are my PDFs kept?</h3><p>A downloaded PDF is yours to keep and reprint. Copies in My Exports can be downloaded again for 7 days.</p></article>
       </div>
     </section>
   </main>
   <!-- MODE: Warehouse bin labels -->
-  <main id="mode-bin" class="mode mode--wide hidden no-print">
+  <main id="mode-bin" class="mode mode--wide hidden no-print" aria-labelledby="bin-tool-title">
     <div class="tool">
       <div class="tool__head">
         <div class="stack stack--xs">
-          <h2 class="tool__title">Warehouse bin labels</h2>
+          <h1 id="bin-tool-title" class="tool__title">Warehouse bin labels</h1>
           <p class="lede">One complete 4&quot; x 6&quot; label per bin — the bin number on top, its CODE128 barcode underneath — for Rollo, Zebra, and any 4-inch direct thermal printer.</p>
         </div>
         <div class="tool__spec">
@@ -238,8 +223,24 @@
           <span class="chip led led--ready">Exact size PDF</span>
         </div>
       </div>
-
       <div class="tool__bench">
+        <aside class="tool__stage" aria-label="Bin label preview and download">
+          <p class="tool__stage-title">Preview · first label</p>
+          <div class="liner">
+            <div id="bin-preview" class="stock sample sample--bin" aria-hidden="true">
+              <span id="bin-preview-title" class="sample__title">BIN 1A</span>
+              <svg id="bin-preview-barcode" class="sample__barcode"></svg>
+            </div>
+          </div>
+          <div class="tool__caption">
+            <span id="bin-preview-caption" class="tiny muted" aria-live="polite">BIN 1A to BIN 20A · 20 labels · 4" x 6" portrait</span>
+          </div>
+          <div id="bin-print-hint" class="note note--attn" role="status">
+            4&quot; x 6&quot; setup: your PDF is exactly 4&quot; x 6&quot; — print at 100% scale with margins none (102 x 152 mm paper, Portrait). Each bin number and barcode prints together on one label.
+          </div>
+          <button type="button" onclick="LN.generateBinBatch(this)" class="btn btn--primary btn--lg tool__cta">Download bin labels (PDF)</button>
+          <p class="tool__fine">One 4x6 page per bin. Preview without an account; PDF downloads use our server and a free account (no card).</p>
+        </aside>
         <section class="panel tool__form" aria-label="Bin label settings">
           <div class="grid grid--4">
             <div class="field">
@@ -262,7 +263,6 @@
               <span class="field__hint">Up to 200 labels per PDF</span>
             </div>
           </div>
-
           <div class="grid grid--6">
             <div class="field span-2">
               <label class="field__label" for="bin-layout">Label layout</label>
@@ -292,12 +292,10 @@
               <span class="field__hint">inches</span>
             </div>
           </div>
-
           <label class="check">
             <input type="checkbox" id="bin-show-value" checked>
             Show barcode text under bars
           </label>
-
           <div class="tool__save">
             <span>Settings:</span>
             <span id="project-name-bin" class="mono">Unsaved</span>
@@ -305,35 +303,15 @@
             <button type="button" onclick="LN.saveProject('bin', this)" class="btn btn--ghost btn--sm">Save settings</button>
           </div>
         </section>
-
-        <aside class="tool__stage" aria-label="Bin label preview and download">
-          <p class="tool__stage-title">Preview · first label</p>
-          <div class="liner">
-            <div id="bin-preview" class="stock sample sample--bin" aria-hidden="true">
-              <span id="bin-preview-title" class="sample__title">BIN 1A</span>
-              <svg id="bin-preview-barcode" class="sample__barcode"></svg>
-            </div>
-          </div>
-          <div class="tool__caption">
-            <span id="bin-preview-caption" class="tiny muted" aria-live="polite">BIN 1A to BIN 20A · 20 labels · 4" x 6" portrait</span>
-          </div>
-
-          <div id="bin-print-hint" class="note note--attn" role="status">
-            4&quot; x 6&quot; setup: your PDF is exactly 4&quot; x 6&quot; — print at 100% scale with margins none (102 x 152 mm paper, Portrait). Each bin number and barcode prints together on one label.
-          </div>
-
-          <button type="button" onclick="LN.generateBinBatch(this)" class="btn btn--primary btn--lg tool__cta">Download bin labels (PDF)</button>
-          <p class="tool__fine">One 4x6 page per bin · exact physical size · free, no limit on PDFs.</p>
-        </aside>
       </div>
     </div>
   </main>
   <!-- MODE: Whatnot live show numbers -->
-  <main id="mode-whatnot" class="mode mode--wide hidden no-print">
+  <main id="mode-whatnot" class="mode mode--wide hidden no-print" aria-labelledby="whatnot-tool-title">
     <div class="tool">
       <div class="tool__head">
         <div class="stack stack--xs">
-          <h2 class="tool__title">Whatnot show number labels</h2>
+          <h1 id="whatnot-tool-title" class="tool__title">Whatnot show number labels</h1>
           <p class="lede">Numbered item labels for your next show. Choose a range and stock, then download one PDF. No Whatnot account connection or shipping postage.</p>
           <p class="small"><a href="/whatnot-labels">Whatnot labels setup and sizes</a> · <a href="/guides/whatnot-labels-printing-too-small">Fix tiny or cropped prints</a></p>
         </div>
@@ -343,8 +321,22 @@
           <span class="chip led led--ready">Exact size PDF</span>
         </div>
       </div>
-
       <div class="tool__bench">
+        <aside class="tool__stage" aria-label="Show number preview and download">
+          <p class="tool__stage-title">Preview · first label</p>
+          <div class="liner">
+            <div id="wn-preview" class="stock sample sample--wn" aria-hidden="true">
+              <span id="wn-preview-number" class="sample__title">#1</span>
+            </div>
+          </div>
+          <div class="tool__caption">
+            <span id="wn-preview-caption" class="tiny muted">1 x 0.5 in · 50 labels · 1 PDF</span>
+            <span class="tiny mono muted">not to scale</span>
+          </div>
+          <div id="wn-print-hint" class="note note--attn" role="status"></div>
+          <button type="button" onclick="LN.generateWhatnotBatch(this)" class="btn btn--primary btn--lg tool__cta">Download Whatnot labels (PDF)</button>
+          <p class="tool__fine">Free, with no limit on PDFs. Up to 200 labels in each PDF. The preview works without an account; downloading needs a free one (no card).</p>
+        </aside>
         <section class="panel tool__form" aria-label="Show number settings">
           <div class="grid grid--4">
             <div class="field">
@@ -370,7 +362,6 @@
               </select>
             </div>
           </div>
-
           <div class="tool__save">
             <span>Settings:</span>
             <span id="project-name-whatnot" class="mono">Unsaved</span>
@@ -378,34 +369,16 @@
             <button type="button" onclick="LN.saveProject('whatnot', this)" class="btn btn--ghost btn--sm">Save settings</button>
           </div>
         </section>
-
-        <aside class="tool__stage" aria-label="Show number preview and download">
-          <p class="tool__stage-title">Preview · first label</p>
-          <div class="liner">
-            <div id="wn-preview" class="stock sample sample--wn" aria-hidden="true">
-              <span id="wn-preview-number" class="sample__title">#1</span>
-            </div>
-          </div>
-          <div class="tool__caption">
-            <span id="wn-preview-caption" class="tiny muted">1 x 0.5 in · 50 labels · 1 PDF</span>
-            <span class="tiny mono muted">not to scale</span>
-          </div>
-
-          <div id="wn-print-hint" class="note note--attn" role="status"></div>
-
-          <button type="button" onclick="LN.generateWhatnotBatch(this)" class="btn btn--primary btn--lg tool__cta">Download Whatnot labels (PDF)</button>
-          <p class="tool__fine">Free, with no limit on PDFs. Up to 200 labels in each PDF. The preview works without an account; downloading needs a free one (no card).</p>
-        </aside>
       </div>
     </div>
   </main>
   <!-- MODE: Amazon FNSKU labels -->
-  <main id="mode-fnsku" class="mode mode--wide hidden no-print">
+  <main id="mode-fnsku" class="mode mode--wide hidden no-print" aria-labelledby="fnsku-tool-title">
     <div class="tool">
       <div class="tool__head">
         <div class="stack stack--xs">
-          <h2 class="tool__title">Amazon FNSKU labels</h2>
-          <p class="lede">Item title, CODE128 barcode, and condition on a 2&quot; x 1&quot; label — the Dymo 30334 and Rollo FNSKU stock Amazon FBA prep tables run on. Works for UPCs and any single barcode too.</p>
+          <h1 id="fnsku-tool-title" class="tool__title">Amazon FNSKU labels</h1>
+          <p class="lede">Print an existing FNSKU with the item title, CODE128 barcode and condition on a 2&quot; x 1&quot; label. Copy your identifier from Seller Central; this tool does not issue FNSKUs. UPCs and other single barcode values work too.</p>
         </div>
         <div class="tool__spec">
           <span class="chip chip--stock">2 x 1 in</span>
@@ -413,8 +386,24 @@
           <span class="chip led led--ready">Exact size PDF</span>
         </div>
       </div>
-
       <div class="tool__bench">
+        <aside class="tool__stage" aria-label="FNSKU label preview and download">
+          <p class="tool__stage-title">Preview</p>
+          <div class="liner">
+            <div class="stock sample sample--fnsku" aria-hidden="true">
+              <span id="fnsku-preview-title" class="sample__title">Wireless Bluetooth Earbuds</span>
+              <svg id="fnsku-preview-barcode" class="sample__barcode"></svg>
+              <span id="fnsku-preview-cond" class="sample__meta">Condition: New</span>
+            </div>
+          </div>
+          <div class="tool__caption">
+            <span id="fnsku-preview-caption" class="tiny muted" aria-live="polite">Sample · 2 x 1 in</span>
+            <span class="tiny mono muted">2x1 stock</span>
+          </div>
+          <div class="note">Print on 2&quot; x 1&quot; stock at 100% scale, margins none. If the barcode looks stretched in the print dialog, the paper size is wrong — not the label.</div>
+          <button type="button" onclick="LN.printSingleFNSKU(this)" class="btn btn--primary btn--lg tool__cta">Download FNSKU label (PDF)</button>
+          <p class="tool__fine">Title, CODE128 barcode and condition on 2&quot; x 1&quot; stock. Preview without an account; PDF downloads use our server and a free account (no card).</p>
+        </aside>
         <section class="panel tool__form" aria-label="FNSKU label settings">
           <div class="grid grid--3">
             <div class="field">
@@ -433,7 +422,6 @@
               <datalist id="fnsku-cond-list"><option value="New"><option value="Used - Like New"><option value="Used - Very Good"><option value="Used - Good"><option value="Used - Acceptable"></datalist>
             </div>
           </div>
-
           <div class="tool__save">
             <span>Settings:</span>
             <span id="project-name-fnsku" class="mono">Unsaved</span>
@@ -441,43 +429,22 @@
             <button type="button" onclick="LN.saveProject('fnsku', this)" class="btn btn--ghost btn--sm">Save settings</button>
           </div>
         </section>
-
-        <aside class="tool__stage" aria-label="FNSKU label preview and download">
-          <p class="tool__stage-title">Preview</p>
-          <div class="liner">
-            <div class="stock sample sample--fnsku" aria-hidden="true">
-              <span id="fnsku-preview-title" class="sample__title">Wireless Bluetooth Earbuds</span>
-              <svg id="fnsku-preview-barcode" class="sample__barcode"></svg>
-              <span id="fnsku-preview-cond" class="sample__meta">Condition: New</span>
-            </div>
-          </div>
-          <div class="tool__caption">
-            <span id="fnsku-preview-caption" class="tiny muted" aria-live="polite">Sample · 2 x 1 in</span>
-            <span class="tiny mono muted">Dymo 30334</span>
-          </div>
-
-          <div class="note">Print on 2&quot; x 1&quot; stock at 100% scale, margins none. If the barcode looks stretched in the print dialog, the paper size is wrong — not the label.</div>
-
-          <button type="button" onclick="LN.printSingleFNSKU(this)" class="btn btn--primary btn--lg tool__cta">Download FNSKU label (PDF)</button>
-          <p class="tool__fine">Title + CODE128 barcode + condition on a 2&quot; x 1&quot; label · free, no limit on PDFs.</p>
-        </aside>
       </div>
     </div>
   </main>
   <!-- MODE: Printer setup & buying guides (Long Document) -->
-  <main id="mode-guides" class="mode hidden no-print">
+  <main id="mode-guides" class="mode hidden no-print" aria-labelledby="printer-guides-title">
     <article class="doc">
       <header class="doc__head">
         <span class="doc__stamp">Thermal label printer guides</span>
-        <h2 class="doc__title">Set up a label printer for 4x6 shipping, bin, barcode, and FNSKU labels</h2>
+        <h1 id="printer-guides-title" class="doc__title">Set up a label printer for 4x6 shipping, bin, barcode, and FNSKU labels</h1>
         <p class="lede">Start with your label stock, match the PDF and driver sizes, then print one test page at 100% scale. Use these guides to fix small, sideways, blank, or skipped labels before running a batch.</p>
         <nav class="doc__toc" aria-label="On this page">
           <a href="#printer-setup-checklist">Setup checklist</a>
-          <a href="#best-label-printers">Best label printers</a>
+          <a href="#best-label-printers">Compare label printers</a>
           <a href="#seo-keywords">Choose a tool</a>
         </nav>
       </header>
-
       <section id="printer-setup-checklist" class="doc__section">
         <h2>Universal thermal label printer setup checklist</h2>
         <p class="lede">Use this first for Rollo, Zebra, DYMO 4XL, Brother, MUNBYN, Nelko, Polono, Jadens, and most 203 DPI direct thermal printers. It matches the recurring setup pattern shown by official Rollo setup pages, Zebra's ZD421 documentation, DYMO LabelWriter help, and shipping-platform support guides.</p>
@@ -516,7 +483,6 @@
           </div>
         </div>
       </section>
-
       <section class="doc__section">
         <h2>Brand setup guides</h2>
         <article id="rollo-setup" class="brand">
@@ -565,57 +531,71 @@
           </div>
         </article>
       </section>
-
-      <section id="best-label-printers" class="doc__section">
-        <h2>Best thermal label printers for small business</h2>
-        <p class="lede">These are the 4-inch thermal printers I see on reseller packing tables. Links go to Amazon product searches so you can compare current prices. They are marked as sponsored.</p>
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr><th scope="col">Best for</th><th scope="col">Printer</th><th scope="col">Why</th><th scope="col"><span class="sr-only">Price</span></th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Overall for resellers</td>
-                <td>Rollo Wireless Label Printer</td>
-                <td>Good pick for eBay, Shopify, Etsy, Amazon FBM, Pirate Ship, and warehouse bin labels when you want 4x6 shipping plus browser-based tools.</td>
-                <td><a href="https://www.amazon.com/s?k=Rollo+Wireless+Label+Printer" rel="sponsored noopener" target="_blank">Check price</a></td>
-              </tr>
-              <tr>
-                <td>Simple USB setup</td>
-                <td>Rollo USB Thermal Printer</td>
-                <td>Strong choice for a packing table that stays connected to one Windows or Mac workstation. Fewer wireless variables, reliable 4x6 output.</td>
-                <td><a href="https://www.amazon.com/s?k=Rollo+USB+Thermal+Label+Printer" rel="sponsored noopener" target="_blank">Check price</a></td>
-              </tr>
-              <tr>
-                <td>Warehouse-grade desktop</td>
-                <td>Zebra ZD421</td>
-                <td>Best fit when uptime, calibration controls, replaceable parts, and business support matter more than the lowest purchase price.</td>
-                <td><a href="https://www.amazon.com/s?k=Zebra+ZD421+thermal+label+printer" rel="sponsored noopener" target="_blank">Check price</a></td>
-              </tr>
-              <tr>
-                <td>DYMO 4x6 option</td>
-                <td>DYMO LabelWriter 4XL</td>
-                <td>Useful if you already live in DYMO software or find one used, but verify label compatibility and driver support before buying older hardware.</td>
-                <td><a href="https://www.amazon.com/s?k=DYMO+LabelWriter+4XL" rel="sponsored noopener" target="_blank">Check price</a></td>
-              </tr>
-              <tr>
-                <td>Budget 4x6 printer</td>
-                <td>MUNBYN 4x6 Thermal Printer</td>
-                <td>Budget-friendly for new sellers who need shipping labels now. Good target for comparison traffic against Rollo and Zebra.</td>
-                <td><a href="https://www.amazon.com/s?k=MUNBYN+4x6+thermal+label+printer" rel="sponsored noopener" target="_blank">Check price</a></td>
-              </tr>
-              <tr>
-                <td>Small-label ecosystem</td>
-                <td>Brother QL Series</td>
-                <td>Useful for address labels, badges, file labels, and smaller workflow labels. Check maximum label width before buying for 4x6 shipping.</td>
-                <td><a href="https://www.amazon.com/s?k=Brother+QL+label+printer" rel="sponsored noopener" target="_blank">Check price</a></td>
-              </tr>
-            </tbody>
-          </table>
+      <section id="best-label-printers" class="doc__section printer-picker" aria-labelledby="printers-title">
+        <h2 id="printers-title">Choose a printer for your packing table.</h2>
+        <p class="lede">Start with the job and the devices you print from. Check the exact model, stock and current driver support before buying. These are manufacturer specifications and practical selection checks, not hands-on product reviews.</p>
+        <p class="printer-checked">Specifications checked October 5, 2026. Shopping links open Amazon searches; their models, sellers and prices can vary.</p>
+        <p data-affiliate-disclosure="amazon"><strong>Affiliate links:</strong> As an Amazon Associate I earn from qualifying purchases. <a href="/privacy#shopping-links">About shopping links</a>.</p>
+        <div class="printer-filters" data-printer-filters hidden>
+          <label class="field" for="printer-use-filter"><span class="field__label">What do you print?</span><select id="printer-use-filter" class="select" data-printer-use><option value="all">All jobs</option><option value="shipping">4x6 shipping labels</option><option value="product">Small product labels</option><option value="warehouse">Bins / warehouse stock</option></select></label>
+          <label class="field" for="printer-connection-filter"><span class="field__label">Connection</span><select id="printer-connection-filter" class="select" data-printer-connection><option value="all">Any connection</option><option value="usb">USB from a computer</option><option value="wifi">Wi-Fi / AirPrint</option></select></label>
+          <label class="check printer-fanfold"><input type="checkbox" data-printer-fanfold> Confirmed fanfold support</label>
+          <button type="button" class="btn btn--ghost btn--sm" data-printer-reset>Reset filters</button>
         </div>
+        <p class="printer-results" data-printer-results role="status" aria-live="polite">6 printer choices. Compare exact models, not just brand names.</p>
+        <div class="printer-list">
+          <article class="printer-card" data-printer-id="rollo-wireless" data-printer-use="shipping product warehouse" data-printer-connection="usb wifi" data-printer-fanfold="yes">
+            <header><div><p class="printer-job">Shared or mobile packing table</p><h3>Rollo Wireless <span class="mono">X1040</span></h3></div><label class="check printer-compare-choice" hidden><input type="checkbox" data-printer-select aria-label="Compare Rollo Wireless X1040"> Compare</label></header>
+            <dl class="printer-facts"><div><dt>Connection</dt><dd>Wi-Fi / AirPrint + USB</dd></div><div><dt>Resolution</dt><dd>203 DPI</dd></div><div><dt>Label width</dt><dd>1.57–4.1 in</dd></div><div><dt>Feed</dt><dd>Fanfold or external roll</dd></div></dl>
+            <p class="printer-verdict"><strong>Who it's for:</strong> You print from several devices or need phone printing over Wi-Fi.</p><p class="printer-skip"><strong>Skip if:</strong> One USB-connected computer already handles all your labels, or your stock falls outside the supported width.</p>
+            <div class="printer-card__foot"><p class="printer-source"><a href="https://www.rollo.com/product/rollo-wireless-printer/">Manufacturer specifications</a></p><a data-affiliate="amazon" href="https://www.amazon.com/s?k=Rollo+Wireless+Label+Printer&amp;tag=discountd0247-20" rel="sponsored noopener" target="_blank">Check price on Amazon</a></div>
+          </article>
+          <article class="printer-card" data-printer-id="rollo-usb" data-printer-use="shipping product warehouse" data-printer-connection="usb" data-printer-fanfold="yes">
+            <header><div><p class="printer-job">One computer, one print station</p><h3>Rollo USB <span class="mono">X1038</span></h3></div><label class="check printer-compare-choice" hidden><input type="checkbox" data-printer-select aria-label="Compare Rollo USB X1038"> Compare</label></header>
+            <dl class="printer-facts"><div><dt>Connection</dt><dd>USB</dd></div><div><dt>Resolution</dt><dd>203 DPI</dd></div><div><dt>Label width</dt><dd>1.57–4.1 in</dd></div><div><dt>Feed</dt><dd>Fanfold or external roll</dd></div></dl>
+            <p class="printer-verdict"><strong>Who it's for:</strong> You pack at a fixed computer and want a direct USB connection.</p><p class="printer-skip"><strong>Skip if:</strong> You need native phone or shared Wi-Fi printing. Leave clearance behind it for the labels.</p>
+            <div class="printer-card__foot"><p class="printer-source"><a href="https://www.rollo.com/product/rollo-printer/">Model specifications</a> · <a href="https://support.rollo.com/support/solutions/articles/29000050961-which-labels-work-with-rollo-direct-thermal-only-no-ink-or-ribbon-and-recommended-sizes">Stock and feed requirements</a></p><a data-affiliate="amazon" href="https://www.amazon.com/s?k=Rollo+USB+Thermal+Label+Printer&amp;tag=discountd0247-20" rel="sponsored noopener" target="_blank">Check price on Amazon</a></div>
+          </article>
+          <article class="printer-card" data-printer-id="zebra-zd421" data-printer-use="shipping product warehouse" data-printer-connection="usb wifi-optional" data-printer-fanfold="yes">
+            <header><div><p class="printer-job">Configurable warehouse printer</p><h3>Zebra ZD421 <span class="mono">Direct thermal</span></h3></div><label class="check printer-compare-choice" hidden><input type="checkbox" data-printer-select aria-label="Compare Zebra ZD421 direct thermal"> Compare</label></header>
+            <dl class="printer-facts"><div><dt>Connection</dt><dd>USB; network options vary</dd></div><div><dt>Resolution</dt><dd>203 DPI / optional 300 DPI</dd></div><div><dt>Max print / media width</dt><dd>104 mm at 203 DPI / 108 mm</dd></div><div><dt>Feed</dt><dd>Roll-fed or fanfold</dd></div></dl>
+            <p class="printer-verdict"><strong>Who it's for:</strong> You need adjustable media sensing and a configuration matched to warehouse stock.</p><p class="printer-skip"><strong>Skip if:</strong> You want to buy by family name alone. Verify direct thermal versus ribbon-based models and whether Wi-Fi is actually included.</p>
+            <div class="printer-card__foot"><p class="printer-source"><a href="https://www.zebra.com/us/en/products/spec-sheets/printers/desktop/zd421-series.html">Manufacturer specifications</a></p><a data-affiliate="amazon" href="https://www.amazon.com/s?k=Zebra+ZD421+thermal+label+printer&amp;tag=discountd0247-20" rel="sponsored noopener" target="_blank">Check price on Amazon</a></div>
+          </article>
+          <article class="printer-card" data-printer-id="dymo-4xl" data-printer-use="shipping product" data-printer-connection="usb" data-printer-fanfold="unverified">
+            <header><div><p class="printer-job">Existing DYMO roll setup</p><h3>DYMO LabelWriter 4XL</h3></div><label class="check printer-compare-choice" hidden><input type="checkbox" data-printer-select aria-label="Compare DYMO LabelWriter 4XL"> Compare</label></header>
+            <dl class="printer-facts"><div><dt>Connection</dt><dd>USB</dd></div><div><dt>Resolution</dt><dd>300 DPI</dd></div><div><dt>Max print width</dt><dd>4.16 in / 105.73 mm</dd></div><div><dt>Feed</dt><dd>Rolls; fanfold not documented</dd></div></dl>
+            <p class="printer-verdict"><strong>Who it's for:</strong> You already use compatible DYMO rolls and can confirm driver support for your computer.</p><p class="printer-skip"><strong>Skip if:</strong> You want to use a generic fanfold stack. This older model's supplies should not be assumed interchangeable with the 5XL.</p>
+            <div class="printer-card__foot"><p class="printer-source"><a href="https://download.dymo.com/UserManuals/labelwriter%20user%20guides/LabelWriter4XL_UserGuide.pdf">Manufacturer manual and specifications</a></p><a data-affiliate="amazon" href="https://www.amazon.com/s?k=DYMO+LabelWriter+4XL&amp;tag=discountd0247-20" rel="sponsored noopener" target="_blank">Check price on Amazon</a></div>
+          </article>
+          <article class="printer-card" data-printer-id="munbyn-941" data-printer-use="shipping" data-printer-connection="usb" data-printer-fanfold="unverified">
+            <header><div><p class="printer-job">Compare an exact MUNBYN model</p><h3>MUNBYN 4x6 <span class="mono">Example: ITPP941-USB</span></h3></div><label class="check printer-compare-choice" hidden><input type="checkbox" data-printer-select aria-label="Compare MUNBYN ITPP941-USB example model"> Compare</label></header>
+            <dl class="printer-facts"><div><dt>Connection, example model</dt><dd>USB</dd></div><div><dt>Resolution, example model</dt><dd>203 DPI</dd></div><div><dt>Max print width, example</dt><dd>108 mm</dd></div><div><dt>Feed, example model</dt><dd>External roll; fanfold unverified</dd></div></dl>
+            <p class="printer-verdict"><strong>Who it's for:</strong> You can match a listing's model code to a USB shipping-label printer and its driver.</p><p class="printer-skip"><strong>Skip if:</strong> The listing does not identify the model. Other 941 versions have different connections; these facts apply only to ITPP941-USB.</p>
+            <div class="printer-card__foot"><p class="printer-source"><a href="https://pos.munbyn.com/munbyn-itpp941-series-thermal-label-printer/">Manufacturer model specifications</a></p><a data-affiliate="amazon" href="https://www.amazon.com/s?k=MUNBYN+4x6+thermal+label+printer&amp;tag=discountd0247-20" rel="sponsored noopener" target="_blank">Check price on Amazon</a></div>
+          </article>
+          <article class="printer-card" data-printer-id="brother-ql" data-printer-use="shipping product" data-printer-connection="usb" data-printer-fanfold="unverified">
+            <header><div><p class="printer-job">DK roll labels and a cutter</p><h3>Brother QL <span class="mono">Example: QL-1100</span></h3></div><label class="check printer-compare-choice" hidden><input type="checkbox" data-printer-select aria-label="Compare Brother QL-1100 example model"> Compare</label></header>
+            <dl class="printer-facts"><div><dt>Connection, example model</dt><dd>USB / USB host</dd></div><div><dt>Resolution, example model</dt><dd>300 × 300 DPI</dd></div><div><dt>Max print width, example</dt><dd>4 in</dd></div><div><dt>Feed, example model</dt><dd>Brother DK rolls</dd></div></dl>
+            <p class="printer-verdict"><strong>Who it's for:</strong> You want cut labels and plan to use the compatible DK stock system.</p><p class="printer-skip"><strong>Skip if:</strong> You need generic fanfold stock. Many smaller QL models cannot print 4x6; the specs here describe QL-1100 only.</p>
+            <div class="printer-card__foot"><p class="printer-source"><a href="https://www.brother-usa.com/products/ql1100">Example model specifications</a> · <a href="https://www.brother-usa.com/label-makers-printers/learn-more/brother-ql">QL model differences</a></p><a data-affiliate="amazon" href="https://www.amazon.com/s?k=Brother+QL+label+printer&amp;tag=discountd0247-20" rel="sponsored noopener" target="_blank">Check price on Amazon</a></div>
+          </article>
+        </div>
+        <p class="note printer-empty" data-printer-empty hidden>No listed printer matches all these requirements. Try another connection or turn off the fanfold filter. Unknown support is excluded rather than assumed compatible.</p>
+        <aside class="printer-compare-bar" data-printer-compare-bar hidden aria-label="Selected printers"><span data-printer-selected-summary aria-live="polite">Choose two printers</span><div><button type="button" class="btn btn--primary btn--sm" data-printer-open-compare disabled>Compare two</button><button type="button" class="btn btn--ghost btn--sm" data-printer-clear-compare>Clear</button></div></aside>
+        <dialog class="printer-comparison" data-printer-comparison aria-label="Selected printer comparison"><div class="printer-comparison__head"><h3>Your printer shortlist</h3><button type="button" class="btn btn--ghost btn--sm" data-printer-close-compare autofocus>Close</button></div><p>Read the model qualifications and check the exact listing before buying.</p><div class="printer-comparison__items" data-printer-comparison-items></div></dialog>
       </section>
-
+      <section id="label-supplies" class="doc__section prose">
+        <h2>Choose label stock before you buy</h2>
+        <p>Match the printer's supported width, material and feed type first. A printable PDF size does not prove that your printer can feed that stock. Rollo uses direct thermal paper with gaps or perforations; DYMO 5XL and Brother QL models have their own label requirements.</p>
+        <p data-affiliate-disclosure="amazon"><strong>Affiliate links:</strong> As an Amazon Associate I earn from qualifying purchases. <a href="/privacy#shopping-links">About shopping links</a>.</p>
+        <ul>
+          <li><a data-affiliate="amazon" href="https://www.amazon.com/s?k=4x6+direct+thermal+fanfold+shipping+labels&amp;tag=discountd0247-20" rel="sponsored noopener" target="_blank">Compare 4x6 labels on Amazon</a> for printers that support generic direct thermal stock. Check roll or fanfold feed and the exact dimensions; these are not a universal DYMO or Brother supply.</li>
+          <li><a data-affiliate="amazon" href="https://www.amazon.com/s?k=2x1+direct+thermal+labels&amp;tag=discountd0247-20" rel="sponsored noopener" target="_blank">Compare 2x1 labels on Amazon</a> for item numbers or product labels. Confirm your printer's minimum width and height, then print the 2x1 PDF at Actual size.</li>
+          <li><a data-affiliate="amazon" href="https://www.amazon.com/s?k=external+thermal+label+roll+fanfold+holder&amp;tag=discountd0247-20" rel="sponsored noopener" target="_blank">Compare label holders on Amazon</a> if your printer feeds labels from behind. Check roll diameter, core size and desk clearance. Internal-roll printers may not need an external holder.</li>
+        </ul>
+        <p>Read the manufacturer's requirements: <a href="https://support.rollo.com/support/solutions/articles/29000050961-which-labels-work-with-rollo-direct-thermal-only-no-ink-or-ribbon-and-recommended-sizes">Rollo label stock</a>, <a href="https://www.dymo.com/label-makers-printers/labelwriter-label-printers/dymo-labelwriter-5xl-label-printer/SAP_2112554.html">DYMO 5XL labels</a> and <a href="https://www.brother-usa.com/label-makers-printers/learn-more/brother-ql">Brother QL model widths</a>. Try the stock you already have before buying replacements.</p>
+      </section>
       <section id="seo-keywords" class="doc__section">
         <h2>Choose the tool for your labels</h2>
         <div class="table-wrap">
@@ -636,7 +616,6 @@
           <p>Inspect the PDF, print one page, and scan any barcode before printing the rest. A downloaded PDF can be printed again as many times as you need. Label Ninja creates label artwork; it does not purchase shipping postage.</p>
         </div>
       </section>
-
       <section class="doc__section">
         <h2>Thermal label printer FAQ</h2>
         <div class="faq">
@@ -654,7 +633,7 @@
           </article>
           <article>
             <h3>What printer should I buy for eBay and Amazon labels?</h3>
-            <p>For most resellers, a 4-inch direct thermal printer is the safest starting point. Rollo is simple, Zebra is more warehouse-grade, and budget 4x6 printers work if driver support is acceptable.</p>
+            <p>For 4x6 shipping labels, choose a printer that supports a 4-inch print width and the stock you plan to use. Compare its connection type, current driver support and label requirements in the printer checklist above.</p>
           </article>
         </div>
       </section>
@@ -673,7 +652,7 @@
         <a href="/whatnot-labels">Whatnot labels</a>
         <a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a>
         <a href="/guides/">Guides</a>
-        <a href="#best-label-printers" onclick="LN.switchMode('guides')">Best printers</a>
+        <a href="#best-label-printers" onclick="LN.switchMode('guides')">Compare printers</a>
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
         <a href="mailto:chris@bisket.com?subject=Label%20Ninja%20support">Support</a>

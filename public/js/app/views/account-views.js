@@ -4,18 +4,18 @@
 // scripts/test-redesign-contract.mjs). Inline LN.* handlers resolve on window.LN.
 
 export const DASHBOARD_VIEW = `
-  <main id="mode-dashboard" class="mode mode--wide hidden no-print">
-    <div class="grid grid--2">
+  <main id="mode-dashboard" class="mode mode--wide packing-dashboard hidden no-print" aria-labelledby="dashboard-title">
+    <div class="grid grid--2 dash-intro">
       <section class="panel dash-start">
-        <h1>What are we printing today?</h1>
-        <p class="lede">Design a custom label or run a numbered batch.</p>
+        <h1 id="dashboard-title">Back to the packing bench.</h1>
+        <p class="lede">Open a saved job, make a custom label, or set up the next numbered batch.</p>
         <div class="row">
-          <button type="button" class="btn btn--primary btn--lg" onclick="LN.switchMode('editor')">New label</button>
+          <button type="button" class="btn btn--primary btn--lg" onclick="LN.switchMode('editor')">Open label editor</button>
         </div>
       </section>
       <section class="panel dash-usage">
         <p class="label led led--ready">Free account</p>
-        <p class="small">Every tool, unlimited PDF downloads, saved projects, and 7-day re-downloads in My Exports.</p>
+        <p class="small">Tools and PDF downloads are free. Saved projects live in your account. Download an export again for 7 days.</p>
       </section>
     </div>
 
@@ -54,10 +54,10 @@ export const DASHBOARD_VIEW = `
 `;
 
 export const ACCOUNT_VIEW = `
-  <main id="mode-account" class="mode hidden no-print">
+  <main id="mode-account" class="mode packing-account hidden no-print" aria-labelledby="account-title">
     <header class="page-head">
-      <h1>Account</h1>
-      <p class="lede small">Your sign-in details and account help.</p>
+      <h1 id="account-title">Your account</h1>
+      <p class="lede small">Keep your sign-in details and saved label jobs in one place.</p>
     </header>
     <div id="account-mount" class="stack"><p class="small muted">Loading…</p></div>
   </main>

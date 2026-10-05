@@ -107,7 +107,7 @@ if (JSON.stringify(visibleQa) !== JSON.stringify(ldQa)) bad(`FAQPage JSON-LD (${
 if ((html.match(/<header class="site-header/g) || []).length !== 1 || /class="[^"]*\bwordmark\b/.test(html)) bad('index.html must have exactly one site header (no second app top bar)');
 const header = (html.match(/<header class="site-header[\s\S]*?<\/header>/) || [''])[0];
 if (!/<a class="site-brand" href="\/">/.test(header)) bad('site-brand link missing');
-for (const href of ['/shipping-label-to-4x6', '/whatnot-labels', '/#tools/warehouse-rack-bin-label-generator', '/#tools/amazon-fba-fnsku-generator', '/guides/']) {
+for (const href of ['/shipping-label-to-4x6', '/#tools/whatnot-live-show-number-generator', '/#tools/warehouse-rack-bin-label-generator', '/#tools/amazon-fba-fnsku-generator', '/#editor', '/#label-sizes', '/#best-label-printers', '/guides/']) {
   if (!header.includes('<nav class="site-nav" aria-label="Main">') || !header.includes(`<a href="${href}">`)) bad(`site-nav missing ${href}`);
 }
 for (const m of html.matchAll(/<(?:script|link|img)\b[^>]*\b(?:src|href)="(?:https?:)?\/\/[^"]*"[^>]*>/g)) {

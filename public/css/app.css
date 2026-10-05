@@ -1,5 +1,5 @@
-/* Hallmark · macrostructure: Workbench · tone: utilitarian/technical · anchor hue: electric blue (kept)
- * Label Ninja "Print Bench" — base, primitives, masthead, roll nav, footer, overlays.
+/* Hallmark · macrostructure: Workbench · tone: utilitarian/technical · anchor hue: burnt orange
+ * Label Ninja "Packing Bench" — base, primitives, masthead, roll nav, footer, overlays.
  * Section-specific rules live in css/<mode>.css. Tokens live in css/tokens.css (one home). */
 
 /* ---------- base ---------- */
@@ -35,7 +35,7 @@ h1, h2, h3, h4, .display {
   font-family: var(--font-display);
   font-weight: 700;
   font-style: normal;
-  text-transform: uppercase;
+  text-transform: none;
   letter-spacing: var(--track-display);
   line-height: var(--leading-tight);
   color: var(--color-ink);
@@ -232,7 +232,7 @@ p { margin: 0; }
   display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2xs);
   font-family: var(--font-body); font-weight: 600; font-size: var(--text-sm); line-height: 1;
   letter-spacing: 0.01em; white-space: nowrap;
-  padding: 0.7rem 1rem; min-height: 2.5rem;
+  padding: 0.7rem 1rem; min-height: 2.75rem;
   border-radius: var(--radius-label); border: 1px solid transparent;
   background: var(--color-chassis-3); color: var(--color-ink);
   text-decoration: none; user-select: none; -webkit-user-select: none;
@@ -272,7 +272,7 @@ p { margin: 0; }
   background: var(--color-chassis); color: var(--color-ink);
   border: var(--rule-2); border-radius: var(--radius-label);
   padding: 0.6rem 0.75rem; min-height: 2.5rem;
-  font-size: var(--text-sm); line-height: 1.2;
+  font-size: var(--text-base); line-height: 1.2;
   transition: border-color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
 }
 .input::placeholder, .textarea::placeholder { color: var(--color-ink-3); }
@@ -334,7 +334,7 @@ p { margin: 0; }
 
 /* the roll: the app's tool tabs. Hidden on the home view (the main nav covers it). */
 .roll {
-  display: flex; align-items: center; gap: 4px;
+  display: none; align-items: center; gap: 4px;
   max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain;
   scrollbar-width: none;
   padding: 4px;
@@ -342,7 +342,7 @@ p { margin: 0; }
   border: var(--rule);
   border-radius: var(--radius-label);
 }
-body[data-mode="home"] .roll { display: none; }
+body .roll { display: none; }
 .roll::-webkit-scrollbar { display: none; }
 .roll__tab {
   flex: 0 0 auto;
@@ -370,7 +370,7 @@ body[data-mode="home"] .roll { display: none; }
     scroll-snap-type: x proximity;
   }
   .roll__tab { scroll-snap-align: center; font-size: var(--text-sm); padding: 0.6rem 0.75rem; }
-  body:not([data-mode="home"]) { padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom)); }
+  body:not([data-mode="home"]) { padding-bottom: env(safe-area-inset-bottom); }
   .masthead__actions .btn { padding-inline: 0.7rem; }
 }
 @media (max-width: 480px) {
@@ -468,3 +468,6 @@ body[data-mode="home"] .roll { display: none; }
 .is-busy { cursor: wait; }
 .overflow-hidden { overflow: hidden !important; }
 @media print { .no-print { display: none !important; } }
+
+/* Controls remain comfortable on touch; printed canvas typography is unchanged. */
+@media(max-width:48rem) { .btn--sm { min-height:2.75rem; } .mode { padding-inline:var(--space-sm); } }

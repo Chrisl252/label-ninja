@@ -4,7 +4,7 @@ Label Ninja is a browser label editor with a same-origin Cloudflare Worker API a
 
 ## Product contract (2026-10-01)
 
-Everything is free. There are no plans, quotas, credits, payments or Stripe. Revenue is planned from ads only; ads are off (public/js/ads-config.js enabled:false) pending an owner decision.
+Everything is free. There are no plans, quotas, credits, payments or Stripe. Revenue includes owner-authorized affiliate shopping links (2026-10-05); ads are off (public/js/ads-config.js enabled:false) pending an owner decision.
 
 - Studio PDF export still requires a free account (401 without a session). Abuse limits remain: 30 export requests/hour/user (429), 200 pages/batch, spec/image limits, seven-day PDF downloads, saved projects.
 - /shipping-label-to-4x6 is a free in-browser tool: no account, no upload, nothing leaves the device.
@@ -12,10 +12,12 @@ Everything is free. There are no plans, quotas, credits, payments or Stripe. Rev
 
 ## Backend map
 
+Chris approved Packing Bench on October 5. Historical direction mockups in `design/redesign-20261005/` remain isolated from `public/` Static Assets and do not submit API data. Their README now indexes the real local implementation and acceptance evidence; the approved design contract is `DESIGN.md`.
+
 | File | Responsibility |
 | --- | --- |
 | src/worker.js | Thin dispatch: redirects first, then /api/* to domain routers, else src/static.js; private API headers; scheduled cleanup |
-| src/static.js | Static serving: studio SPA only for /account and /reset (SPA_PATHS); everything else via ASSETS; unknown paths return public/404.html with status 404, noindex, no-store (wrangler not_found_handling = "404-page"). Add any new real front-end path to SPA_PATHS. |
+| src/static.js | Static serving: studio SPA only for /account and /reset (SPA_PATHS); everything else via ASSETS; unknown paths return public/404.html with status 404, noindex, no-store (wrangler not_found_handling = "404-page"). Add only actual SPA deep links to SPA_PATHS; article pages are HTML assets, not SPA routes. |
 | src/redirects.js | www/http to https://label-ninja.com (301 GET/HEAD, 308 otherwise); legacy /pricing and /billing to / (301) |
 | src/security.js | Same-origin write guard, JSON request content type, canonical app origin |
 | src/http.js | Sanitized errors, streaming byte-limited body reads |
@@ -58,8 +60,27 @@ Entry is public/js/app/app.js. It owns mode routing (home, dashboard, editor, bi
 | html | Shared escapeHtml for every user string at an HTML sink |
 | workspace-navigation | Remember the last label tool for the home resume link |
 | guides, toast | Guide hashes and user feedback |
+| home-picker | Fixed local sample artwork for real job links; remembers only `ln.home.job`, never a draft/file |
+| packing-tools | Accessible editor element selection/nudging; `ln.editor.stock.v1` stock reuse requires an explicit click |
+| ../printer-picker | Filters sourced static printer cards; native two-printer comparison dialog; no generated shopping URLs |
+| ../site-nav | Shared real-link navigation, native Tools group, fixed-catalog search and optional `ln.theme` preference |
 
-public/index.html is the studio SPA + crawlable home (685 lines). App-only markup (editor workbench, dashboard, account, dialogs) renders from public/js/app/views/*; live-previews.js + barcode-svg.js draw on-screen barcodes matching the PDF renderer; focus-trap.js handles dialogs. Shared header/breadcrumb: public/css/site.css + public/js/site-nav.js on every page; 404 page public/404.html; guides hub public/guides/index.html.
+public/index.html is the studio SPA + crawlable home; keep it below the 700-line contract. App-only markup (editor workbench, dashboard, account, dialogs) renders from public/js/app/views/*; live-previews.js + barcode-svg.js draw on-screen barcodes matching the PDF renderer; focus-trap.js handles dialogs. New helpers are registered by initPackingTools(), initHomePicker() and initPrinterPicker() after routeFromLocation() in app.js. Presentation entry/view/enhancement imports share the packing-20261005c cache key; API/output dependency imports remain unchanged. Preview appears before compact controls in the mobile DOM; each visible app mode has one H1 and labelled main landmark.
+
+### Shared Packing Bench presentation
+
+| Source | Responsibility |
+| --- | --- |
+| public/css/tokens.css | Warm paper/ink/orange semantic colors, light default + dark overrides, shared type/spacing/radius/motion; the only component-color definitions |
+| public/css/app.css | Base type, stock/liner, controls, focus, motion reduction and footer primitives; no change to physical label geometry |
+| public/css/site.css + public/js/site-nav.js | Consistent header, Tools/Labels & sizes/Printers/Guides grouping, breadcrumbs, search/theme; reserved static controls reduce layout movement |
+| public/css/home.css | Job-first homepage, physical sample station, truthful workflow/size/FAQ sections |
+| public/css/printers.css + public/js/printer-picker.js | Decision cards, qualified filters, verdicts, mobile sticky selection and comparison dialog |
+| public/css/editor.css, tools.css, account.css | Preview-first studio, native settings details, accessible inspector, dashboard/account/overlays |
+| public/css/guides.css, whatnot-labels.css, label-crop.css | Scannable static help/legal/recovery pages and converter workspace; existing converter geometry remains in JS |
+| public/assets/fonts/ | OFL-licensed Latin-focused Barlow Condensed 700, IBM Plex Sans variable 100–700 and JetBrains Mono 400; 89,324 WOFF2 bytes total, font-display:swap and three shared preloads |
+
+Header/footer use shared markup/classes across the ten canonical documents and 404. Printer cards and editorial text remain crawlable static HTML. Illustrative home/proposal labels are not postage or export results. Editor canvas Helvetica and existing presets/spec builders/renderers retain their physical-output contract. New labels/settings are never added to shopping URLs. Full-stack local preview is port 8797; historical proposal review is 8809.
 
 ### Free 4x6 converter
  v2 adds layouts (1/2/4-up sheets, packing slip), batch, jobs, sample (fake SAMPLE ONLY label), errors, prefs (localStorage ln.labelcrop.v1).
@@ -67,10 +88,14 @@ public/shipping-label-to-4x6.html with public/js/label-crop/ modules: geometry (
 
 ### Crawlable pages
 
-/whatnot-labels (public/js/whatnot-labels.js form; public/js/whatnot-settings.js is the shared DOM-free validation and URL contract that whatnot-tool also imports) and guides under public/guides: whatnot-labels-printing-too-small, ebay-shipping-label-not-4x6, print-amazon-return-label-4x6, 8-5x11-shipping-label-to-4x6. Worker Static Assets serves extensionless URLs. public/sitemap.xml lists 9 URLs; public/robots.txt disallows /api/. SEO_STRATEGY.md records intent, sources and measurement.
+/whatnot-labels (public/js/whatnot-labels.js form; public/js/whatnot-settings.js is the shared DOM-free validation and URL contract that whatnot-tool also imports) and guides under public/guides: whatnot-labels-printing-too-small, ebay-shipping-label-not-4x6, print-amazon-return-label-4x6, 8-5x11-shipping-label-to-4x6. Worker Static Assets serves extensionless URLs. public/sitemap.xml lists 10 URLs; public/robots.txt disallows /api/. SEO_STRATEGY.md records intent, sources and measurement.
 
 public/css contains tokens and mode-specific styles. public/_headers contains CSP and security headers. Inline event handlers still require unsafe-inline. public/.assetsignore excludes local preview pages. CSV import is not implemented and is not advertised.
 
 ## Verification
 
-npm test runs spec-builders, the DOM contract, test-launch (52) and whatnot-feature (105) against pure modules and real API handlers on SQLite with a fake Resend transport. node scripts/test-routing.mjs (in npm test) covers 200/404/301 routing. node scripts/test-label-crop.mjs runs 23 converter tests. npm run test:runtime checks the real password module (LN_CRYPTO_PROBE points it at an isolated real Cloudflare preview; local workerd alone is insufficient). Integration/project suites hit a local Wrangler/D1 instance. scripts/test-deploy-canary.mjs requires explicit production opt-in. scripts/check-launch.mjs checks HTTP routes, redirects and headers without mutations. None certifies email delivery, image-heavy load or physical printing.
+npm test runs spec-builders, the DOM contract, test-launch, whatnot-feature, routing and affiliate checks against pure modules and real API handlers on SQLite with a fake Resend transport. Routing covers 200/404/301 behavior; scripts/test-label-crop.mjs runs 23 converter tests. npm run test:runtime checks the real password module (LN_CRYPTO_PROBE points it at an isolated real Cloudflare preview; local workerd alone is insufficient). Integration/project suites hit local Wrangler/D1; scripts/test-deploy-canary.mjs requires explicit production opt-in. scripts/check-launch.mjs checks HTTP routes, redirects and headers without mutations. Redesign source, 390px DOM and mobile Lighthouse receipts live in design/redesign-20261005/evidence/. None certifies email delivery, physical printing, field Core Web Vitals or affiliate conversion. The October 5 reviewed candidate is frozen under backups/packing-20261005/release-candidate-v2/ with a 121-file manifest (98 physical public assets); QA.md records actual browser/PDF/Lighthouse/dry-run results. This is release input, not a new canonical source root.
+
+### Affiliate shopping links
+
+Shopping anchors are static HTML on the homepage, Whatnot tool and 4x6 converter; no click redirect, third-party script or user-level tracking is added. `config/affiliates.json` records the active Amazon tag and website-list evidence. `scripts/check-affiliates.mjs` scans public HTML for untagged shopping links, mismatched tags, missing sponsored/noopener attributes and disclosures in the same shopping section. Its `--release` mode fails until Label Ninja is verified in the Associates website list. Manufacturer support and Amazon privacy links remain ordinary source links. Compatibility copy does not certify untested printer/stock combinations.

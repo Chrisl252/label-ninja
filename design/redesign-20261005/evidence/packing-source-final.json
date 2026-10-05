@@ -1,0 +1,265 @@
+{
+  "checked_utc": "2026-10-05T22:23:35.857065+00:00",
+  "source_root": "C:\\Code\\label-ninja.com\\lane-site-improve-20261004",
+  "resource_version": "packing-20261005c",
+  "canonical_pages": [
+    {
+      "asset": "public/index.html",
+      "sha256": "3b869ceae2373aca3769ef523e7ec7ce14022d3ce38cf9a94249fe097a332712",
+      "all_seo_metadata_ids_affiliates_equal": true,
+      "jsonld_blocks": 2,
+      "affiliate_links": 9
+    },
+    {
+      "asset": "public/shipping-label-to-4x6.html",
+      "sha256": "b060f985d9dbe303acdadd077e6244323ca742ef28356f0a9432c8f2b9e77ac1",
+      "all_seo_metadata_ids_affiliates_equal": true,
+      "jsonld_blocks": 1,
+      "affiliate_links": 1
+    },
+    {
+      "asset": "public/whatnot-labels.html",
+      "sha256": "ae270d0378bb9432cebb3b730f444e40c18a66c1e38aefeb9bb5e6ffc3e1ed45",
+      "all_seo_metadata_ids_affiliates_equal": true,
+      "jsonld_blocks": 1,
+      "affiliate_links": 1
+    },
+    {
+      "asset": "public/guides/index.html",
+      "sha256": "ec04b8dd84f693b2c999c9f5f9d118954e79724f5021b5153908a5b89d7d9aad",
+      "all_seo_metadata_ids_affiliates_equal": true,
+      "jsonld_blocks": 1,
+      "affiliate_links": 0
+    },
+    {
+      "asset": "public/guides/8-5x11-shipping-label-to-4x6.html",
+      "sha256": "a4654e6cf3a46c0648260f8c3b5a8942ed04475018933d29ee270dc4d47f22cb",
+      "all_seo_metadata_ids_affiliates_equal": true,
+      "jsonld_blocks": 1,
+      "affiliate_links": 0
+    },
+    {
+      "asset": "public/guides/ebay-shipping-label-not-4x6.html",
+      "sha256": "41062e69ecda02754bbc93dbba35c8425de4c789183f8ef72f567931b2c9e6b9",
+      "all_seo_metadata_ids_affiliates_equal": true,
+      "jsonld_blocks": 1,
+      "affiliate_links": 0
+    },
+    {
+      "asset": "public/guides/print-amazon-return-label-4x6.html",
+      "sha256": "ef6c1660d5d348744f5f9e951ce3374447fb6f78b0a6f6e08de4caa6facabd09",
+      "all_seo_metadata_ids_affiliates_equal": true,
+      "jsonld_blocks": 1,
+      "affiliate_links": 0
+    },
+    {
+      "asset": "public/guides/whatnot-labels-printing-too-small.html",
+      "sha256": "8ae47e15fe0dd96c7baae85b7455e81a1567a6ae01eba28e6ee593ba04640c21",
+      "all_seo_metadata_ids_affiliates_equal": true,
+      "jsonld_blocks": 1,
+      "affiliate_links": 0
+    },
+    {
+      "asset": "public/privacy.html",
+      "sha256": "0df2a7ea0704b63a5297d49423e86c6231935490f4a3c0f102996af01c21f223",
+      "all_seo_metadata_ids_affiliates_equal": true,
+      "jsonld_blocks": 1,
+      "affiliate_links": 0
+    },
+    {
+      "asset": "public/terms.html",
+      "sha256": "9d8474802f2153f49fc3f1118cf94a5dbd5d5a082fdfa0a8f42bee7cc7b7474f",
+      "all_seo_metadata_ids_affiliates_equal": true,
+      "jsonld_blocks": 1,
+      "affiliate_links": 0
+    }
+  ],
+  "all_pages_including_404_checked": 11,
+  "controls": [
+    {
+      "asset": "public/whatnot-labels.html",
+      "existing_controls": 4,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/shipping-label-to-4x6.html",
+      "existing_controls": 12,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/guides/8-5x11-shipping-label-to-4x6.html",
+      "existing_controls": 0,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/guides/ebay-shipping-label-not-4x6.html",
+      "existing_controls": 0,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/guides/index.html",
+      "existing_controls": 0,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/guides/print-amazon-return-label-4x6.html",
+      "existing_controls": 0,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/guides/whatnot-labels-printing-too-small.html",
+      "existing_controls": 0,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/privacy.html",
+      "existing_controls": 0,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/terms.html",
+      "existing_controls": 0,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/404.html",
+      "existing_controls": 0,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/index.html",
+      "existing_controls": 28,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/js/app/views/editor-view.js",
+      "existing_controls": 5,
+      "semantics_equal": true
+    },
+    {
+      "asset": "public/js/app/views/overlays.js",
+      "existing_controls": 22,
+      "semantics_equal": true
+    }
+  ],
+  "protected_files": [
+    {
+      "path": "public/js/app/editor.js",
+      "sha256": "92f652c2d994c17fac4b19e804fb8832b2d51c4896329f963bbcaae7f0399658",
+      "byte_identical": true
+    },
+    {
+      "path": "public/js/app/spec-builders.js",
+      "sha256": "9ba6292863af46719c1b67e95884f73352009cdcb9f9b778cdd97ba7f25b7635",
+      "byte_identical": true
+    },
+    {
+      "path": "public/js/app/barcode-svg.js",
+      "sha256": "315d807b8ade664fdc670edb38b5f2a24f71cd3e081a90ece1c2cad23c50ab30",
+      "byte_identical": true
+    },
+    {
+      "path": "public/js/app/live-previews.js",
+      "sha256": "9031539872dafaf2f6dbbaf6613ac89cda68d57b1960dd9d8c845b49d6813690",
+      "byte_identical": true
+    },
+    {
+      "path": "public/js/app/presets.js",
+      "sha256": "3f0ed4aabcd196a0088f6cc1723507202d40b2543a93ae1b2c21f0f36e9e8c30",
+      "byte_identical": false
+    },
+    {
+      "path": "public/js/app/exporter.js",
+      "sha256": "8fe38d9779674c0d7e612b55ef5a0e1af6c8c42c86a3267365a3f2d6d737df4c",
+      "byte_identical": true
+    },
+    {
+      "path": "public/js/label-crop/geometry.js",
+      "sha256": "abfaa004893c071a9f46e7cf234e76bafc1a558ef5949acf1e0a358798b57bff",
+      "byte_identical": true
+    },
+    {
+      "path": "public/js/label-crop/output.js",
+      "sha256": "cc866b5099ef855c2f06fa87fc7e1d9321f9d7ca8294aca3e378fbe37eaa4d0a",
+      "byte_identical": true
+    },
+    {
+      "path": "public/js/label-crop/cropbox.js",
+      "sha256": "e4517b648ac48ca3418459841795b90c6b4fb0eb0dc3ae4217b17541159bfc5d",
+      "byte_identical": true
+    },
+    {
+      "path": "src/render/pdf-label.js",
+      "sha256": "49d324a384e41d2eddbd11084c60ddbdb8ceaf7dd4a4a4f0ba3900f12d8b181a",
+      "byte_identical": true
+    },
+    {
+      "path": "config/affiliates.json",
+      "sha256": "82cc345ea88aecd8402323993b75d4a25120b8ad527725b78f64e1089de8d954",
+      "byte_identical": true
+    }
+  ],
+  "preset_before_sha256": "8591455ac8c21073822e5d3aff58d9d0de1aface3cbe3f3842c275fc0932b9b5",
+  "preset_display_changes": [
+    {
+      "old": "2.25x1.25 Dymo 30336",
+      "new": "2.25x1.25 DYMO 30334"
+    },
+    {
+      "old": "2x1 Dymo 30334",
+      "new": "2x1 Product / FNSKU"
+    }
+  ],
+  "preset_all_other_source_identical": true,
+  "helpers": [
+    {
+      "path": "public/js/site-nav.js",
+      "sha256": "cc2d8d5331524df11e5296d373a24bb18713bad9d0ff232ef19e9066f8bdcfbc"
+    },
+    {
+      "path": "public/js/app/home-picker.js",
+      "sha256": "6f8c187409d1bcf358d8afffdff99a3e13f8c57b2cbecc19dae65b3ee3c6b7bd"
+    },
+    {
+      "path": "public/js/printer-picker.js",
+      "sha256": "042e1d4cbd3cc2dc836ceab0e4a83dea8ba4e3cddc66e88c6b1ba2a0bb00ccc7"
+    },
+    {
+      "path": "public/js/app/packing-tools.js",
+      "sha256": "ff40acf65cb96299716b3505eea319b6fe97cd45469b258c721ef2a3c19606de"
+    }
+  ],
+  "public_changed_count": 29,
+  "public_added_count": 11,
+  "failures": [],
+  "ui_cache_wiring": [
+    {
+      "path": "public/index.html",
+      "before_sha256": "2579286c938c0fe925965e463e0996ac1bf48ce31b4c2187439727a0380d395e",
+      "sha256": "3b869ceae2373aca3769ef523e7ec7ce14022d3ce38cf9a94249fe097a332712",
+      "only_presentation_query_keys_changed": true,
+      "added_query_keys": 1
+    },
+    {
+      "path": "public/js/app/app.js",
+      "before_sha256": "653bff0fe2da1bf6939aa2556d51a8e0d400ec17b1357ec806fac338e7413954",
+      "sha256": "5ea09efd01eba8c8b085971739daf67058cd81580bb14b569e3be466b9cf244a",
+      "only_presentation_query_keys_changed": true,
+      "added_query_keys": 5
+    },
+    {
+      "path": "public/js/app/views/mount.js",
+      "before_sha256": "9dbde581ba87008a231fc8fc8b5b436016f5f889e27a245302e954632c9c4892",
+      "sha256": "4a86d11b33d734c47b6ea42947e300539bc28c8f94ddbd82f8574eec6eb4f875",
+      "only_presentation_query_keys_changed": true,
+      "added_query_keys": 3
+    }
+  ],
+  "freeze": {
+    "folder": "backups/packing-20261005/release-candidate-v2",
+    "manifest": "backups/packing-20261005/release-candidate-v2-sha256.json",
+    "files": 121,
+    "physical_public_files": 98,
+    "source_and_copy_mismatches": []
+  }
+}

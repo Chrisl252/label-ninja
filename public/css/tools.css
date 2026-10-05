@@ -1,38 +1,33 @@
-/* Hallmark · macrostructure: Workbench · tone: utilitarian/technical · anchor hue: electric blue (kept)
- * Batch tools (bin · whatnot · fnsku): form panel on the left, the label on its liner on the right,
- * the one blue button directly under the label. Tokens only — see DESIGN.md. */
-
-.tool { display: flex; flex-direction: column; gap: var(--space-md); min-width: 0; }
-.tool__head {
-  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
-  gap: var(--space-xs) var(--space-md);
-  padding-bottom: var(--space-sm);
-  border-bottom: var(--rule);
-}
+/* Packing Bench batch tools. Settings and physical-size PDF code are unchanged. */
+.tool { display: flex; flex-direction: column; gap: var(--space-lg); min-width: 0; }
+.tool__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-md); padding-bottom: var(--space-lg); border-bottom: var(--rule-cut); }
 .tool__head > .stack { flex: 1 1 22rem; min-width: 0; }
 .tool__title { font-size: var(--text-display); }
 .tool__spec { display: flex; flex-wrap: wrap; gap: var(--space-2xs); }
-
-.tool__bench { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-md); align-items: start; }
-@media (min-width: 900px) {
-  .tool__bench { grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); }
-  /* header = main nav row + tool-tab row in the app views */
-  .tool__stage { position: sticky; top: calc(var(--masthead-h) + var(--dock-h) + var(--space-sm)); }
-}
-.tool__form { display: flex; flex-direction: column; gap: var(--space-md); }
-.tool__form .grid { gap: var(--space-sm); }
-.tool__stage { display: flex; flex-direction: column; gap: var(--space-sm); min-width: 0; }
-.tool__stage .liner { padding: var(--space-lg) var(--space-md); min-height: 18rem; }
-.tool__stage-title { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--color-ink-3); }
-.tool__caption { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2xs); }
-.tool__save { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2xs) var(--space-xs); font-size: var(--text-xs); color: var(--color-ink-3); }
+.tool__bench { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: var(--space-lg); align-items: start; }
+.tool__form { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; gap: var(--space-lg); background: var(--color-chassis-2); border: var(--rule); padding: var(--space-lg); }
+.tool__form .grid { gap: var(--space-md); }
+.tool__form .input, .tool__form .select { min-height: 44px; }
+.tool__stage { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; gap: var(--space-sm); min-width: 0; padding: var(--space-lg); background: var(--color-chassis-3); border: var(--rule-cut); border-radius: var(--radius-card); }
+.tool__stage .liner { padding: var(--space-md); min-height: 18rem; background: transparent; border: 0; }
+.tool__stage-title { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-ink-2); }
+.tool__caption { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2xs); }
+.tool__save { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2xs) var(--space-xs); padding-top: var(--space-sm); border-top: var(--rule-cut); font-size: var(--text-sm); color: var(--color-ink-2); }
+.tool__save .btn { min-height: 44px; }
 .tool__save .led::before { width: 6px; height: 6px; }
-.tool__cta { width: 100%; }
-#mode-whatnot .btn--primary { background: var(--color-accent-3); border-color: var(--color-accent-3); color: var(--color-accent-ink); }
-#mode-whatnot .btn--primary:hover { background: var(--color-accent-3); border-color: var(--color-accent-2); }
-.tool__fine { text-align: center; font-size: var(--text-xs); color: var(--color-ink-3); }
+.tool__cta { width: 100%; min-height: 48px; }
+.tool__fine { text-align: center; font-size: var(--text-sm); line-height: var(--leading-body); color: var(--color-ink-2); }
 .upper { text-transform: uppercase; }
-
+@media (min-width: 900px) { .tool__stage { position: sticky; top: calc(var(--masthead-h) + var(--space-lg)); } }
+@media (max-width: 899px) {
+  .tool__bench { grid-template-columns: minmax(0, 1fr); }
+  .tool__stage { grid-column: 1; grid-row: 1; padding: var(--space-sm); }
+  .tool__stage .liner { min-height: 0; padding: var(--space-sm); }
+  .tool__form { grid-column: 1; grid-row: 2; padding: var(--space-md); }
+  .tool__title { font-size: var(--text-2xl); }
+  .tool__head .lede { font-size: var(--text-base); }
+  .tool__spec { font-size: var(--text-xs); }
+}
 /* the sample label — proportions are the real stock, content is the tool's defaults */
 .sample {
   display: flex; flex-direction: column; align-items: center; justify-content: space-around;

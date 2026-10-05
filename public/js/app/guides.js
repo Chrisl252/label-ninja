@@ -1,12 +1,13 @@
-// Hash routing helper — pure, DOM-free, node-testable.
+// Hash routing helper â€” pure, DOM-free, node-testable.
 // Guides content lives in index.html; this maps a URL hash to the app mode
 // that owns it (SEO landing hashes -> home / guides / tool pages).
 
 // Home-page anchors (free tools list, FAQ) keep the home mode visible.
-const HOME_SECTION_IDS = ['home', 'free-tools', 'faq'];
+const HOME_SECTION_IDS = ['home', 'free-tools', 'faq', 'label-sizes'];
 
 const GUIDE_HASH_HINTS = [
   'best-label-printers',
+  'label-supplies',
   'printer-setup',
   'seo-keywords',
   'rollo-setup',
@@ -30,6 +31,7 @@ export function modeFromHash(hash) {
 export const GUIDE_SECTION_IDS = [
   'printer-setup-checklist',
   'best-label-printers',
+  'label-supplies',
   'seo-keywords',
   'rollo-setup',
   'zebra-setup',

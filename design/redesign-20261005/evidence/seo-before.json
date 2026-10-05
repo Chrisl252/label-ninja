@@ -1,0 +1,1589 @@
+{
+  "captured_at_utc": "2026-10-05T20:50:47.509548+00:00",
+  "capture_method": "Python standard library: local sitemap and HTML/JS source parsing; no network requests or browser execution.",
+  "canonical_source_root": "C:\\Code\\label-ninja.com\\lane-site-improve-20261004",
+  "source_baseline": "Local prepared affiliate candidate, before the requested production redesign. Not evidence that affiliate changes are deployed.",
+  "live_visual_baseline": "Parent-captured live-site screenshots in ../baseline/{home,editor,converter,guide,printers}-{desktop,mobile}.jpg; separate from this source metadata snapshot.",
+  "scope_notes": [
+    "Exactly the 10 canonical sitemap documents.",
+    "Source H1s and JavaScript-mounted view H1s are distinguished; they are not all simultaneously visible.",
+    "JSON-LD top-level types and nested types are recorded separately.",
+    "No Lighthouse, CrUX, indexing, ranking or conversion measurements are inferred.",
+    "Internal linked asset paths and external font resource URLs are public source references, not downloaded dependencies."
+  ],
+  "pages": [
+    {
+      "sitemap_url": "https://label-ninja.com/",
+      "url_path": "/",
+      "source_asset": "public/index.html",
+      "source_sha256": "e4c1e15242f4a66bd841f61a91baea71d5153c4ec6687e1c27f22cdb88ba7e80",
+      "title": "Free Thermal Label Maker – 4x6, Bin & FNSKU | Label Ninja",
+      "descriptions": [
+        {
+          "name": "description",
+          "property": null,
+          "content": "Make exact-size PDF labels for Rollo, Zebra, Munbyn and Dymo printers: 4x6 bin labels, Whatnot numbers, Amazon FNSKU and custom designs. Free.",
+          "line": 7
+        }
+      ],
+      "canonical_links": [
+        {
+          "href": "https://label-ninja.com/",
+          "line": 8
+        }
+      ],
+      "robots_meta": [],
+      "robots_meta_note": "No explicit robots meta in this document; no runtime/X-Robots-Tag claim made.",
+      "h1_in_html_source": [
+        {
+          "line": 98,
+          "id": "home-title",
+          "class": null,
+          "main_id": "mode-home",
+          "hidden_ancestors_in_source": [],
+          "screen_reader_only_class": false,
+          "text": "Free thermal label maker for 4x6 and small label printers"
+        }
+      ],
+      "h1_from_mounted_view_sources": [
+        {
+          "source_asset": "public/js/app/views/account-views.js",
+          "h1": [
+            {
+              "line": 10,
+              "id": null,
+              "class": null,
+              "main_id": "mode-dashboard",
+              "hidden_ancestors_in_source": [
+                "mode-dashboard"
+              ],
+              "screen_reader_only_class": false,
+              "text": "What are we printing today?"
+            },
+            {
+              "line": 59,
+              "id": null,
+              "class": null,
+              "main_id": "mode-account",
+              "hidden_ancestors_in_source": [
+                "mode-account"
+              ],
+              "screen_reader_only_class": false,
+              "text": "Account"
+            }
+          ],
+          "visibility": "Mounted by JavaScript; app mode/session determines visibility. Not part of homepage HTML source."
+        },
+        {
+          "source_asset": "public/js/app/views/editor-view.js",
+          "h1": [
+            {
+              "line": 8,
+              "id": "editor-title",
+              "class": "sr-only",
+              "main_id": "mode-editor",
+              "hidden_ancestors_in_source": [
+                "mode-editor"
+              ],
+              "screen_reader_only_class": true,
+              "text": "Custom label editor"
+            }
+          ],
+          "visibility": "Mounted by JavaScript; app mode/session determines visibility. Not part of homepage HTML source."
+        }
+      ],
+      "h1_measurement_scope": "Source inventory only. Visible runtime H1 count was not measured by this capture.",
+      "json_ld_blocks": [
+        {
+          "line": 22,
+          "parse_status": "valid_json",
+          "top_level_types": [
+            "WebApplication"
+          ],
+          "all_nested_types": [
+            "Offer",
+            "WebApplication"
+          ]
+        },
+        {
+          "line": 36,
+          "parse_status": "valid_json",
+          "top_level_types": [
+            "FAQPage"
+          ],
+          "all_nested_types": [
+            "Answer",
+            "FAQPage",
+            "Question"
+          ]
+        }
+      ],
+      "linked_assets": [
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.ico",
+          "line": 52
+        },
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.svg",
+          "line": 53
+        },
+        {
+          "element": "link",
+          "role": "apple-touch-icon",
+          "path": "/apple-touch-icon.png",
+          "line": 54
+        },
+        {
+          "element": "link",
+          "role": "manifest",
+          "path": "/site.webmanifest",
+          "line": 55
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/tokens.css",
+          "line": 58
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/app.css",
+          "line": 59
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/site.css",
+          "line": 60
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/account.css",
+          "line": 61
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/tools.css",
+          "line": 62
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/editor.css",
+          "line": 63
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/guides.css",
+          "line": 64
+        },
+        {
+          "element": "script",
+          "role": "script",
+          "path": "/js/site-nav.js",
+          "line": 65
+        },
+        {
+          "element": "script",
+          "role": "module",
+          "path": "/js/app/app.js",
+          "line": 66
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/favicon.svg",
+          "line": 73
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/assets/home-bin.svg",
+          "line": 114
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/assets/home-whatnot.svg",
+          "line": 116
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/assets/home-fnsku.svg",
+          "line": 117
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/assets/home-whatnot.svg",
+          "line": 135
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/assets/home-shipping.svg",
+          "line": 141
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/assets/home-bin.svg",
+          "line": 147
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/assets/home-fnsku.svg",
+          "line": 153
+        }
+      ]
+    },
+    {
+      "sitemap_url": "https://label-ninja.com/shipping-label-to-4x6",
+      "url_path": "/shipping-label-to-4x6",
+      "source_asset": "public/shipping-label-to-4x6.html",
+      "source_sha256": "77a2b59c177b6696c7de06b9f2bb2297221c7cfd149ba1832be986596365aa1d",
+      "title": "4x6 Shipping Label Converter, Free, No Upload | Label NinjaLetter page to 4 × 6 label",
+      "descriptions": [
+        {
+          "name": "description",
+          "property": null,
+          "content": "Crop eBay, USPS, Pirate Ship and Amazon return labels from 8.5x11 or A4 to 4x6. Splits 2-up and 4-up sheets. Free, no signup, nothing uploaded.",
+          "line": 7
+        }
+      ],
+      "canonical_links": [
+        {
+          "href": "https://label-ninja.com/shipping-label-to-4x6",
+          "line": 9
+        }
+      ],
+      "robots_meta": [
+        {
+          "name": "robots",
+          "property": null,
+          "content": "index,follow,max-image-preview:large",
+          "line": 8
+        }
+      ],
+      "robots_meta_note": "Explicit source directives recorded above.",
+      "h1_in_html_source": [
+        {
+          "line": 54,
+          "id": null,
+          "class": null,
+          "main_id": "main",
+          "hidden_ancestors_in_source": [],
+          "screen_reader_only_class": false,
+          "text": "Shipping Label to 4x6 Converter"
+        }
+      ],
+      "h1_from_mounted_view_sources": [],
+      "h1_measurement_scope": "Source inventory only. Visible runtime H1 count was not measured by this capture.",
+      "json_ld_blocks": [
+        {
+          "line": 35,
+          "parse_status": "valid_json",
+          "top_level_types": [
+            "BreadcrumbList",
+            "FAQPage",
+            "WebApplication"
+          ],
+          "all_nested_types": [
+            "Answer",
+            "BreadcrumbList",
+            "FAQPage",
+            "ListItem",
+            "Offer",
+            "Organization",
+            "Question",
+            "WebApplication"
+          ]
+        }
+      ],
+      "linked_assets": [
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.ico",
+          "line": 20
+        },
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.svg",
+          "line": 21
+        },
+        {
+          "element": "link",
+          "role": "apple-touch-icon",
+          "path": "/apple-touch-icon.png",
+          "line": 22
+        },
+        {
+          "element": "link",
+          "role": "manifest",
+          "path": "/site.webmanifest",
+          "line": 23
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.googleapis.com",
+          "line": 25
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.gstatic.com",
+          "line": 26
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
+          "line": 27
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/tokens.css",
+          "line": 28
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/app.css",
+          "line": 29
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/whatnot-labels.css",
+          "line": 30
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/site.css",
+          "line": 31
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/label-crop.css",
+          "line": 32
+        },
+        {
+          "element": "script",
+          "role": "script",
+          "path": "/js/site-nav.js",
+          "line": 33
+        },
+        {
+          "element": "script",
+          "role": "module",
+          "path": "/js/label-crop/app.js",
+          "line": 34
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/favicon.svg",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "sitemap_url": "https://label-ninja.com/whatnot-labels",
+      "url_path": "/whatnot-labels",
+      "source_asset": "public/whatnot-labels.html",
+      "source_sha256": "3b6534b6f0ea40613e3655bb233e8572e7cc90c8ecdd7e33206ab42028d0019c",
+      "title": "Free Whatnot Number Labels & Tags (PDF) | Label NinjaExample numbered labels",
+      "descriptions": [
+        {
+          "name": "description",
+          "property": null,
+          "content": "Make free numbered Whatnot item labels and number tags as exact-size PDFs. See how they differ from Whatnot Sorting Labels. No limits, nothing to buy.",
+          "line": 7
+        }
+      ],
+      "canonical_links": [
+        {
+          "href": "https://label-ninja.com/whatnot-labels",
+          "line": 9
+        }
+      ],
+      "robots_meta": [
+        {
+          "name": "robots",
+          "property": null,
+          "content": "index,follow,max-image-preview:large",
+          "line": 8
+        }
+      ],
+      "robots_meta_note": "Explicit source directives recorded above.",
+      "h1_in_html_source": [
+        {
+          "line": 55,
+          "id": null,
+          "class": null,
+          "main_id": "main",
+          "hidden_ancestors_in_source": [],
+          "screen_reader_only_class": false,
+          "text": "Free Whatnot number labels"
+        }
+      ],
+      "h1_from_mounted_view_sources": [],
+      "h1_measurement_scope": "Source inventory only. Visible runtime H1 count was not measured by this capture.",
+      "json_ld_blocks": [
+        {
+          "line": 38,
+          "parse_status": "valid_json",
+          "top_level_types": [
+            "BreadcrumbList",
+            "FAQPage",
+            "HowTo",
+            "WebPage"
+          ],
+          "all_nested_types": [
+            "Answer",
+            "BreadcrumbList",
+            "FAQPage",
+            "HowTo",
+            "HowToStep",
+            "HowToSupply",
+            "HowToTool",
+            "ListItem",
+            "Organization",
+            "Question",
+            "WebPage",
+            "WebSite"
+          ]
+        }
+      ],
+      "linked_assets": [
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.ico",
+          "line": 23
+        },
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.svg",
+          "line": 24
+        },
+        {
+          "element": "link",
+          "role": "apple-touch-icon",
+          "path": "/apple-touch-icon.png",
+          "line": 25
+        },
+        {
+          "element": "link",
+          "role": "manifest",
+          "path": "/site.webmanifest",
+          "line": 26
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.googleapis.com",
+          "line": 28
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.gstatic.com",
+          "line": 29
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
+          "line": 30
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/tokens.css",
+          "line": 31
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/app.css",
+          "line": 32
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/site.css",
+          "line": 33
+        },
+        {
+          "element": "script",
+          "role": "script",
+          "path": "/js/site-nav.js",
+          "line": 34
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/guides.css",
+          "line": 35
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/whatnot-labels.css",
+          "line": 36
+        },
+        {
+          "element": "script",
+          "role": "module",
+          "path": "/js/whatnot-labels.js",
+          "line": 37
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/favicon.svg",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "sitemap_url": "https://label-ninja.com/guides/",
+      "url_path": "/guides/",
+      "source_asset": "public/guides/index.html",
+      "source_sha256": "7a347b5d81bff7d9f708bc4ba9f66d02dbd6092aa40483b4c9c2b9e723177df0",
+      "title": "Thermal Label Printing Guides | Label Ninja",
+      "descriptions": [
+        {
+          "name": "description",
+          "property": null,
+          "content": "Free how-to guides for printing shipping labels on 4x6 thermal printers, fixing Whatnot labels that print too small and setting paper size and scale.",
+          "line": 7
+        }
+      ],
+      "canonical_links": [
+        {
+          "href": "https://label-ninja.com/guides/",
+          "line": 9
+        }
+      ],
+      "robots_meta": [
+        {
+          "name": "robots",
+          "property": null,
+          "content": "index,follow,max-image-preview:large",
+          "line": 8
+        }
+      ],
+      "robots_meta_note": "Explicit source directives recorded above.",
+      "h1_in_html_source": [
+        {
+          "line": 56,
+          "id": null,
+          "class": null,
+          "main_id": "main",
+          "hidden_ancestors_in_source": [],
+          "screen_reader_only_class": false,
+          "text": "Label printing guides"
+        }
+      ],
+      "h1_from_mounted_view_sources": [],
+      "h1_measurement_scope": "Source inventory only. Visible runtime H1 count was not measured by this capture.",
+      "json_ld_blocks": [
+        {
+          "line": 37,
+          "parse_status": "valid_json",
+          "top_level_types": [
+            "BreadcrumbList",
+            "CollectionPage"
+          ],
+          "all_nested_types": [
+            "BreadcrumbList",
+            "CollectionPage",
+            "ItemList",
+            "ListItem",
+            "Organization",
+            "WebSite"
+          ]
+        }
+      ],
+      "linked_assets": [
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.ico",
+          "line": 23
+        },
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.svg",
+          "line": 24
+        },
+        {
+          "element": "link",
+          "role": "apple-touch-icon",
+          "path": "/apple-touch-icon.png",
+          "line": 25
+        },
+        {
+          "element": "link",
+          "role": "manifest",
+          "path": "/site.webmanifest",
+          "line": 26
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.googleapis.com",
+          "line": 28
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.gstatic.com",
+          "line": 29
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
+          "line": 30
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/tokens.css",
+          "line": 31
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/app.css",
+          "line": 32
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/site.css",
+          "line": 33
+        },
+        {
+          "element": "script",
+          "role": "script",
+          "path": "/js/site-nav.js",
+          "line": 34
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/guides.css",
+          "line": 35
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/whatnot-labels.css",
+          "line": 36
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/favicon.svg",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "sitemap_url": "https://label-ninja.com/guides/8-5x11-shipping-label-to-4x6",
+      "url_path": "/guides/8-5x11-shipping-label-to-4x6",
+      "source_asset": "public/guides/8-5x11-shipping-label-to-4x6.html",
+      "source_sha256": "03e1b855672a46d1ca45a69f3abc29b87f191f69224ff1fea1b52d3296bb253a",
+      "title": "Convert an 8.5x11 Shipping Label to 4x6 (Free)Fit to page shrinks the label; a 4 × 6 PDF at 100% does notA letter-size page cropped to a 4 × 6 labelGeneric print settings for a 4 × 6 thermal label",
+      "descriptions": [
+        {
+          "name": "description",
+          "property": null,
+          "content": "Turn a letter-size shipping label PDF into a 4x6 thermal label: switch the format at the source, crop the PDF free in your browser, and print at 100%.",
+          "line": 7
+        }
+      ],
+      "canonical_links": [
+        {
+          "href": "https://label-ninja.com/guides/8-5x11-shipping-label-to-4x6",
+          "line": 9
+        }
+      ],
+      "robots_meta": [
+        {
+          "name": "robots",
+          "property": null,
+          "content": "index,follow,max-image-preview:large",
+          "line": 8
+        }
+      ],
+      "robots_meta_note": "Explicit source directives recorded above.",
+      "h1_in_html_source": [
+        {
+          "line": 55,
+          "id": null,
+          "class": null,
+          "main_id": "main",
+          "hidden_ancestors_in_source": [],
+          "screen_reader_only_class": false,
+          "text": "Convert an 8.5×11 shipping label to 4×6"
+        }
+      ],
+      "h1_from_mounted_view_sources": [],
+      "h1_measurement_scope": "Source inventory only. Visible runtime H1 count was not measured by this capture.",
+      "json_ld_blocks": [
+        {
+          "line": 39,
+          "parse_status": "valid_json",
+          "top_level_types": [
+            "Article",
+            "BreadcrumbList",
+            "HowTo"
+          ],
+          "all_nested_types": [
+            "Article",
+            "BreadcrumbList",
+            "HowTo",
+            "HowToStep",
+            "ImageObject",
+            "ListItem",
+            "Organization"
+          ]
+        }
+      ],
+      "linked_assets": [
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.ico",
+          "line": 25
+        },
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.svg",
+          "line": 26
+        },
+        {
+          "element": "link",
+          "role": "apple-touch-icon",
+          "path": "/apple-touch-icon.png",
+          "line": 27
+        },
+        {
+          "element": "link",
+          "role": "manifest",
+          "path": "/site.webmanifest",
+          "line": 28
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.googleapis.com",
+          "line": 30
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.gstatic.com",
+          "line": 31
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
+          "line": 32
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/tokens.css",
+          "line": 33
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/app.css",
+          "line": 34
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/site.css",
+          "line": 35
+        },
+        {
+          "element": "script",
+          "role": "script",
+          "path": "/js/site-nav.js",
+          "line": 36
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/guides.css",
+          "line": 37
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/whatnot-labels.css",
+          "line": 38
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/favicon.svg",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "sitemap_url": "https://label-ninja.com/guides/ebay-shipping-label-not-4x6",
+      "url_path": "/guides/ebay-shipping-label-not-4x6",
+      "source_asset": "public/guides/ebay-shipping-label-not-4x6.html",
+      "source_sha256": "85af6fd794a13075cd0404329c8a7d90cb76a02aba1c830ebb7160efac51228c",
+      "title": "eBay Shipping Label Not 4x6? Fix the 8.5x11 FormatFit to page shrinks the label; a 4 × 6 PDF at 100% does notA letter-size page cropped to a 4 × 6 label",
+      "descriptions": [
+        {
+          "name": "description",
+          "property": null,
+          "content": "eBay label printing on a full 8.5x11 page or tiny on your thermal printer? Change eBay's label format to 4x6, fix printer settings, or crop the PDF free.",
+          "line": 7
+        }
+      ],
+      "canonical_links": [
+        {
+          "href": "https://label-ninja.com/guides/ebay-shipping-label-not-4x6",
+          "line": 9
+        }
+      ],
+      "robots_meta": [
+        {
+          "name": "robots",
+          "property": null,
+          "content": "index,follow,max-image-preview:large",
+          "line": 8
+        }
+      ],
+      "robots_meta_note": "Explicit source directives recorded above.",
+      "h1_in_html_source": [
+        {
+          "line": 55,
+          "id": null,
+          "class": null,
+          "main_id": "main",
+          "hidden_ancestors_in_source": [],
+          "screen_reader_only_class": false,
+          "text": "eBay shipping label not printing 4×6?"
+        }
+      ],
+      "h1_from_mounted_view_sources": [],
+      "h1_measurement_scope": "Source inventory only. Visible runtime H1 count was not measured by this capture.",
+      "json_ld_blocks": [
+        {
+          "line": 39,
+          "parse_status": "valid_json",
+          "top_level_types": [
+            "Article",
+            "BreadcrumbList",
+            "HowTo"
+          ],
+          "all_nested_types": [
+            "Article",
+            "BreadcrumbList",
+            "HowTo",
+            "HowToStep",
+            "ImageObject",
+            "ListItem",
+            "Organization"
+          ]
+        }
+      ],
+      "linked_assets": [
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.ico",
+          "line": 25
+        },
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.svg",
+          "line": 26
+        },
+        {
+          "element": "link",
+          "role": "apple-touch-icon",
+          "path": "/apple-touch-icon.png",
+          "line": 27
+        },
+        {
+          "element": "link",
+          "role": "manifest",
+          "path": "/site.webmanifest",
+          "line": 28
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.googleapis.com",
+          "line": 30
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.gstatic.com",
+          "line": 31
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
+          "line": 32
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/tokens.css",
+          "line": 33
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/app.css",
+          "line": 34
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/site.css",
+          "line": 35
+        },
+        {
+          "element": "script",
+          "role": "script",
+          "path": "/js/site-nav.js",
+          "line": 36
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/guides.css",
+          "line": 37
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/whatnot-labels.css",
+          "line": 38
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/favicon.svg",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "sitemap_url": "https://label-ninja.com/guides/print-amazon-return-label-4x6",
+      "url_path": "/guides/print-amazon-return-label-4x6",
+      "source_asset": "public/guides/print-amazon-return-label-4x6.html",
+      "source_sha256": "944fbd516af23309b4c25f482cd5501d324aae60fb9dc98a0ba15be836ef0686",
+      "title": "How to Print an Amazon Return Label on a 4x6 PrinterA letter-size page cropped to a 4 × 6 labelGeneric print settings for a 4 × 6 thermal label",
+      "descriptions": [
+        {
+          "name": "description",
+          "property": null,
+          "content": "Amazon return labels download as a full page. Here is how to print one on a 4x6 thermal label printer, crop it free, or skip printing with a QR code.",
+          "line": 7
+        }
+      ],
+      "canonical_links": [
+        {
+          "href": "https://label-ninja.com/guides/print-amazon-return-label-4x6",
+          "line": 9
+        }
+      ],
+      "robots_meta": [
+        {
+          "name": "robots",
+          "property": null,
+          "content": "index,follow,max-image-preview:large",
+          "line": 8
+        }
+      ],
+      "robots_meta_note": "Explicit source directives recorded above.",
+      "h1_in_html_source": [
+        {
+          "line": 55,
+          "id": null,
+          "class": null,
+          "main_id": "main",
+          "hidden_ancestors_in_source": [],
+          "screen_reader_only_class": false,
+          "text": "How to print an Amazon return label on 4×6"
+        }
+      ],
+      "h1_from_mounted_view_sources": [],
+      "h1_measurement_scope": "Source inventory only. Visible runtime H1 count was not measured by this capture.",
+      "json_ld_blocks": [
+        {
+          "line": 39,
+          "parse_status": "valid_json",
+          "top_level_types": [
+            "Article",
+            "BreadcrumbList",
+            "HowTo"
+          ],
+          "all_nested_types": [
+            "Article",
+            "BreadcrumbList",
+            "HowTo",
+            "HowToStep",
+            "ImageObject",
+            "ListItem",
+            "Organization"
+          ]
+        }
+      ],
+      "linked_assets": [
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.ico",
+          "line": 25
+        },
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.svg",
+          "line": 26
+        },
+        {
+          "element": "link",
+          "role": "apple-touch-icon",
+          "path": "/apple-touch-icon.png",
+          "line": 27
+        },
+        {
+          "element": "link",
+          "role": "manifest",
+          "path": "/site.webmanifest",
+          "line": 28
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.googleapis.com",
+          "line": 30
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.gstatic.com",
+          "line": 31
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
+          "line": 32
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/tokens.css",
+          "line": 33
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/app.css",
+          "line": 34
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/site.css",
+          "line": 35
+        },
+        {
+          "element": "script",
+          "role": "script",
+          "path": "/js/site-nav.js",
+          "line": 36
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/guides.css",
+          "line": 37
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/whatnot-labels.css",
+          "line": 38
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/favicon.svg",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "sitemap_url": "https://label-ninja.com/guides/whatnot-labels-printing-too-small",
+      "url_path": "/guides/whatnot-labels-printing-too-small",
+      "source_asset": "public/guides/whatnot-labels-printing-too-small.html",
+      "source_sha256": "4b856b04a95d9e3e998b6a5eab81b66234e3917947bd7250ca9d89a2970b11d4",
+      "title": "Whatnot Label Too Small, Cropped or Sideways? 4x6 FixFit to page shrinks the label; a 4 × 6 PDF at 100% does notGeneric print settings for a 4 × 6 thermal label",
+      "descriptions": [
+        {
+          "name": "description",
+          "property": null,
+          "content": "Whatnot label tiny, cropped or sideways? Switch to Whatnot's 4x6 thermal format, set paper size to 4x6 and print at 100% on Rollo, Zebra or Munbyn.",
+          "line": 7
+        }
+      ],
+      "canonical_links": [
+        {
+          "href": "https://label-ninja.com/guides/whatnot-labels-printing-too-small",
+          "line": 9
+        }
+      ],
+      "robots_meta": [
+        {
+          "name": "robots",
+          "property": null,
+          "content": "index,follow,max-image-preview:large",
+          "line": 8
+        }
+      ],
+      "robots_meta_note": "Explicit source directives recorded above.",
+      "h1_in_html_source": [
+        {
+          "line": 57,
+          "id": null,
+          "class": null,
+          "main_id": "main",
+          "hidden_ancestors_in_source": [],
+          "screen_reader_only_class": false,
+          "text": "Whatnot labels printing too small? Here is the fix"
+        }
+      ],
+      "h1_from_mounted_view_sources": [],
+      "h1_measurement_scope": "Source inventory only. Visible runtime H1 count was not measured by this capture.",
+      "json_ld_blocks": [
+        {
+          "line": 38,
+          "parse_status": "valid_json",
+          "top_level_types": [
+            "Article",
+            "BreadcrumbList",
+            "HowTo"
+          ],
+          "all_nested_types": [
+            "Article",
+            "BreadcrumbList",
+            "HowTo",
+            "HowToStep",
+            "ImageObject",
+            "ListItem",
+            "Organization"
+          ]
+        }
+      ],
+      "linked_assets": [
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.ico",
+          "line": 24
+        },
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.svg",
+          "line": 25
+        },
+        {
+          "element": "link",
+          "role": "apple-touch-icon",
+          "path": "/apple-touch-icon.png",
+          "line": 26
+        },
+        {
+          "element": "link",
+          "role": "manifest",
+          "path": "/site.webmanifest",
+          "line": 27
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.googleapis.com",
+          "line": 29
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.gstatic.com",
+          "line": 30
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
+          "line": 31
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/tokens.css",
+          "line": 32
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/app.css",
+          "line": 33
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/site.css",
+          "line": 34
+        },
+        {
+          "element": "script",
+          "role": "script",
+          "path": "/js/site-nav.js",
+          "line": 35
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/guides.css",
+          "line": 36
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/whatnot-labels.css",
+          "line": 37
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/favicon.svg",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "sitemap_url": "https://label-ninja.com/privacy",
+      "url_path": "/privacy",
+      "source_asset": "public/privacy.html",
+      "source_sha256": "de921cd175cd962370b95ce1bc0e03d159b4e8c246bac4e39254b772590741c6",
+      "title": "Privacy Policy | Label Ninja",
+      "descriptions": [
+        {
+          "name": "description",
+          "property": null,
+          "content": "What free label tool Label Ninja stores, what stays in your browser (including the 4x6 label cropper), which ads appear, and how to delete your account.",
+          "line": 7
+        }
+      ],
+      "canonical_links": [
+        {
+          "href": "https://label-ninja.com/privacy",
+          "line": 8
+        }
+      ],
+      "robots_meta": [
+        {
+          "name": "robots",
+          "property": null,
+          "content": "index,follow",
+          "line": 9
+        }
+      ],
+      "robots_meta_note": "Explicit source directives recorded above.",
+      "h1_in_html_source": [
+        {
+          "line": 54,
+          "id": null,
+          "class": null,
+          "main_id": null,
+          "hidden_ancestors_in_source": [],
+          "screen_reader_only_class": false,
+          "text": "Privacy policy"
+        }
+      ],
+      "h1_from_mounted_view_sources": [],
+      "h1_measurement_scope": "Source inventory only. Visible runtime H1 count was not measured by this capture.",
+      "json_ld_blocks": [
+        {
+          "line": 38,
+          "parse_status": "valid_json",
+          "top_level_types": [
+            "BreadcrumbList",
+            "WebPage"
+          ],
+          "all_nested_types": [
+            "BreadcrumbList",
+            "ListItem",
+            "Organization",
+            "WebPage"
+          ]
+        }
+      ],
+      "linked_assets": [
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.ico",
+          "line": 23
+        },
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.svg",
+          "line": 24
+        },
+        {
+          "element": "link",
+          "role": "apple-touch-icon",
+          "path": "/apple-touch-icon.png",
+          "line": 25
+        },
+        {
+          "element": "link",
+          "role": "manifest",
+          "path": "/site.webmanifest",
+          "line": 26
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.googleapis.com",
+          "line": 29
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.gstatic.com",
+          "line": 30
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
+          "line": 31
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/tokens.css",
+          "line": 33
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/app.css",
+          "line": 34
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/site.css",
+          "line": 35
+        },
+        {
+          "element": "script",
+          "role": "script",
+          "path": "/js/site-nav.js",
+          "line": 36
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/guides.css",
+          "line": 37
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/favicon.svg",
+          "line": 47
+        }
+      ]
+    },
+    {
+      "sitemap_url": "https://label-ninja.com/terms",
+      "url_path": "/terms",
+      "source_asset": "public/terms.html",
+      "source_sha256": "97ee975fbcc34719e51ffe59b465259461869630eaa3e4758be983d3fc72d4cf",
+      "title": "Terms of Use | Label Ninja",
+      "descriptions": [
+        {
+          "name": "description",
+          "property": null,
+          "content": "Label Ninja's terms: free label tools with no paid plan, optional accounts, possible ads, fair-use limits and your responsibility for what you print.",
+          "line": 7
+        }
+      ],
+      "canonical_links": [
+        {
+          "href": "https://label-ninja.com/terms",
+          "line": 8
+        }
+      ],
+      "robots_meta": [
+        {
+          "name": "robots",
+          "property": null,
+          "content": "index,follow",
+          "line": 9
+        }
+      ],
+      "robots_meta_note": "Explicit source directives recorded above.",
+      "h1_in_html_source": [
+        {
+          "line": 50,
+          "id": null,
+          "class": null,
+          "main_id": null,
+          "hidden_ancestors_in_source": [],
+          "screen_reader_only_class": false,
+          "text": "Terms of use"
+        }
+      ],
+      "h1_from_mounted_view_sources": [],
+      "h1_measurement_scope": "Source inventory only. Visible runtime H1 count was not measured by this capture.",
+      "json_ld_blocks": [
+        {
+          "line": 36,
+          "parse_status": "valid_json",
+          "top_level_types": [
+            "BreadcrumbList",
+            "WebPage"
+          ],
+          "all_nested_types": [
+            "BreadcrumbList",
+            "ListItem",
+            "Organization",
+            "WebPage"
+          ]
+        }
+      ],
+      "linked_assets": [
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.ico",
+          "line": 23
+        },
+        {
+          "element": "link",
+          "role": "icon",
+          "path": "/favicon.svg",
+          "line": 24
+        },
+        {
+          "element": "link",
+          "role": "apple-touch-icon",
+          "path": "/apple-touch-icon.png",
+          "line": 25
+        },
+        {
+          "element": "link",
+          "role": "manifest",
+          "path": "/site.webmanifest",
+          "line": 26
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.googleapis.com",
+          "line": 28
+        },
+        {
+          "element": "link",
+          "role": "preconnect",
+          "path": "https://fonts.gstatic.com",
+          "line": 29
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
+          "line": 30
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/tokens.css",
+          "line": 31
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/app.css",
+          "line": 32
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/site.css",
+          "line": 33
+        },
+        {
+          "element": "script",
+          "role": "script",
+          "path": "/js/site-nav.js",
+          "line": 34
+        },
+        {
+          "element": "link",
+          "role": "stylesheet",
+          "path": "/css/guides.css",
+          "line": 35
+        },
+        {
+          "element": "img",
+          "role": "image",
+          "path": "/favicon.svg",
+          "line": 44
+        }
+      ]
+    }
+  ]
+}

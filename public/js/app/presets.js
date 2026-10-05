@@ -2,8 +2,8 @@
 // Pure data + one numeric helper; no DOM, importable from node tests.
 
 export const PRESETS = {
-  standard: { width: 360, height: 200, printWidth: 2.25, printHeight: 1.25, name: '2.25x1.25 Dymo 30336' },
-  fnsku: { width: 320, height: 180, printWidth: 2, printHeight: 1, name: '2x1 Dymo 30334' },
+  standard: { width: 360, height: 200, printWidth: 2.25, printHeight: 1.25, name: '2.25x1.25 DYMO 30334' },
+  fnsku: { width: 320, height: 180, printWidth: 2, printHeight: 1, name: '2x1 Product / FNSKU' },
   address: { width: 520, height: 160, printWidth: 3.5, printHeight: 1.125, name: '1.125x3.5 Address' },
   small_sq: { width: 200, height: 200, printWidth: 1, printHeight: 1, name: '1x1 Square' },
   small_bc: { width: 300, height: 120, printWidth: 2, printHeight: 0.75, name: '2x0.75 Barcode' },

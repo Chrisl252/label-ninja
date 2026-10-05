@@ -147,6 +147,7 @@ assert(!('pages' in tp) || tp.pages == null, 'test_print: no pages (server rende
 const guideHashes = [
   '#printer-setup-checklist',
   '#best-label-printers',
+  '#label-supplies',
   '#seo-keywords',
   '#rollo-setup',
   '#zebra-setup',
@@ -159,6 +160,7 @@ assert(modeFromHash('#tools/warehouse-rack-bin-label-generator') === 'bin', 'rou
 assert(modeFromHash('#tools/whatnot-live-show-number-generator') === 'whatnot', 'routing: whatnot tool hash');
 assert(modeFromHash('#tools/amazon-fba-fnsku-generator') === 'fnsku', 'routing: fnsku tool hash');
 assert(modeFromHash('') === 'editor', 'routing: no hash -> editor');
+assert(sectionIdFromHash('#label-supplies') === 'label-supplies', 'routing: supply checklist scroll target');
 assert(sectionIdFromHash('#best-label-printers') === 'best-label-printers', 'routing: scroll target extracted');
 assert(sectionIdFromHash('#tools/warehouse-rack-bin-label-generator') === null, 'routing: tool hash has no guide section');
 

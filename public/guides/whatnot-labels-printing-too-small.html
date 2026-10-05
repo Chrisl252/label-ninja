@@ -25,16 +25,13 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#14161c">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/tokens.css">
-  <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/css/site.css">
-  <script src="/js/site-nav.js" defer></script>
-  <link rel="stylesheet" href="/css/guides.css">
-  <link rel="stylesheet" href="/css/whatnot-labels.css">
+  <meta name="theme-color" content="#F5F1E8">
+  <link rel="stylesheet" href="/css/tokens.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/app.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/site.css?v=packing-20261005c">
+  <script src="/js/site-nav.js?v=packing-20261005c" defer></script>
+  <link rel="stylesheet" href="/css/guides.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/whatnot-labels.css?v=packing-20261005c">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[
     {"@type":"Article","headline":"Whatnot labels printing too small? How to fix the size","description":"Fix tiny, cropped or sideways Whatnot labels by matching the PDF size, printer paper size and print scale, and by choosing Whatnot's 4 x 6 label format.","datePublished":"2026-09-06","dateModified":"2026-10-01","inLanguage":"en","author":{"@type":"Organization","name":"Label Ninja team","url":"https://label-ninja.com/"},"publisher":{"@type":"Organization","name":"Label Ninja","url":"https://label-ninja.com/","logo":{"@type":"ImageObject","url":"https://label-ninja.com/assets/logo.jpg"}},"mainEntityOfPage":"https://label-ninja.com/guides/whatnot-labels-printing-too-small","image":"https://label-ninja.com/assets/logo.jpg"},
@@ -45,25 +42,44 @@
       {"@type":"HowToStep","position":3,"name":"Check the new PDF","text":"Download the label again and check the new PDF's page size before printing."}]}
   ]}
   </script>
+  <link rel="preload" href="/assets/fonts/barlow-condensed.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
 </head>
-<body class="seller-page">
+<body class="seller-page packing-page guide-page">
   <a class="seller-skip btn btn--primary" href="#main">Skip to guide</a>
-  <header class="site-header"><a class="site-brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"> Label Ninja</a><nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/">Guides</a></nav></header>
+  <header class="site-header">
+    <a class="site-brand" href="/"><span class="brand__mark" aria-hidden="true"></span>Label Ninja</a>
+    <nav class="site-nav" aria-label="Main">
+      <details class="nav-group"><summary>Tools</summary><div class="nav-group__menu">
+        <a href="/shipping-label-to-4x6">Shipping label to 4×6</a>
+        <a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a>
+        <a href="/#tools/whatnot-live-show-number-generator">Whatnot numbers</a>
+        <a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a>
+        <a href="/#editor">Custom label editor</a>
+      </div></details>
+      <a href="/#label-sizes">Labels &amp; sizes</a>
+      <a href="/#best-label-printers">Printers</a>
+      <a href="/guides/">Guides</a>
+    </nav>
+    <div class="site-controls"><button type="button" class="site-control" data-site-search aria-label="Find a tool or guide" disabled>Find</button><button type="button" class="site-control" data-site-theme aria-label="Switch to dark theme" disabled>Dark</button></div>
+
+  </header>
   <nav class="breadcrumb gd-crumbs gd-crumbs--article" aria-label="Breadcrumb"><ol><li><a href="/">Label Ninja</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">Whatnot labels printing too small</li></ol></nav>
   <main id="main" class="seller-main seller-article">
-    <article>
+    <article class="guide-layout">
       <header class="seller-intro">
         <p class="seller-kicker">Guide / Whatnot printing</p>
         <h1>Whatnot labels printing too small? Here is the fix</h1>
         <p class="lede">A tiny label in one corner, a cut-off barcode or a sideways print almost always comes from one of three mismatches: the PDF page size, the printer's paper size or the print scale. Check them in that order.</p>
         <div class="gd-answer" role="note" aria-labelledby="quick-answer">
-          <p class="gd-answer__label" id="quick-answer">Quick answer</p>
+          <p class="gd-answer__label" id="quick-answer">Try this first</p>
           <p>Whatnot shipping labels print tiny when an 8.5 × 11 PDF is sent to a 4 × 6 thermal printer. Re-download the label in Whatnot's 4 × 6 thermal format, set the printer's paper size to 4 × 6, and print at 100% (Actual size), not Fit. For number labels, match the PDF size to your stock.</p>
         </div>
         <p class="seller-meta">By the Label Ninja team · Last updated <time datetime="2026-10-01">2026-10-01</time></p>
       </header>
       <nav class="gd-toc" aria-labelledby="toc-heading">
-        <h2 id="toc-heading">On this page</h2>
+        <h2 id="toc-heading">Work through the fix</h2>
         <ol>
           <li><a href="#change-size">How to change label size on Whatnot</a></li>
           <li><a href="#label-type">Shipping label or item number?</a></li>
@@ -74,7 +90,7 @@
         </ol>
       </nav>
       <section id="change-size" class="seller-section">
-        <h2><span>01 / Start at the source</span>How to change label size on Whatnot</h2>
+        <h2><span>Start at the source</span>How to change label size on Whatnot</h2>
         <div class="prose">
           <p>Whatnot offers shipping labels in two formats: <strong>4 × 6 for thermal printers</strong> and <strong>8.5 × 11 for standard paper</strong>. If you print an 8.5 × 11 file on a 4 × 6 roll, the printer shrinks a whole letter page onto the label, which is the most common reason a Whatnot label comes out tiny.</p>
           <ol>
@@ -92,14 +108,14 @@
         </div>
       </section>
       <section id="label-type" class="seller-section">
-        <h2><span>02 / Check the file</span>Is this a shipping label or an item number?</h2>
+        <h2><span>Check the file</span>Is this a shipping label or an item number?</h2>
         <div class="prose">
           <p>A shipping label contains the destination and carrier barcode. A numbered item label identifies something in your show. They usually have different page sizes, even if you print both from the same computer, so the printer setting that works for one may shrink the other.</p>
           <p>Keep a separate paper-size preset for each stock you use, and switch presets when you switch rolls.</p>
         </div>
       </section>
       <section id="size-check" class="seller-section">
-        <h2><span>03 / Match all three</span>Which print settings should I check?</h2>
+        <h2><span>Match all three</span>Which print settings should I check?</h2>
         <div class="prose">
           <h3>1. PDF page dimensions</h3>
           <p>Open the downloaded file in a PDF viewer and inspect its page dimensions or document properties. Don't judge its size from how large it looks on your screen: zoom changes the preview, not the page.</p>
@@ -116,7 +132,7 @@
         </div>
       </section>
       <section id="printers" class="seller-section">
-        <h2><span>04 / Where the setting lives</span>Rollo, Zebra and Munbyn: where to set paper size</h2>
+        <h2><span>Where the setting lives</span>Rollo, Zebra and Munbyn: where to set paper size</h2>
         <div class="prose">
           <p class="gd-verify"><strong>General guidance, not a tested walkthrough for each model.</strong> Driver screens differ by version and operating system.</p>
           <ul>
@@ -130,7 +146,7 @@
         </div>
       </section>
       <section id="symptoms" class="seller-section">
-        <h2><span>05 / Read the result</span>What if the label is cropped, blank or sideways?</h2>
+        <h2><span>Read the result</span>What if the label is cropped, blank or sideways?</h2>
         <div class="prose">
           <h3>Part of the number or barcode is missing</h3>
           <p>Check the PDF itself first. If it looks complete, compare its dimensions and orientation with the driver. For a shipping label, regenerate the 4 × 6 format or crop carefully so the whole carrier barcode stays on the page.</p>
@@ -143,7 +159,7 @@
         </div>
       </section>
       <section id="test" class="seller-section">
-        <h2><span>06 / Save the rest of the roll</span>Print one page before the full batch</h2>
+        <h2><span>Save the rest of the roll</span>Print one page before the full batch</h2>
         <div class="prose">
           <p>Use the print dialog's page range to print page 1 only. Check the physical dimensions, orientation and edge clearance. If it fits, print the remaining pages from that same file.</p>
           <p>Once you have a working combination, write down the stock, driver paper size and scale and keep it beside your printer. Label Ninja's tools are free with no export limit, so remaking a PDF at a different size costs nothing but a minute.</p>
@@ -180,6 +196,6 @@
       <li><a href="/guides/8-5x11-shipping-label-to-4x6">Convert an 8.5×11 shipping label to 4×6</a></li>
     </ul>
   </aside>
-  <footer class="seller-footer"><span>Label Ninja · Independent of Whatnot</span><nav aria-label="Footer"><a href="/guides/">Guides</a><a href="/whatnot-labels">Whatnot Labels</a><a href="/shipping-label-to-4x6">Label to 4×6</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav></footer>
+  <footer class="seller-footer"><span>© 2026 Christopher Lucas · Label Ninja · Independent of Whatnot</span><nav aria-label="Footer"><a href="/guides/">Guides</a><a href="/whatnot-labels">Whatnot Labels</a><a href="/shipping-label-to-4x6">Label to 4×6</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav></footer>
 </body>
 </html>

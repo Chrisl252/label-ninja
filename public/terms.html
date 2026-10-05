@@ -24,32 +24,49 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#14161c">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/tokens.css">
-  <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/css/site.css">
-  <script src="/js/site-nav.js" defer></script>
-  <link rel="stylesheet" href="/css/guides.css">
+  <meta name="theme-color" content="#F5F1E8">
+  <link rel="stylesheet" href="/css/tokens.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/app.css?v=packing-20261005c">
+  <link rel="stylesheet" href="/css/site.css?v=packing-20261005c">
+  <script src="/js/site-nav.js?v=packing-20261005c" defer></script>
+  <link rel="stylesheet" href="/css/guides.css?v=packing-20261005c">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[
-    {"@type":"WebPage","@id":"https://label-ninja.com/terms","url":"https://label-ninja.com/terms","name":"Label Ninja Terms of Use","inLanguage":"en","dateModified":"2026-10-01","publisher":{"@type":"Organization","name":"Label Ninja","url":"https://label-ninja.com/"}},
+    {"@type":"WebPage","@id":"https://label-ninja.com/terms","url":"https://label-ninja.com/terms","name":"Label Ninja Terms of Use","inLanguage":"en","dateModified":"2026-10-05","publisher":{"@type":"Organization","name":"Label Ninja","url":"https://label-ninja.com/"}},
     {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Label Ninja","item":"https://label-ninja.com/"},{"@type":"ListItem","position":2,"name":"Terms","item":"https://label-ninja.com/terms"}]}
   ]}
   </script>
+  <link rel="preload" href="/assets/fonts/barlow-condensed.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
 </head>
-<body>
-  <header class="site-header"><a class="site-brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"> Label Ninja</a><nav class="site-nav" aria-label="Main"><a href="/shipping-label-to-4x6">4x6 converter</a><a href="/whatnot-labels">Whatnot labels</a><a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a><a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a><a href="/guides/">Guides</a></nav></header>
-  <main class="mode">
-    <article class="doc">
+<body class="packing-page policy-page">
+  <a class="seller-skip btn btn--primary" href="#policy-main">Skip to policy</a>
+  <header class="site-header">
+    <a class="site-brand" href="/"><span class="brand__mark" aria-hidden="true"></span>Label Ninja</a>
+    <nav class="site-nav" aria-label="Main">
+      <details class="nav-group"><summary>Tools</summary><div class="nav-group__menu">
+        <a href="/shipping-label-to-4x6">Shipping label to 4×6</a>
+        <a href="/#tools/warehouse-rack-bin-label-generator">Bin labels</a>
+        <a href="/#tools/whatnot-live-show-number-generator">Whatnot numbers</a>
+        <a href="/#tools/amazon-fba-fnsku-generator">FNSKU labels</a>
+        <a href="/#editor">Custom label editor</a>
+      </div></details>
+      <a href="/#label-sizes">Labels &amp; sizes</a>
+      <a href="/#best-label-printers">Printers</a>
+      <a href="/guides/">Guides</a>
+    </nav>
+    <div class="site-controls"><button type="button" class="site-control" data-site-search aria-label="Find a tool or guide" disabled>Find</button><button type="button" class="site-control" data-site-theme aria-label="Switch to dark theme" disabled>Dark</button></div>
+
+  </header>
+  <main class="mode" id="policy-main">
+    <article class="doc doc--policy">
       <nav class="breadcrumb" aria-label="Breadcrumb"><ol><li><a href="/">Label Ninja</a></li><li aria-current="page">Terms</li></ol></nav>
       <header class="doc__head">
         <span class="doc__stamp">Label Ninja · Christopher Lucas</span>
         <h1>Terms of use</h1>
         <p class="lede">Label Ninja makes printable label PDFs and resizes shipping labels for thermal printers. These short terms cover using the tools, optional accounts and what you print.</p>
-        <span class="doc__stamp">Last updated <time datetime="2026-10-01">2026-10-01</time></span>
+        <span class="doc__stamp">Last updated <time datetime="2026-10-05">2026-10-05</time></span>
       </header>
 
       <section class="gd-summary" aria-labelledby="summary-heading">
@@ -57,7 +74,7 @@
         <ul>
           <li>Every tool is free. There is no paid plan and we never ask for card details.</li>
           <li>Accounts are optional. Downloading PDFs from the studio needs a free account; the 4×6 converter needs none.</li>
-          <li>The site may show ads to cover its costs.</li>
+          <li>The site may earn commissions from optional shopping links and may show ads to cover its costs.</li>
           <li>You are responsible for what you print and for testing a label before a full run.</li>
           <li>The tools come as is, with no warranty that every printer and stock will work.</li>
         </ul>
@@ -77,7 +94,7 @@
       </nav>
 
       <section id="free" class="doc__section prose"><h2>1. Free to use</h2>
-        <p>All Label Ninja tools are free. There is no paid plan or subscription, and we never ask for card details. There is no quota on how many PDFs you make. The site may show ads, as described in the <a href="/privacy#ads">privacy policy</a>.</p>
+        <p>All Label Ninja tools are free. There is no paid plan or subscription, and we never ask for card details. There is no quota on how many PDFs you make. Optional <a href="/privacy#shopping-links">affiliate shopping links</a> may earn us a commission. The site may also show ads, as described in the <a href="/privacy#ads">privacy policy</a>.</p>
       </section>
       <section id="accounts" class="doc__section prose"><h2>2. Optional accounts</h2>
         <p>The shipping label to 4×6 converter works without an account. Downloading PDFs from the label studio, saving projects and keeping recent exports need a free account. Keep your password private and do not share an account to get around safeguards. You can ask us to delete your account at any time.</p>
