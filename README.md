@@ -1,5 +1,7 @@
 # Label Ninja
 
+**Status (2026-10-06):** LIVE at https://label-ninja.com (200). Live build = Packing Bench 2d78018 on branch `lane/site-improve-20261004-labelninja` (worktree `C:\Code\label-ninja.com\lane-site-improve-20261004`); `master` is behind live until that lane is merged. GitHub: `Chrisl252/label-ninja` (private). See [PROJECT_STATE.md](PROJECT_STATE.md).
+
 Thermal label PDFs for bins, Whatnot numbers, Amazon FNSKUs and custom designs.
 
 Free for everyone: no plans, quotas or payments. Studio export needs a free account and is subject to abuse limits (30 exports/hour, 200 pages/batch). The free in-browser /shipping-label-to-4x6 tool needs no account or upload. Revenue is planned from ads only; ads are currently off.

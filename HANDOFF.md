@@ -1,5 +1,7 @@
 # Label Ninja handoff
 
+> **2026-10-06:** this handoff predates the 2026-10-01 free-everything ruling (no Stripe, no payments) and the 2026-10-05 Packing Bench release. The Stripe "next revenue work" below is obsolete. Current truth: PROJECT_STATE.md.
+
 Current release: Chris explicitly said deploy approved. Shipped unchanged upgrade candidate ceb6a67 from clean backups/release-upgrade-20260907 as Worker eacac403-fbac-4484-bd6f-24398f2232cf, preserving Whatnot 79842db. Both domains match all 41 public hashes and pass HTTP/DB/offer gates; live account/PDF/project canary passes 17/17. Live browser confirms custom Whatnot settings survive pricing and return, without owner-account changes; sanitized Worker checks report two ok outcomes and zero exceptions. DEPLOYMENT_UPGRADE_CEB6A67.md is the full receipt. Prior 99bd8c27-c9e0-479d-b418-08727ff37aa3 is the rollback target.
 
 No further release approval is pending for this brick. Next revenue work is secure Stripe test provisioning and real checkout/webhook/portal acceptance, with recovery email still required. Production pricing remains configured:false, mode:test; paid-launch gate intentionally exits 1. No payment/email, migration, provider secret, hosting-plan change or GitHub push. Synthetic account ln-release+20260907053132@bisket.com retains two expiring PDFs and 8 batches; its only project was removed. Preserve unrelated files and earlier release evidence.

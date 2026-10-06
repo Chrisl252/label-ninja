@@ -1,6 +1,13 @@
 # Label Ninja current state
 
-## Start here (2026-10-01, v2 LIVE)
+## Start here (2026-10-06 docs sweep) - READ: live is NOT this branch
+
+- **LIVE = Packing Bench release 2d78018** (Worker b7eb4353-a631-45b0-b0b1-b88cdea0dafc, deployed 2026-10-05) from branch `lane/site-improve-20261004-labelninja`, worktree `C:\Code\label-ninja.com\lane-site-improve-20261004` (pushed to origin as that branch; NOT merged to master). Its PROJECT_STATE is the detailed live record.
+- **This checkout (`master`, 83e9e24 + docs) is BEHIND live.** Deploying from master would revert the Packing Bench identity, the 10-04 SEO/perf fixes and the Associates registration config. Merge the lane into master (Chris OK) before any deploy from here.
+- Verified 2026-10-06: https://label-ninja.com returns 200. Everything free, no Stripe, no quota; ads still off (CSP decision open).
+- HANDOFF.md's "next = Stripe test provisioning" is obsolete since the 2026-10-01 free-everything ruling.
+
+## Previous start here (2026-10-01, v2 LIVE - superseded by Packing Bench 10-05)
 
 - LIVE: commit ab63404 (branch lane/pages-v2-20261001, worktree C:\Code\label-ninja.com\lane-free-20261001), Worker version 1f8eb5e4-8713-47ca-bbbd-579f3d62a450 on label-ninja.com + www. Pushed to origin/master.
 - Rollback: Worker 28e897a3 (v1 free build, 03a1229); before that eacac403 (old paywall build).
@@ -9,7 +16,7 @@
 - Live evidence: 19 legit routes 200; /nope-xyz + /guides/nope 404 with X-Robots-Tag noindex; /pricing 301; www 301; /guides 307 -> /guides/. npm test exit 0 (launch 52, whatnot 128, routing 79, contract, spec-builders); test-label-crop 23 pass.
 - Any new real front-end path must be added to SPA_PATHS in src/static.js or it 404s.
 - GSC: submit sitemap + inspect /guides/ and /shipping-label-to-4x6 in the UI (API token read-only). Baseline 90d: ~150 impr, 13 clicks. Check at 28/56 days.
-- Next: decide ads/CSP; GSC check; main checkout C:\Code\label-ninja.com\label-ninja is stale at d354b16 with the superseded $9 Stripe dirty tree (patch in its backups\) — reset only with Chris's OK.
+- Next: decide ads/CSP; GSC sitemap submit + 28/56-day check. 2026-10-01: old checkout C:\Code\label-ninja.com\label-ninja DELETED on Chris's order; this folder is now the ONLY copy (standalone repo, master tracks origin). Its backups/.dev.vars/old deploy notes are in backupsold-checkout-*.
 
 Module map: ARCHITECTURE.md. Procedures: RUNBOOKS.md. Evidence: LAUNCH_READINESS.md. Backlog: BACKLOG.md.
 
