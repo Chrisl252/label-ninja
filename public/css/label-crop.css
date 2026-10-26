@@ -5,7 +5,7 @@
 .lc h2 { font-size: var(--text-2xl); }
 .lc-drop {
   display: grid; gap: var(--space-2xs); justify-items: center; text-align: center;
-  padding: var(--space-lg) var(--space-md); border: 2px dashed var(--color-rule-2);
+  padding: var(--space-lg) var(--space-md); border: 2px solid var(--color-rule-2);
   border-radius: var(--radius-card); background: var(--color-chassis-2); cursor: pointer;
 }
 .lc-drop:hover, .lc-drop.is-over { border-color: var(--color-accent-2); background: var(--color-accent-dim); }
@@ -129,13 +129,13 @@
 @media print { .lc { display: none; } }
 
 /* Packing Bench converter: a useful upload entry and readable stock/crop controls. */
-.lc { padding-block: var(--space-lg); gap: var(--space-lg); border-block-style: dashed; }
+.lc { padding-block: var(--space-lg); gap: var(--space-lg);  }
 .lc-drop { padding: var(--space-xl) var(--space-lg); background: var(--color-chassis-2); border-style: dashed; }
 .lc-drop__title { font-size: var(--text-2xl); text-transform: none; letter-spacing: var(--track-display); }
 .lc-drop__hint { font-size: var(--text-base); line-height: var(--leading-body); }
 .lc-controls { padding: var(--space-md); background: var(--color-chassis-2); border: var(--rule); border-radius: var(--radius-card); }
 .lc-radio { min-height: 44px; }
-.lc-stage { background: var(--color-chassis-3); border-style: dashed; min-height: 280px; }
+.lc-stage { background: var(--color-chassis-3); min-height: 280px; }
 .lc-stage__empty { max-width: 40ch; }
 .lc-crop__handle { width: 28px; height: 28px; margin: -14px 0 0 -14px; }
 .lc-editor__actions { gap: var(--space-xs); }

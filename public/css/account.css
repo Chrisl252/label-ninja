@@ -19,7 +19,7 @@
   position: relative;
   display: flex; flex-direction: column; align-items: center; gap: var(--space-3xs);
   padding: var(--space-lg) var(--space-md); text-align: center;
-  border: 2px dashed var(--color-rule-2); border-radius: var(--radius-card);
+  border: 2px solid var(--color-rule-2); border-radius: var(--radius-card);
   background: var(--color-chassis-2); cursor: pointer;
   transition: border-color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
 }
@@ -182,7 +182,7 @@
 /* Packing Bench account surfaces. Existing home selectors stay compatible with the crawlable page. */
 .packing-dashboard { gap: var(--space-xl); }
 .dash-intro { align-items: stretch; }
-.dash-start { padding: var(--space-lg); border-style: dashed; }
+.dash-start { padding: var(--space-lg); }
 .dash-start h1 { font-size: var(--text-display); max-width: 18ch; }
 .dash-usage { padding: var(--space-lg); background: var(--color-chassis-3); }
 .dash-h { font-size: var(--text-xl); color: var(--color-ink); letter-spacing: var(--track-display); }
@@ -195,7 +195,7 @@
 .tile__title { font-size: var(--text-xl); }
 .tile__hint { font-size: var(--text-sm); }
 .packing-account { max-width: 52rem; }
-.packing-account .page-head { gap: var(--space-xs); padding-bottom: var(--space-lg); border-bottom-style: dashed; }
+.packing-account .page-head { gap: var(--space-xs); padding-bottom: var(--space-lg);  }
 .packing-account .page-head h1 { font-size: var(--text-display); }
 .packing-dialog { border: var(--rule); background: var(--color-chassis-2); }
 .auth__mark { color: var(--color-stock-ink); margin-bottom: var(--space-xs); }

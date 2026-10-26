@@ -77,7 +77,7 @@
 .dg-good { fill: var(--color-ready); }
 .dg-bad { fill: var(--color-attn); }
 .dg-panel-text { fill: var(--color-ink); font-family: var(--font-body); font-size: 13px; }
-.dg-panel-text--dim { fill: var(--color-ink-2); font-family: var(--font-body); font-size: 12px; }
+.dg-panel-text--dim { fill: var(--color-ink-2); font-family: var(--font-body); font-size: 13px; }
 .dg-num { font-family: var(--font-body); font-weight: 700; }
 .dg-liner { fill: var(--color-chassis-3); stroke: var(--color-rule); stroke-dasharray: 4 4; }
 .dg-dot { fill: var(--color-accent); }
@@ -127,3 +127,5 @@
   .gd-figure { margin-inline: 0; }
   .recovery-page .nf { padding: var(--space-md); }
 }
+/* print-head voice: condensed caps on page titles and section heads of the content pages */
+main h1, .seller-section h2, .lc h2, .doc__section h2, .guide h2 { text-transform: uppercase; letter-spacing: .005em; }

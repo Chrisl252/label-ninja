@@ -350,7 +350,7 @@ body .roll { display: none; }
   letter-spacing: 0.06em; text-transform: uppercase; line-height: 1; white-space: nowrap;
   color: var(--color-ink-2);
   padding: 0.55rem 0.85rem; min-height: 2.25rem;
-  border: 1px dashed transparent; border-radius: 3px; background: transparent;
+  border: 1px solid transparent; border-radius: 3px; background: transparent;
 }
 .roll__tab:hover { color: var(--color-ink); border-color: var(--color-rule-2); }
 .roll__tab.is-active { background: var(--color-stock); color: var(--color-stock-ink); border-color: var(--color-stock); border-style: solid; }

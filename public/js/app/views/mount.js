@@ -2,9 +2,9 @@
 // index.html keeps the crawlable content (home, tools, guides, footer); the
 // signed-in views, the editor workbench and the overlays render from here.
 
-import { EDITOR_VIEW } from './editor-view.js?v=packing-20261005c';
-import { DASHBOARD_VIEW, ACCOUNT_VIEW } from './account-views.js?v=packing-20261005c';
-import { OVERLAYS_VIEW } from './overlays.js?v=packing-20261005c';
+import { EDITOR_VIEW } from './editor-view.js?v=taste-20261026a';
+import { DASHBOARD_VIEW, ACCOUNT_VIEW } from './account-views.js?v=taste-20261026a';
+import { OVERLAYS_VIEW } from './overlays.js?v=taste-20261026a';
 
 let mounted = false;
 

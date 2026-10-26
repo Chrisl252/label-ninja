@@ -1,36 +1,35 @@
 /* Packing Bench: licensed local fonts; color tokens have one home. */
 @font-face { font-family:"Barlow Condensed"; font-style:normal; font-weight:700; font-display:swap; src:url("/assets/fonts/barlow-condensed.woff2") format("woff2"); }
 @font-face { font-family:"IBM Plex Sans"; font-style:normal; font-weight:100 700; font-display:swap; src:url("/assets/fonts/ibm-plex-sans.woff2") format("woff2"); }
-@font-face { font-family:"JetBrains Mono"; font-style:normal; font-weight:400; font-display:swap; src:url("/assets/fonts/jetbrains-mono.woff2") format("woff2"); }
 
 :root {
   color-scheme: light;
 
   /* chassis — the printer body */
-  --color-chassis:    #F5F1E8;
-  --color-chassis-2:  #FCFAF4;
-  --color-chassis-3:  #E8E0D2;
-  --color-chassis-4:  #DED5C5;
-  --color-rule:       #A39C8D;
-  --color-rule-2:     #918B7D;
+  --color-chassis:    #ECECE8;
+  --color-chassis-2:  #F7F7F4;
+  --color-chassis-3:  #DEDED8;
+  --color-chassis-4:  #D0D0C9;
+  --color-rule:       #8E8E86;
+  --color-rule-2:     #6F6F68;
 
   /* ink on chassis */
-  --color-ink:        #20221D;
-  --color-ink-2:      #5F6057;
-  --color-ink-3:      #5F6057; /* AA on chassis-2 for small text */
+  --color-ink:        #0F110E;
+  --color-ink-2:      #2F322C;
+  --color-ink-3:      #484B43; /* AA on chassis-2 for small text */
 
   /* label stock — the paper */
-  --color-stock:      #FCFCF7;
-  --color-stock-2:    #F0EFE7;
-  --color-stock-3:    #D9D7CC;
-  --color-stock-ink:  #20221D;
-  --color-stock-ink-2: #5F6057;
+  --color-stock:      #FFFFFF;
+  --color-stock-2:    #F1F1EE;
+  --color-stock-3:    #D6D6D0;
+  --color-stock-ink:  #0F110E;
+  --color-stock-ink-2: #484B43;
 
   /* the one action */
   --color-accent:     #BB4114;
   --color-accent-2:   #A73710;
   --color-accent-3:   #922F0D;
-  --color-accent-ink: #FCFAF4;
+  --color-accent-ink: #FFFFFF;
   --color-accent-dim: #BB411414;
   --color-accent-line: #BB411480;
 
@@ -41,19 +40,19 @@
   --color-attn-dim:   #77511614;
   --color-danger:     #A32929;
   --color-danger-dim: #A3292914;
-  --color-off:        #5F6057;
+  --color-off:        #484B43;
   --color-focus:      var(--color-accent);
-  --color-scrim:      #20221DAA;
+  --color-scrim:      #0F110EAA;
 
   /* type */
   --font-display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
   --font-body:    "IBM Plex Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
-  --font-mono:    "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-mono:    "IBM Plex Sans", "Helvetica Neue", Arial, system-ui, sans-serif; /* figures only: tabular numerals, no third face */
 
-  --text-xs:   0.75rem;
-  --text-sm:   0.875rem;
-  --text-base: 1rem;
-  --text-md:   1.0625rem;
+  --text-xs:   0.8125rem;
+  --text-sm:   0.9375rem;
+  --text-base: 1.0625rem;
+  --text-md:   1.1875rem;
   --text-lg:   1.25rem;
   --text-xl:   1.5rem;
   --text-2xl:  1.875rem;
@@ -78,16 +77,18 @@
   --space-3xl: 6rem;
 
   /* shape */
-  --radius-label: 4px;
-  --radius-card:  8px;
+  --radius-label: 2px;
+  --radius-card:  3px;
   --radius-pill:  999px;
   --rule: 1px solid var(--color-rule);
   --rule-2: 1px solid var(--color-rule-2);
-  --rule-cut: 1px dashed var(--color-rule-2);
+  --rule-cut: 1px solid var(--color-rule);
 
   /* elevation — paper on chassis */
-  --shadow-stock: 0 1px 0 #20221D25, 0 12px 24px -16px #20221D50;
-  --shadow-card: 0 1px 0 #20221D10;
+  --shadow-stock: none;
+  --shadow-lift: 0 18px 40px -14px #000;
+  --shadow-lift-sm: 0 10px 22px -10px #0F110E88;
+  --shadow-card: none;
   --shadow-modal: 0 24px 60px -20px oklch(0% 0 0 / 0.9);
   --glow-ready:  0 0 6px var(--color-ready);
   --glow-attn:   0 0 6px var(--color-attn);
@@ -113,19 +114,19 @@
 
 :root[data-theme="dark"] {
   color-scheme:dark;
-  --color-chassis: #21231E;
-  --color-chassis-2: #2C2F27;
-  --color-chassis-3: #363A30;
-  --color-chassis-4: #414638;
-  --color-ink: #F5F1E8;
-  --color-ink-2: #CCC6B8;
-  --color-ink-3: #CCC6B8;
-  --color-rule: #818474;
-  --color-rule-2: #929582;
+  --color-chassis: #121411;
+  --color-chassis-2: #1C1E1A;
+  --color-chassis-3: #272923;
+  --color-chassis-4: #32342D;
+  --color-ink: #ECECE8;
+  --color-ink-2: #CBCDC5;
+  --color-ink-3: #CBCDC5;
+  --color-rule: #7C7F76;
+  --color-rule-2: #92958B;
   --color-accent: #F58C58;
   --color-accent-2: #FFA273;
   --color-accent-3: #FFB890;
-  --color-accent-ink: #21231E;
+  --color-accent-ink: #121411;
   --color-accent-dim: #F58C581A;
   --color-accent-line: #F58C5880;
   --color-ready: #93C69F;
@@ -134,5 +135,20 @@
   --color-attn-dim: #E5BC7614;
   --color-danger: #FFB0A4;
   --color-danger-dim: #FFB0A414;
-  --color-off: #CCC6B8;
+  --color-off: #CBCDC5;
+}
+
+/* the hero is the printer cavity: always dark, in both themes */
+.home-hero { --color-chassis:#0F110E;
+  --color-chassis-2:#1C1F1A;
+  --color-chassis-3:#262923;
+  --color-ink:#F6F6F2;
+  --color-ink-2:#D2D4CC;
+  --color-rule:#6B6E65;
+  --color-rule-2:#8B8E84;
+  --color-accent:#FF7A45;
+  --color-accent-2:#FF8E5E;
+  --color-accent-3:#FFA67F;
+  --color-accent-ink:#0F110E;
+  --color-focus:#FF9B6E;
 }
