@@ -80,6 +80,7 @@
       ['Full-page label to 4x6', '/guides/8-5x11-shipping-label-to-4x6', 'letter PDF convert'],
       ['eBay label is not 4x6', '/guides/ebay-shipping-label-not-4x6', 'small wrong size'],
       ['Amazon return label to 4x6', '/guides/print-amazon-return-label-4x6', 'QR return'],
+      ['4x6 thermal label printers compared', '/guides/best-4x6-thermal-label-printers', 'best buy Rollo Zebra MUNBYN DYMO Brother'],
       ['Whatnot labels print too small', '/guides/whatnot-labels-printing-too-small', 'scale calibration'],
       ['Privacy and file handling', '/privacy', 'upload local browser server data'],
       ['Terms', '/terms', 'service owner']
