@@ -111,7 +111,7 @@ for (const href of ['/shipping-label-to-4x6', '/#tools/whatnot-live-show-number-
   if (!header.includes('<nav class="site-nav" aria-label="Main">') || !header.includes(`<a href="${href}">`)) bad(`site-nav missing ${href}`);
 }
 for (const m of html.matchAll(/<(?:script|link|img)\b[^>]*\b(?:src|href)="(?:https?:)?\/\/[^"]*"[^>]*>/g)) {
-  if (!/rel="canonical"/.test(m[0])) bad(`external resource in index.html: ${m[0].slice(0, 100)}`);
+  if (!/rel="canonical"/.test(m[0]) && !m[0].includes("https://www.googletagmanager.com/gtag/js?id=G-PCRCH56PCP")) bad(`external resource in index.html: ${m[0].slice(0, 100)}`);
 }
 for (const m of markup.matchAll(/<img\b[^>]*>/g)) if (!/\swidth="\d+"/.test(m[0]) || !/\sheight="\d+"/.test(m[0])) bad(`img without width/height: ${m[0].slice(0, 80)}`);
 const homeCta = (homeMain.match(/<div class="home-cta">[\s\S]*?<\/div>/) || [''])[0];

@@ -1,5 +1,7 @@
 # Label Ninja current state
 
+- 2026-10-30 GA4 G-PCRCH56PCP in code: gtag snippet in all 12 public/*.html heads; strict CSP paths in public/_headers extended (GTM script-src, google-analytics img/connect); contract test allows the gtag src; Worker 91515030-0c0b-4d57-ba4a-2e14a6574bd6. Ads unchanged.
+
 - 2026-10-26 TASTE REDESIGN LIVE (Worker 09afc04c-ad89-4f81-a048-1238a5785a26; rollback b7eb4353-a631-45b0-b0b1-b88cdea0dafc; CSS backup backups/css-bak-20261026-taste). CSS-only restyle on the same stack: cool paper palette + black printer-cavity hero, Barlow Condensed caps + Plex (JetBrains Mono dropped), no dashed rules/shadows, new flat favicon/icons (label with orange slash), Zebra LP 2824 photo (CC BY-SA, credited on page). Inspector home 10 FAIL/8 WARN -> 5/6. Cache-bust ?v=taste-20261026a. npm test green. No content/route/ads/pricing change.
 
 - 2026-10-25 ADS: `public/js/adsterra.js` = loader v2 (Popunder once/24h) on the content pages that already carried the tag (privacy/terms/whatnot/shipping-label); home/studio/account still ad-free by design. Deployed; uncommitted in this lane.
