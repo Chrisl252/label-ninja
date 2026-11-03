@@ -14,3 +14,7 @@ node_modules/
 *.pfx
 dev-*.log.err
 .taste-skill/
+
+# local-only: superseded 10-05 redesign review mockups/screens (23 MB) + canary scratch PDFs
+design/redesign-20261005/
+scratch/

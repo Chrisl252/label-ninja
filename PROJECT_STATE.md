@@ -1,5 +1,7 @@
 # Label Ninja current state
 
+- 2026-11-02 LOOSE ENDS CLOSED: (1) lane pushed to origin (05658ab..7dd3c9c), tree clean. (2) Adsterra loader v2 was already committed in b268885 (the 10-25 "uncommitted" line below is stale). (3) Worker tail VERIFIED: `wrangler tail label-ninja` caught 6/6 probe requests, all outcome ok, 0 exceptions (/, guide, converter, /api/health 200; unknown paths 404 as designed). (4) design/redesign-20261005/ + scratch/ are gitignored local-only. Still open: the SEO_STRATEGY.md briefs (next = Whatnot label stock guide) and a CTR rewrite of the Whatnot guide title (482 impr / 1 click in 28d); both need a Ready Check before going live.
+
 - 2026-10-30 GA4 G-PCRCH56PCP in code: gtag snippet in all 12 public/*.html heads; strict CSP paths in public/_headers extended (GTM script-src, google-analytics img/connect); contract test allows the gtag src; Worker 91515030-0c0b-4d57-ba4a-2e14a6574bd6. Ads unchanged.
 
 - 2026-10-26 TASTE REDESIGN LIVE (Worker 09afc04c-ad89-4f81-a048-1238a5785a26; rollback b7eb4353-a631-45b0-b0b1-b88cdea0dafc; CSS backup backups/css-bak-20261026-taste). CSS-only restyle on the same stack: cool paper palette + black printer-cavity hero, Barlow Condensed caps + Plex (JetBrains Mono dropped), no dashed rules/shadows, new flat favicon/icons (label with orange slash), Zebra LP 2824 photo (CC BY-SA, credited on page). Inspector home 10 FAIL/8 WARN -> 5/6. Cache-bust ?v=taste-20261026a. npm test green. No content/route/ads/pricing change.
