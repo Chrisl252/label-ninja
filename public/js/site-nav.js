@@ -82,6 +82,8 @@
       ['Amazon return label to 4x6', '/guides/print-amazon-return-label-4x6', 'QR return'],
       ['4x6 thermal label printers compared', '/guides/best-4x6-thermal-label-printers', 'best buy Rollo Zebra MUNBYN DYMO Brother'],
       ['Whatnot labels print too small', '/guides/whatnot-labels-printing-too-small', 'scale calibration'],
+      ['Whatnot label sizes and stock', '/guides/whatnot-label-stock', 'roll size sorting number stickers tags'],
+      ['Whatnot Sorting Labels not printing', '/guides/whatnot-sorting-labels-not-printing', 'Tray blank skipped setup'],
       ['Privacy and file handling', '/privacy', 'upload local browser server data'],
       ['Terms', '/terms', 'service owner']
     ];
