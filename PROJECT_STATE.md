@@ -1,5 +1,7 @@
 # Label Ninja current state
 
+- 2026-11-12 CONVERT PASS LIVE (commit 654077c, Worker 9163d9f8-373b-4146-b025-225276b38ab4; rollback = previous version 93a5522): query-matched titles/H1/meta on 4 pages, no new pages. Whatnot guide is now "How to Change Whatnot Label Size to 4x6 (Fix Tiny Labels)" with the answer first (URL unchanged); /whatnot-labels, /shipping-label-to-4x6 and the printers guide titles lead with the search phrase, all under 60 chars; hub anchors + sitemap lastmod updated. npm test + affiliates release gate green. Re-read GSC around 12-10. Master is NOT an ancestor of this lane, so it was not fast-forwarded.
+
 - 2026-11-02 LOOSE ENDS CLOSED: (1) lane pushed to origin (05658ab..7dd3c9c), tree clean. (2) Adsterra loader v2 was already committed in b268885 (the 10-25 "uncommitted" line below is stale). (3) Worker tail VERIFIED: `wrangler tail label-ninja` caught 6/6 probe requests, all outcome ok, 0 exceptions (/, guide, converter, /api/health 200; unknown paths 404 as designed). (4) design/redesign-20261005/ + scratch/ are gitignored local-only. Still open: the SEO_STRATEGY.md briefs (next = Whatnot label stock guide) and a CTR rewrite of the Whatnot guide title (482 impr / 1 click in 28d); both need a Ready Check before going live.
 
 - 2026-10-30 GA4 G-PCRCH56PCP in code: gtag snippet in all 12 public/*.html heads; strict CSP paths in public/_headers extended (GTM script-src, google-analytics img/connect); contract test allows the gtag src; Worker 91515030-0c0b-4d57-ba4a-2e14a6574bd6. Ads unchanged.
