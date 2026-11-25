@@ -1,5 +1,11 @@
 # Label Ninja backlog
 
+## Next (2026-11-25)
+
+- [ ] Merge live lane into master (docs-only conflicts), npm test, push. See PROJECT_STATE Start here.
+- [ ] GSC re-read ~2026-12-10 for convert/convert3 pages.
+- [ ] Ads/CSP decision (Chris).
+
 ## Free-everything lane (2026-10-01, NOT deployed)
 
 - [x] Remove payment system, Stripe, quota and paywall; keep free account + abuse limits for studio export; billing tables left dormant.

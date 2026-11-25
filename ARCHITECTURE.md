@@ -1,5 +1,7 @@
 # Label Ninja architecture
 
+> 2026-11-25: this file describes master. The live lane adds guides (printers compare, Whatnot label stock/sorting), GA4 gtag (G-PCRCH56PCP), Adsterra loader v2 (off). See PROJECT_STATE.md.
+
 Label Ninja is a browser label editor with a same-origin Cloudflare Worker API and D1 database. The production app is the Worker on label-ninja.com; the old static Pages mirror cannot provide accounts or exports.
 
 ## Product contract (2026-10-01)

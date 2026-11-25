@@ -1,6 +1,18 @@
 # Label Ninja current state
 
-## Start here (2026-10-06 docs sweep) - READ: live is NOT this branch
+## Start here (2026-11-25 sync)
+
+- WHAT: free label tools (4x6 converter, Whatnot label guides, studio PDF export with free account) at https://label-ninja.com. Revenue = Amazon Associates links (tag discountd0247-20) + planned ads (ads OFF).
+- RUNS: Cloudflare Worker `label-ninja` + D1 + static assets. Deploy is manual `wrangler deploy` (no GitHub Actions, none in repo).
+- LIVE = `lane/site-improve-20261004-labelninja` tip 9d134ee (convert3, Worker 454acdb3; rollback 9163d9f8), pushed to origin 2026-11-25. Not merged to master.
+- MASTER (261550d) is BEHIND live. `git merge lane/convert3-20261112` conflicts only in DECISIONS_LOG.md, HANDOFF.md, PROJECT_STATE.md (docs). Take the lane side of those three; code merges clean.
+- Local branches convert2/convert3 are ancestors of the lane tip (no extra work). The old worktree folder `lane-site-improve-20261004` holds only node_modules (no git).
+- Traffic 7d: 109 CF pageloads / 114 GA sessions (28 users). Whatnot label size guide was 482 impr / 1 click in 28d before the 11-12 title rewrite.
+- Known issues: ads blocked on CSP decision (needs Chris); GSC re-read due ~2026-12-10; production canary not run for convert3.
+- NEXT BRICK: merge the lane into master (resolve the 3 docs conflicts taking the lane side), `npm test` exit 0, push master. Acceptance: `git merge-base --is-ancestor 9d134ee master` true, `npm test` exit 0, `git status` clean, no deploy.
+- Rejected: Stripe/paywall (free-everything ruling 2026-10-01).
+
+## Previous start here (2026-10-06 docs sweep)
 
 - **LIVE = Packing Bench release 2d78018** (Worker b7eb4353-a631-45b0-b0b1-b88cdea0dafc, deployed 2026-10-05) from branch `lane/site-improve-20261004-labelninja`, worktree `C:\Code\label-ninja.com\lane-site-improve-20261004` (pushed to origin as that branch; NOT merged to master). Its PROJECT_STATE is the detailed live record.
 - **This checkout (`master`, 83e9e24 + docs) is BEHIND live.** Deploying from master would revert the Packing Bench identity, the 10-04 SEO/perf fixes and the Associates registration config. Merge the lane into master (Chris OK) before any deploy from here.
